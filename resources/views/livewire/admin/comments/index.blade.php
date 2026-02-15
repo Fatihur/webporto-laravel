@@ -15,8 +15,33 @@
         </div>
     </div>
 
+    <!-- Skeleton Loading -->
+    <div wire:loading.delay class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div class="p-6 space-y-4">
+            @for($i = 0; $i < 5; $i++)
+                <div class="flex gap-4">
+                    <div class="w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    <div class="flex-1 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    <div class="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    <div class="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                </div>
+            @endfor
+        </div>
+    </div>
+
+    <!-- Mobile Skeleton -->
+    <div wire:loading.delay class="md:hidden space-y-4">
+        @for($i = 0; $i < 3; $i++)
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-3">
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse"></div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full animate-pulse"></div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+            </div>
+        @endfor
+    </div>
+
     <!-- Desktop Table -->
-    <div class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <div wire:loading.remove class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
@@ -77,7 +102,7 @@
     </div>
 
     <!-- Mobile Cards -->
-    <div class="md:hidden space-y-4">
+    <div wire:loading.remove class="md:hidden space-y-4">
         @forelse ($comments as $comment)
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
                 <div class="flex items-start justify-between mb-3">

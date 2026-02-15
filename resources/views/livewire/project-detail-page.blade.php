@@ -171,7 +171,15 @@
     @if($relatedProjects->count() > 0)
         <div class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800">
             <h3 class="text-2xl font-bold mb-8">{{ __('frontend.projects.related_projects') }}</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {{-- Skeleton Loading --}}
+            <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @for($i = 0; $i < 3; $i++)
+                    <x-skeleton.card image title class="rounded-2xl" />
+                @endfor
+            </div>
+
+            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($relatedProjects as $related)
                     <a href="{{ route('projects.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-4">

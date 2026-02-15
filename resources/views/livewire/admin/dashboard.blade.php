@@ -5,8 +5,23 @@
         <p class="text-zinc-500 mt-1">Welcome back! Here's what's happening with your portfolio.</p>
     </div>
 
+    <!-- Skeleton Loading -->
+    <div wire:loading.delay class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        @for($i = 0; $i < 4; $i++)
+            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                <div class="flex items-center justify-between">
+                    <div class="space-y-2">
+                        <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                        <div class="h-8 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
+                </div>
+            </div>
+        @endfor
+    </div>
+
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div wire:loading.remove class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Projects -->
         <a href="{{ route('admin.projects.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-mint transition-colors">
             <div class="flex items-center justify-between">

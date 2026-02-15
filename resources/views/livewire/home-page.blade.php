@@ -147,7 +147,7 @@
             <p class="text-zinc-500 dark:text-zinc-400 mb-8 leading-relaxed max-w-md">
                 Focusing on the intersection of human-centered design and robust technical implementation for high-growth companies.
             </p>
-            <div class="flex flex-wrap gap-3">
+            <div wire:loading.class="animate-pulse" class="flex flex-wrap gap-3">
                 @foreach($tags as $tag)
                     <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-full text-[10px] font-bold uppercase tracking-widest">
                         {{ $tag }}
@@ -155,7 +155,22 @@
                 @endforeach
             </div>
         </div>
+
         <div class="lg:col-span-7 space-y-4 sm:space-y-6">
+            <!-- Skeleton Loading -->
+            <div wire:loading.delay class="space-y-4">
+                @for($i = 0; $i < 3; $i++)
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 sm:p-8 rounded-4xl border border-zinc-100 dark:border-zinc-800 gap-2">
+                        <div class="space-y-2">
+                            <div class="h-6 bg-zinc-200 dark:bg-zinc-700 rounded w-48 animate-pulse"></div>
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-32 animate-pulse"></div>
+                        </div>
+                        <div class="h-6 bg-zinc-200 dark:bg-zinc-700 rounded w-24 animate-pulse"></div>
+                    </div>
+                @endfor
+            </div>
+
+            <div wire:loading.remove>
             @foreach($experiences as $exp)
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 sm:p-8 rounded-4xl border border-zinc-100 dark:border-zinc-800 group hover:border-mint transition-colors gap-2">
                     <div>
@@ -164,7 +179,8 @@
                     </div>
                     <span class="text-xs sm:text-sm font-bold opacity-60 bg-zinc-50 dark:bg-zinc-900 px-4 py-1 rounded-full">{{ $exp->dateRange() }}</span>
                 </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
     </section>
 

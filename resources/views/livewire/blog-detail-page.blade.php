@@ -98,7 +98,15 @@
     @if($relatedPosts->count() > 0)
         <div class="mb-12">
             <h3 class="text-2xl font-bold mb-8">{{ __('frontend.blog.related_articles') }}</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Skeleton Loading -->
+            <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @for($i = 0; $i < 2; $i++)
+                    㱬-skeleton.card image title description class="rounded-2xl" />
+                @endfor
+            </div>
+
+            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 @foreach($relatedPosts as $related)
                     <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">

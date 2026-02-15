@@ -48,8 +48,50 @@
         </div>
     </div>
 
+    <!-- Skeleton Loading -->
+    <div wire:loading.delay class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-bold">Title</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold">Category</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold">Date</th>
+                    <th class="px-6 py-4 text-center text-sm font-bold">Featured</th>
+                    <th class="px-6 py-4 text-right text-sm font-bold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                @for($i = 0; $i < 5; $i++)
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
+                                <div class="space-y-2">
+                                    <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-32 animate-pulse"></div>
+                                    <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-4 mx-auto animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-16 ml-auto animate-pulse"></div>
+                        </td>
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+    </div>
+
     @if(count($projects) > 0)
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+        <div wire:loading.remove class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
             <table class="w-full">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
                 <tr>
@@ -137,6 +179,8 @@
         <div class="mt-6">
             {{ $projects->links() }}
         </div>
+    </div>
+
     @else
         <div
             class="text-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800">
