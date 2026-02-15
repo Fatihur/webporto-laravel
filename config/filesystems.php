@@ -60,6 +60,30 @@ return [
             'report' => false,
         ],
 
+        // CDN Disk for optimized images
+        'cdn' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/cdn'),
+            'url' => rtrim(env('CDN_URL', env('APP_URL', 'http://localhost')), '/').'/storage/cdn',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // Cloudflare R2 (S3-compatible CDN)
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => env('R2_DEFAULT_REGION', 'auto'),
+            'bucket' => env('R2_BUCKET'),
+            'url' => env('R2_URL'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

@@ -16,6 +16,11 @@ use App\Livewire\Admin\Blogs\Form as BlogsForm;
 use App\Livewire\Admin\Contacts\Index as ContactsIndex;
 use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
 use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
+use App\Livewire\Admin\Comments\Index as CommentsIndex;
+use App\Livewire\Admin\Analytics\Dashboard as AnalyticsDashboard;
+use App\Livewire\SearchComponent;
+use App\Http\Controllers\SeoController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -26,6 +31,20 @@ use Illuminate\Support\Facades\Auth;
 
 // Home
 Route::get('/', HomePage::class)->name('home');
+
+// SEO Routes
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+// Social Login Routes
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login/{provider}', [SocialLoginController::class, 'redirect'])->name('social.login');
+    Route::get('/login/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/social/{provider}/unlink', [SocialLoginController::class, 'unlink'])->name('social.unlink');
+});
 
 // Projects
 Route::redirect('/projects', '/');
@@ -77,4 +96,19 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/experiences', ExperiencesIndex::class)->name('admin.experiences.index');
     Route::get('/experiences/create', ExperiencesForm::class)->name('admin.experiences.create');
     Route::get('/experiences/{id}/edit', ExperiencesForm::class)->name('admin.experiences.edit');
+
+    // Comments
+    Route::get('/comments', CommentsIndex::class)->name('admin.comments.index');
+
+    // Search
+    Route::get('/search', SearchComponent::class)->name('search');
+
+    // Analytics
+    Route::get('/analytics', AnalyticsDashboard::class)->name('admin.analytics');
+
+    // Security
+    Route::prefix('security')->name('security.')->group(function () {
+        Route::get('/2fa', \App\Livewire\Admin\Security\TwoFactorAuth::class)->name('2fa');
+        Route::get('/sessions', \App\Livewire\Admin\Security\SessionManager::class)->name('sessions');
+    });
 });

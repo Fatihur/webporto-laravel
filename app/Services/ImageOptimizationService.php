@@ -19,6 +19,7 @@ class ImageOptimizationService
         'quality' => 85,
         'max_width' => 1200,
         'max_height' => 1200,
+        'storage_disk' => 'public',
     ];
 
     /**
@@ -50,7 +51,7 @@ class ImageOptimizationService
         $encoded = $this->encodeImage($image, $options['format'], $options['quality']);
 
         // Simpan ke storage
-        Storage::disk('public')->put($path, $encoded);
+        Storage::disk($this->config['storage_disk'] ?? 'public')->put($path, $encoded);
 
         return $path;
     }

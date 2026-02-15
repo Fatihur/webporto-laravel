@@ -87,6 +87,30 @@ class Blog extends Model
     }
 
     /**
+     * Get comments for the blog.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get approved comments for the blog.
+     */
+    public function approvedComments()
+    {
+        return $this->hasMany(Comment::class)->approved();
+    }
+
+    /**
+     * Get page views for the blog.
+     */
+    public function pageViews()
+    {
+        return $this->morphMany(PageView::class, 'viewable');
+    }
+
+    /**
      * Clear all cache entries related to this blog.
      */
     public function clearModelCache(): void
@@ -106,5 +130,21 @@ class Blog extends Model
         if ($this->category) {
             Cache::forget('blog.related.' . $this->category);
         }
+    }
+
+    /**
+     * Get the array of data for Scout search.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'excerpt' => $this->excerpt,
+            'content' => $this->content,
+            'category' => $this->category,
+            'author' => $this->author,
+            'slug' => $this->slug,
+        ];
     }
 }

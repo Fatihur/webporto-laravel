@@ -16,8 +16,8 @@
         class="hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg border border-zinc-100 dark:border-zinc-800 py-2 z-50"
     >
         @foreach($locales as $code => $info)
-            <a
-                href="{{ route('locale.switch', ['locale' => $code, 'redirect' => request()->url()]) }}"
+            <button
+                wire:click="switchLocale('{{ $code }}')"
                 class="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors {{ $currentLocale === $code ? 'text-mint font-semibold' : 'text-zinc-600 dark:text-zinc-300' }}"
             >
                 <span class="text-lg">{{ $info['flag'] }}</span>
@@ -27,7 +27,7 @@
                         <polyline points="20 6 9 17 4 12"/>
                     </svg>
                 @endif
-            </a>
+            </button>
         @endforeach
     </div>
 </div>

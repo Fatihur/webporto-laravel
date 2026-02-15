@@ -15,6 +15,12 @@
 
     <header class="mb-16">
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8">{{ $project->title }}</h1>
+
+        <!-- Share Buttons -->
+        <div class="mb-6">
+            <x-share-buttons :url="request()->url()" :title="$project->title" :description="$project->description" size="sm" />
+        </div>
+
         <div class="flex flex-wrap items-center gap-8 py-8 border-y border-zinc-100 dark:border-zinc-800">
             <div class="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>

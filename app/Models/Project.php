@@ -80,6 +80,26 @@ class Project extends Model
     }
 
     /**
+     * Scope by tech stack
+     */
+    public function scopeByTechStack(Builder $query, array $techStacks): Builder
+    {
+        return $query->where(function ($q) use ($techStacks) {
+            foreach ($techStacks as $tech) {
+                $q->orWhereJsonContains('tech_stack', $tech);
+            }
+        });
+    }
+
+    /**
+     * Get page views for project.
+     */
+    public function pageViews()
+    {
+        return $this->morphMany(PageView::class, 'viewable');
+    }
+
+    /**
      * Clear all cache entries related to this project.
      */
     public function clearModelCache(): void
@@ -101,5 +121,22 @@ class Project extends Model
         if ($this->category) {
             Cache::forget('projects.related.' . $this->category);
         }
+    }
+
+    /**
+     * Get the array of data for Scout search.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'content' => $this->content,
+            'category' => $this->category,
+            'tech_stack' => $this->tech_stack,
+            'tags' => $this->tags,
+            'slug' => $this->slug,
+        ];
     }
 }

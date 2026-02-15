@@ -1,6 +1,7 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800"
-    x-data="{ mobileMenuOpen: false, megaMenuOpen: false }"
-    x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false"
+    x-data="{ mobileMenuOpen: false, megaMenuOpen: false, searchOpen: false }"
+    x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false; searchOpen = false"
+    x-on:open-search.window="searchOpen = true"
 >
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
         <div class="flex items-center justify-between h-20">
@@ -56,6 +57,20 @@
 
             <!-- Right Side -->
             <div class="flex items-center gap-3">
+                <!-- Search Button -->
+                <button
+                    type="button"
+                    x-on:click="$dispatch('open-search')"
+                    class="hidden md:flex w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                    aria-label="{{ __('Search') }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </button>
+
+                <livewire:language-switcher />
                 <livewire:theme-toggle />
                 <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
                     <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
@@ -121,6 +136,30 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Search Modal -->
+    <template x-teleport="body">
+        <div
+            x-show="searchOpen"
+            style="display: none;"
+            x-transition.opacity.duration.200ms
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] flex items-start justify-center pt-32"
+        >
+            <div
+                x-show="searchOpen"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                x-on:click.outside="searchOpen = false"
+                class="w-full max-w-2xl mx-4"
+            >
+                <livewire:search-component />
             </div>
         </div>
     </template>

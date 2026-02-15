@@ -36,6 +36,11 @@
         <p class="text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed">
             {{ $post->excerpt }}
         </p>
+
+        <!-- Share Buttons -->
+        <div class="mt-6">
+            <x-share-buttons :url="request()->url()" :title="$post->title" :description="$post->excerpt" size="sm" />
+        </div>
     </header>
 
     <!-- Featured Image -->
@@ -61,6 +66,22 @@
     <article class="prose prose-lg dark:prose-invert max-w-none mb-20">
         {!! $post->content !!}
     </article>
+
+    <!-- Comments Section -->
+    <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
+        <div class="flex items-center justify-between mb-8">
+            <h3 class="text-3xl font-bold tracking-tight">{{ __('Comments') }}</h3>
+            <span class="text-sm font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
+        </div>
+
+        <!-- Comments List -->
+        <div class="mb-8">
+            <livewire:comment-list :blog-id="$post->id" />
+        </div>
+
+        <!-- Comment Form -->
+        <livewire:comment-form :blog-id="$post->id" />
+    </section>
 
     <!-- Author Section -->
     <div class="flex items-center gap-4 py-8 border-y border-zinc-100 dark:border-zinc-900 mb-16">

@@ -20,7 +20,10 @@ class ProjectFilter extends Component
 
     #[Url(as: 'search')]
     public string $search = '';
-
+    
+    public array $selectedTechStacks = [];
+    public array $availableTechStacks = [];
+    
     public function mount(?string $category = null): void
     {
         $this->selectedCategory = $category;
@@ -28,6 +31,17 @@ class ProjectFilter extends Component
         $this->categories = Cache::remember('categories.all', 86400, function () {
             return CategoryData::all();
         });
+        
+        // Get unique tech stacks from all projects
+        $this->availableTechStacks = Cache::remember('tech_stacks.all', 86400, function () {
+            return Project::all()
+                ->pluck('tech_stack')
+                ->flatten()
+                ->unique()
+                ->values()
+                ->toArray();
+        });
+        
         $this->loadProjects();
     }
 
@@ -38,6 +52,11 @@ class ProjectFilter extends Component
     }
 
     public function updatedSearch(): void
+    {
+        $this->loadProjects();
+    }
+
+    public function updatedSelectedTechStacks(): void
     {
         $this->loadProjects();
     }
@@ -71,12 +90,17 @@ class ProjectFilter extends Component
     private function fetchProjectsFromDatabase()
     {
         $query = Project::query();
-
+        
         // Filter by category
         if ($this->selectedCategory) {
             $query->byCategory($this->selectedCategory);
         }
-
+        
+        // Filter by tech stack
+        if (!empty($this->selectedTechStacks)) {
+            $query->byTechStack($this->selectedTechStacks);
+        }
+        
         // Filter by search term
         if ($this->search) {
             $searchTerm = '%' . strtolower($this->search) . '%';
@@ -86,10 +110,10 @@ class ProjectFilter extends Component
                   ->orWhereJsonContains('tags', $this->search);
             });
         }
-
+        
         // Order by date
         $query->recent();
-
+        
         return $query->get();
     }
 
