@@ -18,7 +18,7 @@
                 id="name"
                 wire:model.live="name"
                 class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('name') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors"
-                placeholder="Enter your name"
+                placeholder="Your name"
             >
             @error('name')
                 <p class="mt-2 text-sm text-red-500 flex items-center gap-1">
@@ -36,7 +36,7 @@
                 id="email"
                 wire:model.live="email"
                 class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('email') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors"
-                placeholder="Enter your email"
+                placeholder="your@email.com"
             >
             @error('email')
                 <p class="mt-2 text-sm text-red-500 flex items-center gap-1">
@@ -55,8 +55,8 @@
                 class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('project_type') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors appearance-none cursor-pointer"
             >
                 <option value="">Select project type</option>
-                @foreach($projectTypes as $type)
-                    <option value="{{ $type }}">{{ $type }}</option>
+                @foreach($projectTypes as $typeKey => $typeValue)
+                    <option value="{{ $typeKey }}">{{ $typeValue }}</option>
                 @endforeach
             </select>
             @error('project_type')

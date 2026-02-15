@@ -21,7 +21,12 @@ class HomePage extends Component
         $this->categories = Cache::remember('categories.all', 86400, function () {
             return CategoryData::all();
         });
-        $this->tags = ['Minimalism', 'Precision', 'Scalability', 'Innovation'];
+        $this->tags = [
+            'minimalism' => 'Minimalism',
+            'precision' => 'Precision',
+            'scalability' => 'Scalability',
+            'innovation' => 'Innovation',
+        ];
 
         // About Me data
         $this->aboutMe = [

@@ -1,10 +1,10 @@
 <main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto">
     <!-- Header -->
     <header class="mb-16 text-center max-w-3xl mx-auto">
-        <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">Blog</span>
-        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter mb-6">Journal</h1>
+        <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">{{ __('frontend.blog.title') }}</span>
+        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter mb-6">{{ __('frontend.blog.subtitle') }}</h1>
         <p class="text-lg text-zinc-500 dark:text-zinc-400 mb-10">
-            Thoughts on design, engineering, and the intersection of technology and minimalism.
+            {{ __('frontend.blog.description') }}
         </p>
 
         <!-- Search Bar -->
@@ -18,7 +18,7 @@
             <input
                 type="text"
                 wire:model.live.debounce.300ms="search"
-                placeholder="Search articles..."
+                placeholder="{{ __('frontend.blog.search_placeholder') }}"
                 class="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
             >
             @if($search)
@@ -37,7 +37,7 @@
         <!-- Results Count -->
         @if($search)
             <p class="mt-4 text-sm text-zinc-500">
-                Found {{ $posts->total() }} result{{ $posts->total() !== 1 ? 's' : '' }} for "{{ $search }}"
+                {{ __('frontend.blog.found_results', ['count' => $posts->total(), 'query' => $search]) }}
             </p>
         @endif
 
@@ -48,7 +48,7 @@
                     wire:click="$set('category', '')"
                     class="px-4 py-2 rounded-full text-xs font-bold transition-all {{ $category === '' ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
                 >
-                    All
+                    {{ __('frontend.blog.all') }}
                 </button>
                 @foreach($categories as $cat)
                     <button
@@ -96,9 +96,9 @@
                                 {{ $post->category }}
                             </span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at->format('M d, Y') }}</span>
+                            <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at?->format('M d, Y') }}</span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $post->read_time }} min read</span>
+                            <span class="text-xs text-zinc-500">{{ $post->read_time }} {{ __('frontend.blog.min_read') }}</span>
                         </div>
 
                         <h2 class="text-2xl md:text-3xl font-bold mb-3 group-hover:text-mint transition-colors leading-tight">
@@ -110,7 +110,7 @@
                         </p>
 
                         <span class="inline-flex items-center gap-2 text-sm font-bold text-zinc-950 dark:text-white group-hover:gap-3 transition-all">
-                            Read Article
+                            {{ __('frontend.blog.read_article') }}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M5 12h14"/>
                                 <path d="m12 5 7 7-7 7"/>
@@ -134,13 +134,13 @@
                         <path d="m21 21-4.3-4.3"/>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-2">No articles found</h3>
-                <p class="text-zinc-500 dark:text-zinc-400 mb-6">Try adjusting your search terms</p>
+                <h3 class="text-xl font-bold mb-2">{{ __('frontend.blog.no_results') }}</h3>
+                <p class="text-zinc-500 dark:text-zinc-400 mb-6">{{ __('frontend.blog.try_adjusting') }}</p>
                 <button
                     wire:click="clearSearch"
                     class="px-6 py-3 rounded-full bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold hover:scale-105 transition-transform"
                 >
-                    Clear Search
+                    {{ __('frontend.blog.clear_search') }}
                 </button>
             </div>
         @endforelse

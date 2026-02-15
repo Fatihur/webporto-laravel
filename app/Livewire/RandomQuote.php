@@ -118,7 +118,8 @@ class RandomQuote extends Component
 
     public function refreshQuote(): void
     {
-        $this->quote = $this->quotes[array_rand($this->quotes)];
+        $quotes = __('frontend.quotes');
+        $this->quote = $quotes[array_rand($quotes)];
     }
 
     public function render()

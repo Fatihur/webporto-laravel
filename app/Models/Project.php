@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\CacheInvalidatable;
+use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,7 +11,21 @@ use Illuminate\Support\Facades\Cache;
 
 class Project extends Model
 {
-    use HasFactory, CacheInvalidatable;
+    use HasFactory, CacheInvalidatable, Translatable;
+
+    /**
+     * Fields that should be translatable.
+     *
+     * @var array
+     */
+    protected array $translatableFields = [
+        'title',
+        'description',
+        'content',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+    ];
 
     protected $fillable = [
         'title',

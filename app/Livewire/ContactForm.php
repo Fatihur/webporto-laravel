@@ -14,10 +14,10 @@ class ContactForm extends Component
     public ?string $successMessage = null;
 
     public array $projectTypes = [
-        'Graphic Design',
-        'Software Development',
-        'Data Analysis',
-        'Networking / IT',
+        'graphic_design' => 'Graphic Design',
+        'software_dev' => 'Software Development',
+        'data_analysis' => 'Data Analysis',
+        'networking' => 'Networking / IT',
     ];
 
     protected array $rules = [

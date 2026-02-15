@@ -14,7 +14,7 @@
             <path d="m12 19-7-7 7-7"/>
             <path d="M19 12H5"/>
         </svg>
-        Back to Journal
+        {{ __('frontend.blog.back_to_journal') }}
     </a>
 
     <!-- Article Header -->
@@ -24,9 +24,9 @@
                 {{ $post->category }}
             </span>
             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-            <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at->format('M d, Y') }}</span>
+            <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at?->format('M d, Y') }}</span>
             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-            <span class="text-xs text-zinc-500">{{ $post->read_time }} min read</span>
+            <span class="text-xs text-zinc-500">{{ $post->read_time }} {{ __('frontend.blog.min_read') }}</span>
         </div>
 
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6 leading-tight">
@@ -69,14 +69,14 @@
         </div>
         <div>
             <p class="font-bold">{{ $post->author ?? 'Admin' }}</p>
-            <p class="text-sm text-zinc-500">Multidisciplinary Designer & Developer</p>
+            <p class="text-sm text-zinc-500">{{ __('frontend.blog.author_role') }}</p>
         </div>
     </div>
 
     <!-- Related Articles -->
     @if($relatedPosts->count() > 0)
         <div class="mb-12">
-            <h3 class="text-2xl font-bold mb-8">Related Articles</h3>
+            <h3 class="text-2xl font-bold mb-8">{{ __('frontend.blog.related_articles') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 @foreach($relatedPosts as $related)
                     <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
@@ -101,7 +101,7 @@
                         <div class="flex items-center gap-2 mb-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $related->category }}</span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $related->read_time }} min</span>
+                            <span class="text-xs text-zinc-500">{{ $related->read_time }} {{ __('frontend.blog.min_read') }}</span>
                         </div>
                         <h4 class="text-lg font-bold group-hover:text-mint transition-colors">{{ $related->title }}</h4>
                     </a>
@@ -112,10 +112,10 @@
 
     <!-- CTA -->
     <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 text-center">
-        <h3 class="text-2xl font-bold mb-4">Enjoyed this article?</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 mb-6">Let's discuss your next project.</p>
+        <h3 class="text-2xl font-bold mb-4">{{ __('frontend.blog.enjoyed_article') }}</h3>
+        <p class="text-zinc-500 dark:text-zinc-400 mb-6">{{ __('frontend.blog.discuss_project') }}</p>
         <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform">
-            Get in Touch
+            {{ __('frontend.blog.get_in_touch') }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"/>
                 <path d="m12 5 7 7-7 7"/>

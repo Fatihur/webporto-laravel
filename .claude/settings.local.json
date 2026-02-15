@@ -21,7 +21,13 @@
       "Bash(php artisan tinker:*)",
       "Bash(php artisan migrate:rollback:*)",
       "Bash(php artisan migrate:status:*)",
-      "Bash(php artisan view:clear:*)"
+      "Bash(php artisan view:clear:*)",
+      "Bash(php artisan config:clear:*)",
+      "Bash(php -r:*)",
+      "Bash(php artisan livewire:discover:*)",
+      "Bash(php artisan optimize:clear:*)",
+      "Bash(git checkout:*)",
+      "Bash(php artisan cache:clear:*)"
     ]
   }
 }

@@ -10,7 +10,7 @@
 <main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto">
     <a href="{{ route('projects.category', $project->category) }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors mb-8">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-        Back to {{ str_replace('-', ' ', $project->category) }}
+        {{ __('frontend.projects.back_to', ['category' => str_replace('-', ' ', $project->category)]) }}
     </a>
 
     <header class="mb-16">
@@ -19,14 +19,14 @@
             <div class="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                 <div>
-                    <p class="text-[10px] font-black uppercase text-zinc-400">Date</p>
-                    <p class="text-sm font-bold">{{ $project->project_date?->format('M Y') ?? $project->created_at->format('M Y') }}</p>
+                    <p class="text-[10px] font-black uppercase text-zinc-400">{{ __('frontend.projects.date') }}</p>
+                    <p class="text-sm font-bold">{{ $project->project_date?->format('M Y') ?? $project->created_at?->format('M Y') }}</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
                 <div>
-                    <p class="text-[10px] font-black uppercase text-zinc-400">Category</p>
+                    <p class="text-[10px] font-black uppercase text-zinc-400">{{ __('frontend.projects.category') }}</p>
                     <p class="text-sm font-bold capitalize">{{ str_replace('-', ' ', $project->category) }}</p>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 @if($project->link)
                     <a href="{{ $project->link }}" target="_blank" rel="noopener noreferrer"
                        class="flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-3 rounded-full text-sm font-bold hover:scale-105 transition-transform">
-                        Launch
+                        {{ __('frontend.projects.launch') }}
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                     </a>
                 @endif
@@ -62,7 +62,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
         <div class="md:col-span-8">
-            <h2 class="text-3xl font-bold mb-6">Overview</h2>
+            <h2 class="text-3xl font-bold mb-6">{{ __('frontend.projects.overview') }}</h2>
             <div class="prose dark:prose-invert max-w-none">
                 {!! $project->content !!}
             </div>
@@ -70,7 +70,7 @@
             {{-- Gallery Section --}}
             @if($project->gallery && count($project->gallery) > 0)
                 <div class="mt-16 pt-16 border-t border-zinc-100 dark:border-zinc-800" x-data="{ open: false, currentImage: '' }">
-                    <h3 class="text-2xl font-bold mb-8">Gallery</h3>
+                    <h3 class="text-2xl font-bold mb-8">{{ __('frontend.projects.gallery') }}</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @foreach($project->gallery as $index => $img)
                             <div class="rounded-3xl overflow-hidden group cursor-pointer"
@@ -120,7 +120,7 @@
         <div class="md:col-span-4 space-y-10">
             @if($project->tags && count($project->tags) > 0)
                 <div>
-                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Core Tags</h4>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">{{ __('frontend.projects.core_tags') }}</h4>
                     <div class="flex flex-wrap gap-2">
                         @foreach($project->tags as $tag)
                             <span class="px-4 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-full text-xs font-bold">{{ $tag }}</span>
@@ -131,7 +131,7 @@
 
             @if($project->tech_stack && count($project->tech_stack) > 0)
                 <div>
-                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Stack</h4>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">{{ __('frontend.projects.stack') }}</h4>
                     <ul class="space-y-3">
                         @foreach($project->tech_stack as $tech)
                             <li class="flex items-center gap-3 text-sm font-bold">
@@ -145,7 +145,7 @@
 
             @if($project->stats && count($project->stats) > 0)
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-4xl">
-                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Key Results</h4>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">{{ __('frontend.projects.key_results') }}</h4>
                     <div class="space-y-6">
                         @foreach($project->stats as $stat)
                             @if(isset($stat['label']) && isset($stat['value']))
@@ -164,7 +164,7 @@
     {{-- Related Projects --}}
     @if($relatedProjects->count() > 0)
         <div class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800">
-            <h3 class="text-2xl font-bold mb-8">Related Projects</h3>
+            <h3 class="text-2xl font-bold mb-8">{{ __('frontend.projects.related_projects') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach($relatedProjects as $related)
                     <a href="{{ route('projects.show', $related->slug) }}" wire:navigate class="group">

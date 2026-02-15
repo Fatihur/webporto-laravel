@@ -3,7 +3,7 @@
     <header class="mb-12">
         <!-- Breadcrumb -->
         <div class="flex items-center gap-3 text-zinc-400 font-bold mb-4">
-            <a href="{{ route('home') }}" wire:navigate class="hover:text-zinc-950 dark:hover:text-white transition-colors">Home</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-zinc-950 dark:hover:text-white transition-colors">{{ __('frontend.projects.breadcrumb_home') }}</a>
             <span>/</span>
             <span class="text-zinc-950 dark:text-white">{{ $title }}</span>
         </div>
@@ -26,7 +26,7 @@
             <input
                 type="text"
                 wire:model.live.debounce.300ms="search"
-                placeholder="Search projects..."
+                placeholder="{{ __('frontend.projects.search_placeholder') }}"
                 class="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
             >
             @if($search)
@@ -45,7 +45,7 @@
         <!-- Results Count -->
         @if($search)
             <p class="mb-4 text-sm text-zinc-500">
-                Found {{ $projects->count() }} result{{ $projects->count() !== 1 ? 's' : '' }} for "{{ $search }}"
+                {{ trans_choice('frontend.projects.found_results_simple', $projects->count(), ['count' => $projects->count()]) }} for "{{ $search }}"
             </p>
         @endif
 
@@ -55,7 +55,7 @@
                 wire:click="filterByCategory(null)"
                 class="px-5 py-2.5 rounded-full text-sm font-bold transition-all {{ $selectedCategory === null ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
             >
-                All Projects
+                {{ __('frontend.projects.all_projects') }}
             </button>
             @foreach($categories as $cat)
                 <button
@@ -102,7 +102,7 @@
                         <div class="flex items-center gap-2 mb-3">
                             <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $project->category }}</span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $project->project_date?->format('M Y') ?? $project->created_at->format('M Y') }}</span>
+                            <span class="text-xs text-zinc-500">{{ $project->project_date?->format('M Y') ?? $project->created_at?->format('M Y') }}</span>
                         </div>
 
                         <h3 class="text-xl font-bold mb-3 group-hover:text-mint transition-colors">{{ $project->title }}</h3>
@@ -126,12 +126,12 @@
                         <path d="m21 21-4.3-4.3"/>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-2">No projects found</h3>
+                <h3 class="text-xl font-bold mb-2">{{ __('frontend.projects.no_results') }}</h3>
                 <p class="text-zinc-500 dark:text-zinc-400 mb-6">
                     @if($search)
-                        No results for "{{ $search }}"
+                        {{ __('frontend.projects.found_results', ['count' => 0, 'query' => $search]) }}
                     @else
-                        No projects in this category
+                        {{ __('frontend.projects.no_results_category') }}
                     @endif
                 </p>
                 @if($search)
@@ -139,7 +139,7 @@
                         wire:click="clearSearch"
                         class="px-6 py-3 rounded-full bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold hover:scale-105 transition-transform"
                     >
-                        Clear Search
+                        {{ __('frontend.projects.clear_search') }}
                     </button>
                 @endif
             </div>
@@ -150,7 +150,7 @@
     <div wire:loading class="flex justify-center py-8">
         <div class="flex items-center gap-2 text-zinc-400">
             <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-            <span class="text-sm font-medium">Loading projects...</span>
+            <span class="text-sm font-medium">{{ __('frontend.projects.loading') }}</span>
         </div>
     </div>
 </main>

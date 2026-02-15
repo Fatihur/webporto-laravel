@@ -3,7 +3,7 @@
         <!-- Left Column: Contact Info -->
         <div>
             <h1 class="text-6xl font-extrabold tracking-tighter mb-10 leading-[1.1]">
-                Let's start a <br><span class="text-mint">Conversation.</span>
+                Let's start a Conversation.
             </h1>
             <p class="text-xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-md">
                 I'm always open to new opportunities, collaborations, or just a friendly chat about design systems.

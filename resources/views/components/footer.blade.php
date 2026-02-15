@@ -5,7 +5,7 @@
         </div>
         
         <p class="text-sm font-medium text-zinc-400">
-            © {{ date('Y') }} FatihPortfolio. All rights reserved.
+            © {{ date('Y') }} FatihPortfolio. {{ __('frontend.footer.copyright') }}
         </p>
     </div>
 </footer>
