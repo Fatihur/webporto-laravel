@@ -1,4 +1,4 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800"
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-100 dark:border-zinc-800 backdrop-blur-md"
     x-data="{ mobileMenuOpen: false, megaMenuOpen: false }"
     x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false"
 >
