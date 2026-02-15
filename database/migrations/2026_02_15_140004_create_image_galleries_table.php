@@ -23,7 +23,6 @@ return new class extends Migration
             $table->integer('order')->default(0);
             $table->timestamps();
             
-            $table->index(['gallerable_type', 'gallerable_id']);
         });
     }
 
