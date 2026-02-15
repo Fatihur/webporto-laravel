@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Fix for Summernote fullscreen mode */
+.note-editor.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important;
+    border-radius: 0 !important;
+}
+
+.note-editor.fullscreen .note-editable {
+    height: calc(100% - 110px) !important;
+    overflow-y: auto !important;
+}
+
+.note-editor.fullscreen .note-statusbar {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+}
+
+/* Ensure fullscreen toolbar is visible */
+.note-editor.fullscreen .note-toolbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10000 !important;
+    width: 100% !important;
+}
+
+/* Fullscreen modal background */
+.note-editor.fullscreen::before {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+    z-index: -1 !important;
+}
+
+/* Disable scrolling on body when fullscreen active */
+body.note-fullscreen-active {
+    overflow: hidden !important;
+}

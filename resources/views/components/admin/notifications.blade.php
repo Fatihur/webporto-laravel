@@ -1,0 +1,67 @@
+<div x-data="{
+    notifications: [],
+    init() {
+        Livewire.on('notify', (event) => {
+            this.add(event[0].type, event[0].message);
+        });
+    },
+    add(type, message) {
+        const id = Date.now();
+        this.notifications.push({ id, type, message });
+        setTimeout(() => this.remove(id), 5000);
+    },
+    remove(id) {
+        this.notifications = this.notifications.filter(n => n.id !== id);
+    }
+}" x-cloak class="fixed top-4 right-4 z-50 space-y-2">
+    <template x-for="notification in notifications" :key="notification.id">
+        <div x-show.transition="true"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 transform translate-x-full"
+             x-transition:enter-end="opacity-100 transform translate-x-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 transform translate-x-0"
+             x-transition:leave-end="opacity-0 transform translate-x-full"
+             :class="{
+                'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950': notification.type === 'success',
+                'bg-red-500 text-white': notification.type === 'error',
+                'bg-blue-500 text-white': notification.type === 'info'
+             }"
+             class="px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 min-w-[300px]"
+        >
+            <!-- Success Icon -->
+            <template x-if="notification.type === 'success'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"/>
+                </svg>
+            </template>
+
+            <!-- Error Icon -->
+            <template x-if="notification.type === 'error'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="m15 9-6 6"/>
+                    <path d="m9 9 6 6"/>
+                </svg>
+            </template>
+
+            <!-- Info Icon -->
+            <template x-if="notification.type === 'info'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+            </template>
+
+            <span class="font-bold" x-text="notification.message"></span>
+
+            <button @click="remove(notification.id)" class="ml-auto opacity-70 hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"/>
+                    <path d="m6 6 12 12"/>
+                </svg>
+            </button>
+        </div>
+    </template>
+</div>
