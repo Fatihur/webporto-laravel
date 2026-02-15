@@ -62,8 +62,31 @@
         @endif
     </header>
 
+    <!-- Loading Skeleton -->
+    <div wire:loading.delay class="space-y-12">
+        @for($i = 0; $i < 3; $i++)
+            <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+                <div class="w-full md:w-72 lg:w-80 shrink-0">
+                    <x-skeleton.card image class="aspect-[16/10] md:aspect-[4/3] rounded-2xl" />
+                </div>
+                <div class="flex-1 py-2 space-y-4 w-full">
+                    <div class="flex gap-3">
+                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
+                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-24 animate-pulse"></div>
+                    </div>
+                    <div class="h-8 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4 animate-pulse"></div>
+                    <x-skeleton.text lines="2" class="max-w-xl" />
+                </div>
+            </div>
+            @if($i < 2)
+                <hr class="border-zinc-100 dark:border-zinc-800">
+            @endif
+        @endfor
+    </div>
+
     <!-- Articles List -->
-    <div class="space-y-12">
+    <div wire:loading.remove class="space-y-12">
         @forelse($posts as $post)
             <article class="group">
                 <a href="{{ route('blog.show', $post->slug) }}" wire:navigate class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">

@@ -68,8 +68,15 @@
         </div>
     </header>
 
+    <!-- Loading Skeleton -->
+    <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for($i = 0; $i < 6; $i++)
+            <x-skeleton.card image title description class="rounded-[2rem]" />
+        @endfor
+    </div>
+
     <!-- Projects Grid -->
-    <div wire:loading.class="opacity-50" class="transition-opacity duration-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @if($projects->count() > 0)
             @foreach($projects as $project)
                 <a
@@ -146,11 +153,4 @@
         @endif
     </div>
 
-    <!-- Loading Indicator -->
-    <div wire:loading class="flex justify-center py-8">
-        <div class="flex items-center gap-2 text-zinc-400">
-            <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-            <span class="text-sm font-medium">{{ __('frontend.projects.loading') }}</span>
-        </div>
-    </div>
 </main>
