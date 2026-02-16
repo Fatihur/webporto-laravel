@@ -34,7 +34,7 @@
         </h1>
 
         <p class="text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            {{ $post->excerpt }}
+            {!! $post->excerpt !!}
         </p>
 
         <!-- Share Buttons -->

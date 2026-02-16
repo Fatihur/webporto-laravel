@@ -129,7 +129,7 @@
                         </h2>
 
                         <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-2">
-                            {{ $post->excerpt }}
+                            {!! $post->excerpt !!}
                         </p>
 
                         <span class="inline-flex items-center gap-2 text-sm font-bold text-zinc-950 dark:text-white group-hover:gap-3 transition-all">

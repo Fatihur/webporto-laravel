@@ -44,7 +44,6 @@ class Blog extends Model
     ];
 
     protected $casts = [
-        'content' => 'array',
         'published_at' => 'date',
         'is_published' => 'boolean',
     ];
