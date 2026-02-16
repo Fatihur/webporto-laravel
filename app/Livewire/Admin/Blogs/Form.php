@@ -63,8 +63,8 @@ class Form extends Component
             if ($blog) {
                 $this->title = $blog->title;
                 $this->slug = $blog->slug;
-                $this->excerpt = $blog->excerpt ?? '';
-                $this->content = $blog->content ?? '';
+                $this->excerpt = $this->cleanHtml($blog->excerpt ?? '');
+                $this->content = $this->cleanHtml($blog->content ?? '');
                 $this->category = $blog->category;
                 $this->author = $blog->author;
                 $this->published_at = $blog->published_at?->format('Y-m-d');
@@ -82,27 +82,6 @@ class Form extends Component
         if (!$this->blogId) {
             $this->slug = Str::slug($this->title);
         }
-    }
-
-    /**
-     * Set content from Summernote - called via Alpine.js
-     */
-    public function setContent(string $content): void
-    {
-        \Log::debug('setContent called', [
-            'preview' => substr($content, 0, 100),
-            'starts_with_quote' => str_starts_with(trim($content), '"'),
-            'ends_with_quote' => str_ends_with(trim($content), '"'),
-        ]);
-        $this->content = $content;
-    }
-
-    /**
-     * Set excerpt from Summernote - called via Alpine.js
-     */
-    public function setExcerpt(string $excerpt): void
-    {
-        $this->excerpt = $excerpt;
     }
 
     public function updatedImage(): void
@@ -127,35 +106,22 @@ class Form extends Component
     }
 
     /**
-     * Clean HTML content from Summernote - fix escaped characters
+     * Clean HTML content by fixing escaped characters from Summernote/Livewire
      */
     private function cleanHtml(string $html): string
     {
-        \Log::debug('cleanHtml input preview', ['preview' => substr($html, 0, 100)]);
-
-        // Fix JSON-encoded strings (from Livewire/Alpine.js transmission)
-        // Iteratively decode until no more JSON encoding detected
-        $maxIterations = 5;
-        while ($maxIterations-- > 0) {
-            $trimmed = trim($html);
-            if (str_starts_with($trimmed, '"') && str_ends_with($trimmed, '"')) {
-                $decoded = json_decode($trimmed, true);
-                if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
-                    $html = $decoded;
-                    \Log::debug('cleanHtml decoded JSON layer');
-                    continue;
-                }
-            }
-            break;
-        }
-
-        // Fix escaped characters
+        // Fix escaped forward slashes (\/) -> (/)
         $html = str_replace('\\/', '/', $html);
+
+        // Fix other common escaped characters
         $html = str_replace('\\"', '"', $html);
         $html = str_replace("\\'", "'", $html);
         $html = str_replace('\\\\', '\\', $html);
 
-        \Log::debug('cleanHtml output preview', ['preview' => substr($html, 0, 100)]);
+        // Fix escaped newlines and tabs
+        $html = str_replace('\\n', "\n", $html);
+        $html = str_replace('\\r', "\r", $html);
+        $html = str_replace('\\t', "\t", $html);
 
         return $html;
     }
@@ -164,21 +130,9 @@ class Form extends Component
     {
         $this->validate();
 
-        \Log::debug('BlogForm save - raw content preview', [
-            'content_preview' => substr($this->content, 0, 100),
-            'excerpt_preview' => substr($this->excerpt, 0, 100),
-            'content_starts_with_quote' => str_starts_with(trim($this->content), '"'),
-            'content_ends_with_quote' => str_ends_with(trim($this->content), '"'),
-        ]);
-
         // Clean content from Summernote JSON encoding
         $cleanContent = $this->cleanHtml($this->content);
         $cleanExcerpt = $this->cleanHtml($this->excerpt);
-
-        \Log::debug('BlogForm save - cleaned content preview', [
-            'clean_content_preview' => substr($cleanContent, 0, 100),
-            'clean_excerpt_preview' => substr($cleanExcerpt, 0, 100),
-        ]);
 
         $data = [
             'title' => $this->title,
