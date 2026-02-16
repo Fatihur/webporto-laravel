@@ -68,9 +68,9 @@ class TwoFactorAuth extends Component
             $this->showRecoveryCodes = true;
             $this->isEnabling = false;
 
-            session()->flash('success', __('Two-factor authentication has been enabled.'));
+            session()->flash('success', 'Two-factor authentication has been enabled.');
         } else {
-            $this->addError('code', __('Invalid verification code.'));
+            $this->addError('code', 'Invalid verification code.');
         }
 
         $this->code = '';
@@ -100,9 +100,9 @@ class TwoFactorAuth extends Component
             $this->twoFactorService->disable(auth()->user());
             $this->isDisabling = false;
 
-            session()->flash('success', __('Two-factor authentication has been disabled.'));
+            session()->flash('success', 'Two-factor authentication has been disabled.');
         } else {
-            $this->addError('code', __('Invalid verification code.'));
+            $this->addError('code', 'Invalid verification code.');
         }
 
         $this->code = '';
@@ -134,11 +134,11 @@ class TwoFactorAuth extends Component
         ]);
 
         if ($this->twoFactorService->verifyRecoveryCode(auth()->user(), strtoupper($this->recoveryCode))) {
-            session()->flash('success', __('Recovery code accepted. Please set up 2FA again.'));
+            session()->flash('success', 'Recovery code accepted. Please set up 2FA again.');
             $this->twoFactorService->disable(auth()->user());
             $this->startEnabling();
         } else {
-            $this->addError('recoveryCode', __('Invalid recovery code.'));
+            $this->addError('recoveryCode', 'Invalid recovery code.');
         }
 
         $this->recoveryCode = '';
@@ -157,9 +157,9 @@ class TwoFactorAuth extends Component
             $this->recoveryCodes = $this->twoFactorService->generateRecoveryCodes(auth()->user());
             $this->showRecoveryCodes = true;
 
-            session()->flash('success', __('New recovery codes have been generated.'));
+            session()->flash('success', 'New recovery codes have been generated.');
         } else {
-            $this->addError('code', __('Invalid verification code.'));
+            $this->addError('code', 'Invalid verification code.');
         }
 
         $this->code = '';

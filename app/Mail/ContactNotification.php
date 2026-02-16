@@ -20,7 +20,7 @@ class ContactNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('New Contact Message: :subject', ['subject' => $this->contact->subject]),
+            subject: "New Contact Message: {$this->contact->subject}",
             replyTo: $this->contact->email,
         );
     }

@@ -31,9 +31,6 @@ class SearchComponent extends Component
 
         if ($this->type === 'all' || $this->type === 'projects') {
             $projects = Project::search($this->query)
-                ->query(function ($builder) {
-                    $builder->with('translations');
-                })
                 ->take(10)
                 ->get();
 
@@ -48,7 +45,7 @@ class SearchComponent extends Component
         if ($this->type === 'all' || $this->type === 'blogs') {
             $blogs = Blog::search($this->query)
                 ->query(function ($builder) {
-                    $builder->published()->with('translations');
+                    $builder->published();
                 })
                 ->take(10)
                 ->get();

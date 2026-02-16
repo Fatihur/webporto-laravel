@@ -5,7 +5,6 @@
     'url' => null,
     'type' => 'website',
     'siteName' => null,
-    'locale' => null,
     'twitterCard' => 'summary_large_image',
     'twitterSite' => null,
     'twitterCreator' => null,
@@ -17,7 +16,6 @@
     $image = $image ?? asset('images/og-default.jpg');
     $url = $url ?? request()->url();
     $siteName = $siteName ?? config('app.name');
-    $locale = $locale ?? app()->getLocale();
     $twitterSite = $twitterSite ?? config('app.twitter_site');
 @endphp
 
@@ -28,7 +26,7 @@
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:image" content="{{ $image }}">
 <meta property="og:site_name" content="{{ $siteName }}">
-<meta property="og:locale" content="{{ $locale }}">
+<meta property="og:locale" content="en_US">
 
 @if ($type === 'article')
     <meta property="article:published_time" content="{{ $publishedTime ?? null }}">

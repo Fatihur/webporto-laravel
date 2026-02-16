@@ -3,7 +3,7 @@
     <header class="mb-12">
         <!-- Breadcrumb -->
         <div class="flex items-center gap-3 text-zinc-400 font-bold mb-4">
-            <a href="{{ route('home') }}" wire:navigate class="hover:text-zinc-950 dark:hover:text-white transition-colors">{{ __('frontend.projects.breadcrumb_home') }}</a>
+            <a href="{{ route('home') }}" wire:navigate class="hover:text-zinc-950 dark:hover:text-white transition-colors">Home</a>
             <span>/</span>
             <span class="text-zinc-950 dark:text-white">{{ $title }}</span>
         </div>
@@ -26,7 +26,7 @@
             <input
                 type="text"
                 wire:model.live.debounce.300ms="search"
-                placeholder="{{ __('frontend.projects.search_placeholder') }}"
+                placeholder="Search projects..."
                 class="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
             >
             @if($search)
@@ -45,7 +45,7 @@
         <!-- Results Count -->
         @if($search)
             <p class="mb-4 text-sm text-zinc-500">
-                {{ trans_choice('frontend.projects.found_results_simple', $projects->count(), ['count' => $projects->count()]) }} for "{{ $search }}"
+                Found {{ $projects->count() }} {{ $projects->count() == 1 ? 'result' : 'results' }} for "{{ $search }}"
             </p>
         @endif
 
@@ -55,7 +55,7 @@
                 wire:click="filterByCategory(null)"
                 class="px-5 py-2.5 rounded-full text-sm font-bold transition-all {{ $selectedCategory === null ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
             >
-                {{ __('frontend.projects.all_projects') }}
+                All Projects
             </button>
             @foreach($categories as $cat)
                 <button
@@ -133,12 +133,12 @@
                         <path d="m21 21-4.3-4.3"/>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-2">{{ __('frontend.projects.no_results') }}</h3>
+                <h3 class="text-xl font-bold mb-2">No results found</h3>
                 <p class="text-zinc-500 dark:text-zinc-400 mb-6">
                     @if($search)
-                        {{ __('frontend.projects.found_results', ['count' => 0, 'query' => $search]) }}
+                        No results found for "{{ $search }}"
                     @else
-                        {{ __('frontend.projects.no_results_category') }}
+                        No projects found in this category
                     @endif
                 </p>
                 @if($search)
@@ -146,7 +146,7 @@
                         wire:click="clearSearch"
                         class="px-6 py-3 rounded-full bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold hover:scale-105 transition-transform"
                     >
-                        {{ __('frontend.projects.clear_search') }}
+                        Clear Search
                     </button>
                 @endif
             </div>

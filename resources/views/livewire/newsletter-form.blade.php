@@ -7,7 +7,7 @@
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                     <polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
-                {{ __('Thank you for subscribing! Check your email for confirmation.') }}
+                Thank you for subscribing! Check your email for confirmation.
             </div>
         </div>
     @else
@@ -16,7 +16,7 @@
                 <input
                     type="email"
                     wire:model="email"
-                    placeholder="{{ __('Enter your email') }}"
+                    placeholder="Enter your email"
                     class="w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-800 border-0 rounded-xl text-sm focus:ring-2 focus:ring-mint"
                     required
                 >
@@ -29,8 +29,8 @@
                 wire:loading.attr="disabled"
                 class="px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold text-sm rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <span wire:loading.remove>{{ __('Subscribe') }}</span>
-                <span wire:loading>{{ __('Subscribing...') }}</span>
+                <span wire:loading.remove>Subscribe</span>
+                <span wire:loading>Subscribing...</span>
             </button>
         </form>
     @endif

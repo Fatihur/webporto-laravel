@@ -14,7 +14,7 @@
             <path d="m12 19-7-7 7-7"/>
             <path d="M19 12H5"/>
         </svg>
-        {{ __('frontend.blog.back_to_journal') }}
+        Back to Journal
     </a>
 
     <!-- Article Header -->
@@ -26,7 +26,7 @@
             <span class="text-zinc-300 dark:text-zinc-700">•</span>
             <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at?->format('M d, Y') }}</span>
             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-            <span class="text-xs text-zinc-500">{{ $post->read_time }} {{ __('frontend.blog.min_read') }}</span>
+            <span class="text-xs text-zinc-500">{{ $post->read_time }} min read</span>
         </div>
 
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6 leading-tight">
@@ -70,7 +70,7 @@
     <!-- Comments Section -->
     <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
         <div class="flex items-center justify-between mb-8">
-            <h3 class="text-3xl font-bold tracking-tight">{{ __('Comments') }}</h3>
+            <h3 class="text-3xl font-bold tracking-tight">Comments</h3>
             <span class="text-sm font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
         </div>
 
@@ -90,14 +90,14 @@
         </div>
         <div>
             <p class="font-bold">{{ $post->author ?? 'Admin' }}</p>
-            <p class="text-sm text-zinc-500">{{ __('frontend.blog.author_role') }}</p>
+            <p class="text-sm text-zinc-500">Author</p>
         </div>
     </div>
 
     <!-- Related Articles -->
     @if($relatedPosts->count() > 0)
         <div class="mb-12">
-            <h3 class="text-2xl font-bold mb-8">{{ __('frontend.blog.related_articles') }}</h3>
+            <h3 class="text-2xl font-bold mb-8">Related Articles</h3>
 
             <!-- Skeleton Loading -->
             <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -130,7 +130,7 @@
                         <div class="flex items-center gap-2 mb-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $related->category }}</span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $related->read_time }} {{ __('frontend.blog.min_read') }}</span>
+                            <span class="text-xs text-zinc-500">{{ $related->read_time }} min read</span>
                         </div>
                         <h4 class="text-lg font-bold group-hover:text-mint transition-colors">{{ $related->title }}</h4>
                     </a>
@@ -141,10 +141,10 @@
 
     <!-- CTA -->
     <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 text-center">
-        <h3 class="text-2xl font-bold mb-4">{{ __('frontend.blog.enjoyed_article') }}</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 mb-6">{{ __('frontend.blog.discuss_project') }}</p>
+        <h3 class="text-2xl font-bold mb-4">Enjoyed this article?</h3>
+        <p class="text-zinc-500 dark:text-zinc-400 mb-6">Let's discuss your project and create something amazing together.</p>
         <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform">
-            {{ __('frontend.blog.get_in_touch') }}
+            Get in Touch
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"/>
                 <path d="m12 5 7 7-7 7"/>

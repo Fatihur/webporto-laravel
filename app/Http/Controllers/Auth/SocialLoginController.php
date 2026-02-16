@@ -22,7 +22,7 @@ class SocialLoginController extends Controller
     {
         if (!$this->socialLoginService->isProviderEnabled($provider)) {
             return redirect()->route('login')
-                ->with('error', __('Social login is not available for this provider.'));
+                ->with('error', 'Social login is not available for this provider.');
         }
 
         return Socialite::driver($provider)->redirect();
@@ -35,7 +35,7 @@ class SocialLoginController extends Controller
     {
         if (!$this->socialLoginService->isProviderEnabled($provider)) {
             return redirect()->route('login')
-                ->with('error', __('Social login is not available for this provider.'));
+                ->with('error', 'Social login is not available for this provider.');
         }
 
         try {
@@ -44,13 +44,13 @@ class SocialLoginController extends Controller
             $this->socialLoginService->login($user);
 
             return redirect()->intended(route('admin.dashboard'))
-                ->with('success', __('Welcome back, :name!', ['name' => $user->name]));
+                ->with('success', "Welcome back, {$user->name}!");
 
         } catch (Exception $e) {
             report($e);
 
             return redirect()->route('login')
-                ->with('error', __('Unable to login with :provider. Please try again.', ['provider' => ucfirst($provider)]));
+                ->with('error', "Unable to login with " . ucfirst($provider) . ". Please try again.");
         }
     }
 
@@ -62,9 +62,9 @@ class SocialLoginController extends Controller
         $user = $request->user();
 
         if ($this->socialLoginService->unlinkAccount($user, $provider)) {
-            return back()->with('success', __(':provider account has been unlinked.', ['provider' => ucfirst($provider)]));
+            return back()->with('success', ucfirst($provider) . " account has been unlinked.");
         }
 
-        return back()->with('error', __('Cannot unlink this account. You need at least one login method.'));
+        return back()->with('error', 'Cannot unlink this account. You need at least one login method.');
     }
 }

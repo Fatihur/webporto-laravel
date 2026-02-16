@@ -62,7 +62,7 @@
                     type="button"
                     x-on:click="$dispatch('open-search')"
                     class="hidden md:flex w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                    aria-label="{{ __('Search') }}"
+                    aria-label="Search"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/>
@@ -70,7 +70,6 @@
                     </svg>
                 </button>
 
-                <livewire:language-switcher />
                 <livewire:theme-toggle />
                 <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
                     <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>

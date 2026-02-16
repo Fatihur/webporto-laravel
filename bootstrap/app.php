@@ -14,10 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\CacheHeaders::class,
         ]);
-
-        $middleware->alias([
-            'set.locale' => \App\Http\Middleware\SetLocale::class,
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1,10 +1,10 @@
 <div>
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {{ __('Two-Factor Authentication') }}
+            Two-Factor Authentication
         </h1>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Add an extra layer of security to your account') }}
+            Add an extra layer of security to your account
         </p>
     </div>
 
@@ -33,10 +33,10 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {{ __('Two-factor authentication is enabled') }}
+                        Two-factor authentication is enabled
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('Your account is protected with two-factor authentication.') }}
+                        Your account is protected with two-factor authentication.
                     </p>
                 </div>
             </div>
@@ -46,13 +46,13 @@
                     wire:click="startDisabling"
                     class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
-                    {{ __('Disable 2FA') }}
+                    Disable 2FA
                 </button>
                 <button
                     wire:click="regenerateRecoveryCodes"
                     class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                 >
-                    {{ __('Regenerate Recovery Codes') }}
+                    Regenerate Recovery Codes
                 </button>
             </div>
         @elseif ($isEnabling)
@@ -60,15 +60,15 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        {{ __('Set up Two-Factor Authentication') }}
+                        Set up Two-Factor Authentication
                     </h3>
-                    
+
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold text-sm mr-3">1</span>
                             <div>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ __('Scan the QR code') }}</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Use an authenticator app like Google Authenticator or Authy') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">Scan the QR code</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Use an authenticator app like Google Authenticator or Authy</p>
                             </div>
                         </div>
 
@@ -78,21 +78,21 @@
                         </div>
 
                         <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ __('Or enter this code manually:') }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Or enter this code manually:</p>
                             <code class="text-lg font-mono bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded">{{ $secret }}</code>
                         </div>
 
                         <div class="flex items-start">
                             <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-bold text-sm mr-3">2</span>
                             <div>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ __('Enter the verification code') }}</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Enter the 6-digit code from your authenticator app') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">Enter the verification code</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Enter the 6-digit code from your authenticator app</p>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ __('Verification Code') }}
+                                Verification Code
                             </label>
                             <input
                                 type="text"
@@ -113,13 +113,13 @@
                         wire:click="confirmEnable"
                         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        {{ __('Confirm & Enable') }}
+                        Confirm & Enable
                     </button>
                     <button
                         wire:click="cancelEnabling"
                         class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
                     >
-                        {{ __('Cancel') }}
+                        Cancel
                     </button>
                 </div>
             </div>
@@ -129,15 +129,15 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        {{ __('Disable Two-Factor Authentication') }}
+                        Disable Two-Factor Authentication
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        {{ __('Are you sure you want to disable two-factor authentication? This will make your account less secure.') }}
+                        Are you sure you want to disable two-factor authentication? This will make your account less secure.
                     </p>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            {{ __('Enter your verification code to confirm') }}
+                            Enter your verification code to confirm
                         </label>
                         <input
                             type="text"
@@ -157,13 +157,13 @@
                         wire:click="confirmDisable"
                         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                     >
-                        {{ __('Disable 2FA') }}
+                        Disable 2FA
                     </button>
                     <button
                         wire:click="cancelDisabling"
                         class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
                     >
-                        {{ __('Cancel') }}
+                        Cancel
                     </button>
                 </div>
             </div>
@@ -178,10 +178,10 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {{ __('Two-factor authentication is not enabled') }}
+                        Two-factor authentication is not enabled
                     </h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('Protect your account by enabling two-factor authentication.') }}
+                        Protect your account by enabling two-factor authentication.
                     </p>
                 </div>
             </div>
@@ -191,7 +191,7 @@
                     wire:click="startEnabling"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    {{ __('Enable 2FA') }}
+                    Enable 2FA
                 </button>
             </div>
         @endif
@@ -202,12 +202,12 @@
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    {{ __('Recovery Codes') }}
+                    Recovery Codes
                 </h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    {{ __('Store these recovery codes in a safe place. You can use them to access your account if you lose your authenticator device.') }}
+                    Store these recovery codes in a safe place. You can use them to access your account if you lose your authenticator device.
                 </p>
-                
+
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg mb-4">
                     <ul class="space-y-2">
                         @foreach ($recoveryCodes as $code)
@@ -217,14 +217,14 @@
                 </div>
 
                 <p class="text-sm text-red-600 dark:text-red-400 mb-4">
-                    {{ __('Each code can only be used once. Keep them secret!') }}
+                    Each code can only be used once. Keep them secret!
                 </p>
 
                 <button
                     wire:click="confirmRecoveryCodes"
                     class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    {{ __('I have saved my recovery codes') }}
+                    I have saved my recovery codes
                 </button>
             </div>
         </div>

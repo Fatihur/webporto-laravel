@@ -6,10 +6,10 @@
 >
     <h4 class="text-lg font-bold mb-6">
         @if($replyingToName)
-            {{ __('Replying to') }} {{ $replyingToName }}
-            <button wire:click="cancelReply" class="ml-2 text-xs font-medium text-zinc-500 hover:text-red-500">{{ __('Cancel') }}</button>
+            Replying to {{ $replyingToName }}
+            <button wire:click="cancelReply" class="ml-2 text-xs font-medium text-zinc-500 hover:text-red-500">Cancel</button>
         @else
-            {{ __('Leave a Comment') }}
+            Leave a Comment
         @endif
     </h4>
 
@@ -29,14 +29,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <label for="name" class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">
-                    {{ __('Name') }}
+                    Name
                 </label>
                 <input
                     type="text"
                     id="name"
                     wire:model="name"
                     class="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-mint focus:border-transparent dark:text-white transition-all"
-                    placeholder="{{ __('Your name') }}"
+                    placeholder="Your name"
                 >
                 @error('name')
                     <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -45,14 +45,14 @@
 
             <div>
                 <label for="email" class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">
-                    {{ __('Email') }}
+                    Email
                 </label>
                 <input
                     type="email"
                     id="email"
                     wire:model="email"
                     class="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-mint focus:border-transparent dark:text-white transition-all"
-                    placeholder="{{ __('your@email.com') }}"
+                    placeholder="your@email.com"
                 >
                 @error('email')
                     <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -62,14 +62,14 @@
 
         <div>
             <label for="content" class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">
-                {{ __('Comment') }}
+                Comment
             </label>
             <textarea
                 id="content"
                 wire:model="content"
                 rows="4"
                 class="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-mint focus:border-transparent dark:text-white transition-all resize-none"
-                placeholder="{{ __('Share your thoughts...') }}"
+                placeholder="Share your thoughts..."
             ></textarea>
             @error('content')
                 <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -83,8 +83,8 @@
             wire:loading.attr="disabled"
             class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-            <span wire:loading.remove>{{ __('Submit Comment') }}</span>
-            <span wire:loading>{{ __('Submitting...') }}</span>
+            <span wire:loading.remove>Submit Comment</span>
+            <span wire:loading>Submitting...</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"/>
                 <path d="m12 5 7 7-7 7"/>

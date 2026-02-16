@@ -5,7 +5,7 @@
 
 @if ($unsubscribeUrl)
 <x-mail::footer>
-    <a href="{{ $unsubscribeUrl }}">{{ __('Unsubscribe from our newsletter') }}</a>
+    <a href="{{ $unsubscribeUrl }}">Unsubscribe from our newsletter</a>
 </x-mail::footer>
 @endif
 </x-mail::message>

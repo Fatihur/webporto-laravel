@@ -121,7 +121,7 @@ class SessionManager extends Component
     public function terminateSession(string $sessionId): void
     {
         if ($sessionId === $this->currentSessionId) {
-            session()->flash('error', __('Cannot terminate your current session.'));
+            session()->flash('error', 'Cannot terminate your current session.');
             return;
         }
 
@@ -133,7 +133,7 @@ class SessionManager extends Component
         }
 
         $this->loadSessions();
-        session()->flash('success', __('Session terminated successfully.'));
+        session()->flash('success', 'Session terminated successfully.');
     }
 
     public function terminateAllOtherSessions(): void
@@ -146,7 +146,7 @@ class SessionManager extends Component
         }
 
         $this->loadSessions();
-        session()->flash('success', __('All other sessions have been terminated.'));
+        session()->flash('success', 'All other sessions have been terminated.');
     }
 
     public function render()

@@ -28,7 +28,7 @@
                                 @click="$dispatch('set-reply-to', { parentId: {{ $comment->id }}, name: '{{ addslashes($comment->name) }}' })"
                                 class="mt-3 text-xs font-bold text-zinc-500 hover:text-mint transition-colors"
                             >
-                                {{ __('Reply') }}
+                                Reply
                             </button>
                         @endif
                     </div>
@@ -69,7 +69,7 @@
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
             </div>
-            <p class="text-zinc-500 dark:text-zinc-400 font-medium">{{ __('No comments yet. Be the first to comment!') }}</p>
+            <p class="text-zinc-500 dark:text-zinc-400 font-medium">No comments yet. Be the first to comment!</p>
         </div>
     @endif
 </div>

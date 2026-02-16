@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\CacheInvalidatable;
-use App\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,21 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Blog extends Model
 {
-    use HasFactory, CacheInvalidatable, Translatable;
-
-    /**
-     * Fields that should be translatable.
-     *
-     * @var array
-     */
-    protected array $translatableFields = [
-        'title',
-        'excerpt',
-        'content',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-    ];
+    use HasFactory, CacheInvalidatable;
 
     protected $fillable = [
         'title',
@@ -47,6 +32,69 @@ class Blog extends Model
         'published_at' => 'date',
         'is_published' => 'boolean',
     ];
+
+    /**
+     * Get content attribute - auto decode if JSON encoded
+     */
+    public function getContentAttribute($value)
+    {
+        return $this->cleanHtmlValue($value);
+    }
+
+    /**
+     * Get excerpt attribute - auto decode if JSON encoded
+     */
+    public function getExcerptAttribute($value)
+    {
+        return $this->cleanHtmlValue($value);
+    }
+
+    /**
+     * Set content attribute - ensure clean HTML before saving
+     */
+    public function setContentAttribute($value)
+    {
+        $this->attributes['content'] = $this->cleanHtmlValue($value);
+    }
+
+    /**
+     * Set excerpt attribute - ensure clean HTML before saving
+     */
+    public function setExcerptAttribute($value)
+    {
+        $this->attributes['excerpt'] = $this->cleanHtmlValue($value);
+    }
+
+    /**
+     * Clean HTML value by decoding JSON encoding and fixing escaped characters.
+     * Handles multi-level JSON encoding (string wrapped in quotes multiple times).
+     */
+    private function cleanHtmlValue($value): mixed
+    {
+        if (!is_string($value) || empty($value)) {
+            return $value;
+        }
+
+        // Iteratively decode JSON-encoded strings (handles multi-level encoding)
+        $maxIterations = 5;
+        while ($maxIterations-- > 0 && is_string($value) && strlen($value) > 2) {
+            if ($value[0] === '"' && $value[strlen($value) - 1] === '"') {
+                $decoded = json_decode($value, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
+                    $value = $decoded;
+                    continue;
+                }
+            }
+            break;
+        }
+
+        // Fix remaining escaped characters
+        $value = str_replace('\\/', '/', $value);
+        $value = str_replace('\\"', '"', $value);
+        $value = str_replace("\\'", "'", $value);
+
+        return $value;
+    }
 
     /**
      * Scope for published blogs

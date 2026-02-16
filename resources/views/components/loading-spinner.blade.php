@@ -26,5 +26,5 @@
     @isset($text)
         <span class="ml-2 text-gray-600 dark:text-gray-400">{{ $text }}</span>
     @endisset
-    <span class="sr-only">{{ __('Loading...') }}</span>
+    <span class="sr-only">Loading...</span>
 </div>

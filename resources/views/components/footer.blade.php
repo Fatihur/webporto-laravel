@@ -3,9 +3,9 @@
         <!-- Newsletter Section -->
         <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 mb-16">
             <div class="max-w-xl mx-auto text-center">
-                <h3 class="text-2xl font-bold mb-4">{{ __('Stay Updated') }}</h3>
+                <h3 class="text-2xl font-bold mb-4">Stay Updated</h3>
                 <p class="text-zinc-500 dark:text-zinc-400 mb-6 text-sm">
-                    {{ __('Subscribe to my newsletter for the latest projects, articles, and insights.') }}
+                    Subscribe to my newsletter for the latest projects, articles, and insights.
                 </p>
                 <livewire:newsletter-form />
             </div>

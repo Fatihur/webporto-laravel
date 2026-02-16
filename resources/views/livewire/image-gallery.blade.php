@@ -6,7 +6,7 @@
                 <div class="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
                     <div class="text-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-4 border-t-blue-500 border-t-transparent mx-auto mb-2"></div>
-                        <span class="text-white text-sm">{{ __('Uploading...') }}</span>
+                        <span class="text-white text-sm">Uploading...</span>
                     </div>
                 </div>
             @endif
@@ -16,9 +16,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span class="mt-2 block text-sm text-gray-600 dark:text-gray-400">
-                    {{ __('Click to upload or drag and drop') }}
+                    Click to upload or drag and drop
                 </span>
-                <span class="text-xs text-gray-500">{{ __('PNG, JPG, GIF up to 10MB') }}</span>
+                <span class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</span>
                 <input
                     type="file"
                     wire:model="upload"
@@ -32,7 +32,7 @@
         @if ($uploadProgress > 0 && $uploadProgress < 100)
             <div class="mt-4">
                 <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    <span>{{ __('Uploading...') }}</span>
+                    <span>Uploading...</span>
                     <span>{{ $uploadProgress }}%</span>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -95,13 +95,13 @@
                                 <input
                                     type="text"
                                     wire:model="editingTitle"
-                                    placeholder="{{ __('Title') }}"
+                                    placeholder="Title"
                                     class="w-full text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                 >
                                 <input
                                     type="text"
                                     wire:model="editingAltText"
-                                    placeholder="{{ __('Alt Text') }}"
+                                    placeholder="Alt Text"
                                     class="w-full text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                 >
                                 <div class="flex gap-2">
@@ -109,20 +109,20 @@
                                         wire:click="saveEdit({{ $image->id }})"
                                         class="flex-1 px-2 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
                                     >
-                                        {{ __('Save') }}
+                                        Save
                                     </button>
                                     <button
                                         wire:click="cancelEdit"
                                         class="flex-1 px-2 py-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded hover:bg-gray-400"
                                     >
-                                        {{ __('Cancel') }}
+                                        Cancel
                                     </button>
                                 </div>
                             </div>
                         @else
                             <!-- View Mode -->
                             <p class="text-sm text-gray-700 dark:text-gray-300 truncate" title="{{ $image->title }}">
-                                {{ $image->title ?? __('Untitled') }}
+                                {{ $image->title ?? 'Untitled' }}
                             </p>
                             <p class="text-xs text-gray-500 truncate">{{ $image->alt_text ?? '' }}</p>
                             
@@ -132,14 +132,14 @@
                                     wire:click="startEdit({{ $image->id }})"
                                     class="flex-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                                 >
-                                    {{ __('Edit') }}
+                                    Edit
                                 </button>
                                 <button
                                     wire:click="deleteImage({{ $image->id }})"
-                                    wire:confirm="{{ __('Are you sure you want to delete this image?') }}"
+                                    wire:confirm="Are you sure you want to delete this image?"
                                     class="flex-1 px-2 py-1 text-xs bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/50"
                                 >
-                                    {{ __('Delete') }}
+                                    Delete
                                 </button>
                             </div>
                         @endif
@@ -153,8 +153,8 @@
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">{{ __('No images uploaded yet') }}</p>
-            <p class="text-sm text-gray-500">{{ __('Upload your first image using the area above') }}</p>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">No images uploaded yet</p>
+            <p class="text-sm text-gray-500">Upload your first image using the area above</p>
         </div>
     @endif
 

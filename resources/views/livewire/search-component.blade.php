@@ -6,7 +6,7 @@
                 type="text"
                 wire:model="query"
                 wire:keydown.enter="search"
-                placeholder="{{ __('Search projects, blogs...') }}"
+                placeholder="Search projects, blogs..."
                 class="w-full px-4 py-3 pl-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             >
             <svg class="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,19 +21,19 @@
             wire:click="$set('type', 'all')"
             class="{{ $type === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }} px-4 py-2 rounded-lg font-medium transition duration-200"
         >
-            {{ __('All') }}
+All
         </button>
         <button
             wire:click="$set('type', 'projects')"
             class="{{ $type === 'projects' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }} px-4 py-2 rounded-lg font-medium transition duration-200"
         >
-            {{ __('Projects') }}
+Projects
         </button>
         <button
             wire:click="$set('type', 'blogs')"
             class="{{ $type === 'blogs' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' }} px-4 py-2 rounded-lg font-medium transition duration-200"
         >
-            {{ __('Blogs') }}
+Blogs
         </button>
     </div>
 
@@ -80,13 +80,13 @@
                 @endif
             @empty
                 <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <p>{{ __('No results found.') }}</p>
+                    <p>No results found.</p>
                 </div>
             @endforelse
         </div>
     @else
         <div class="text-center py-12 text-gray-500 dark:text-gray-400">
-            <p>{{ __('Enter at least 3 characters to search...') }}</p>
+            <p>Enter at least 3 characters to search...</p>
         </div>
     @endif
 </div>
