@@ -181,6 +181,8 @@
             font-size: 1.1em !important;
         }
     </style>
+
+    @stack('styles')
 </head>
 <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-white transition-colors duration-300 min-h-screen">
     <livewire:navigation />
@@ -190,6 +192,9 @@
     </main>
 
     @include('components.footer')
+
+    <!-- AI Chat Bot -->
+    <livewire:chat-bot />
 
     <!-- Theme handling script -->
     <script>
@@ -224,10 +229,16 @@
     <!-- MathJax re-render on Livewire navigation -->
     <script>
         document.addEventListener('livewire:navigated', () => {
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
+            if (typeof MathJax !== 'undefined' && MathJax.startup && MathJax.startup.promise) {
+                MathJax.startup.promise.then(() => {
+                    MathJax.typesetPromise();
+                }).catch((err) => {
+                    console.log('MathJax typeset error:', err);
+                });
             }
         });
     </script>
+
+    @stack('scripts')
 </body>
 </html>

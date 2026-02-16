@@ -15,6 +15,13 @@ Schedule::command('queue:work --stop-when-empty --max-time=55')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/queue-scheduler.log'));
 
+// Clean up old chat sessions daily (keep 30 days)
+Schedule::command('chat:cleanup --days=30')
+    ->daily()
+    ->at('02:00')
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/chat-cleanup.log'));
+
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');

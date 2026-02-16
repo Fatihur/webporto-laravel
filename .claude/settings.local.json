@@ -36,7 +36,14 @@
       "Bash(ls -la:*)",
       "Bash(ls:*)",
       "Bash(git push:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(find:*)",
+      "Bash(php -l:*)",
+      "WebFetch(domain:ai.google.dev)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(composer dump-autoload:*)",
+      "Bash(php:*)"
     ]
   }
 }

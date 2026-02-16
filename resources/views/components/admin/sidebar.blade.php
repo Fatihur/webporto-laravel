@@ -31,6 +31,26 @@
                     Dashboard
                 </a>
 
+                {{-- Chat Analytics (route not yet defined)
+                <a href="{{ route('admin.analytics.chat') }}"
+                   wire:navigate
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.analytics.chat') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    AI Chat Analytics
+                    @php
+                        $todayChats = App\Models\ChatSession::whereDate('created_at', today())->count();
+                    @endphp
+                    @if($todayChats > 0)
+                        <span class="ml-auto bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold px-2 py-0.5 rounded-full">
+                            {{ $todayChats }}
+                        </span>
+                    @endif
+                </a>
+                --}}
+
                 <!-- Projects -->
                 <a href="{{ route('admin.projects.index') }}"
                    wire:navigate
