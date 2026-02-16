@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('excerpt');
-            $table->json('content'); // Rich content blocks
+            $table->longText('content'); // HTML content from Summernote
             $table->string('category');
             $table->string('image')->nullable();
             $table->string('read_time')->nullable();
