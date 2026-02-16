@@ -27,11 +27,14 @@ class SendNewsletterEmail implements ShouldQueue
             return;
         }
 
+        // Set email subject pada subscriber untuk digunakan di Mailable
+        $this->subscriber->email_subject = $this->subject;
+
         Mail::to($this->subscriber->email)
             ->send(new NewsletterEmail(
                 $this->subscriber,
-                $this->subject,
-                $this->content
+                $this->content,
+                $this->subject
             ));
     }
 }

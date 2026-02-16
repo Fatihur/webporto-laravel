@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\NewsletterSubscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -12,16 +13,22 @@ class NewsletterEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public string $emailSubject;
+    public string $unsubscribeUrl;
+
     public function __construct(
-        public string $subject,
+        public NewsletterSubscriber $subscriber,
         public string $content,
-        public ?string $unsubscribeUrl = null
-    ) {}
+        ?string $subject = null
+    ) {
+        $this->emailSubject = $subject ?? 'Newsletter';
+        $this->unsubscribeUrl = route('newsletter.unsubscribe', ['token' => $subscriber->unsubscribe_token]);
+    }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->subject,
+            subject: $this->emailSubject,
         );
     }
 
@@ -30,7 +37,6 @@ class NewsletterEmail extends Mailable
         return new Content(
             markdown: 'emails.newsletter.email',
             with: [
-                'subject' => $this->subject,
                 'content' => $this->content,
                 'unsubscribeUrl' => $this->unsubscribeUrl,
             ],

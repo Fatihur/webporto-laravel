@@ -18,8 +18,11 @@ use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
 use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
 use App\Livewire\Admin\Comments\Index as CommentsIndex;
 use App\Livewire\SearchComponent;
+use App\Livewire\Admin\Newsletter\Index as NewsletterIndex;
+use App\Livewire\Admin\Newsletter\Send as NewsletterSend;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\NewsletterController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -56,6 +59,9 @@ Route::get('/blog/{slug}', BlogDetailPage::class)->name('blog.show');
 
 // Contact
 Route::get('/contact', ContactPage::class)->name('contact.index');
+
+// Newsletter
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +104,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Comments
     Route::get('/comments', CommentsIndex::class)->name('admin.comments.index');
+
+    // Newsletter
+    Route::get('/newsletter', NewsletterIndex::class)->name('admin.newsletter.index');
+    Route::get('/newsletter/send', NewsletterSend::class)->name('admin.newsletter.send');
 
     // Search
     Route::get('/search', SearchComponent::class)->name('search');

@@ -65,6 +65,23 @@
                     Comments
                 </a>
 
+                <!-- Newsletter -->
+                <a href="{{ route('admin.newsletter.index') }}"
+                   wire:navigate
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.newsletter.*') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m22 2-7 20-4-9-9-4Z"/>
+                        <path d="M22 2 11 13"/>
+                    </svg>
+                    Newsletter
+                    @if(App\Models\NewsletterSubscriber::active()->count() > 0)
+                        <span class="ml-auto bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-bold px-2 py-0.5 rounded-full">
+                            {{ App\Models\NewsletterSubscriber::active()->count() }}
+                        </span>
+                    @endif
+                </a>
+
                 <!-- Contacts -->
                 <a href="{{ route('admin.contacts.index') }}"
                    wire:navigate

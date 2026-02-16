@@ -1,11 +1,10 @@
 <x-mail::message>
-# {{ $subject }}
+{!! nl2br(e($content)) !!}
 
-{!! $content !!}
+Thanks,
+{{ config('app.name') }}
 
-@if ($unsubscribeUrl)
-<x-mail::footer>
-    <a href="{{ $unsubscribeUrl }}">Unsubscribe from our newsletter</a>
-</x-mail::footer>
-@endif
+<x-mail::button :url="$unsubscribeUrl" color="gray">
+Unsubscribe
+</x-mail::button>
 </x-mail::message>
