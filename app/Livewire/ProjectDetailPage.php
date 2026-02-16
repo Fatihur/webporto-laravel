@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Jobs\TrackPageView;
 use App\Models\Project;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class ProjectDetailPage extends Component
@@ -26,7 +27,8 @@ class ProjectDetailPage extends Component
             $this->project,
             Request::ip(),
             Request::userAgent(),
-            Request::header('referer')
+            Request::header('referer'),
+            Session::getId()
         );
     }
 
