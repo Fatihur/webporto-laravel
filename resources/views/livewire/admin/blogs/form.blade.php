@@ -57,9 +57,12 @@
 
 <!-- Excerpt -->
 <div x-data="{
+    isUpdating: false,
     init() {
         const isDark = document.documentElement.classList.contains('dark');
-        $(this.$refs.excerptEditor).summernote({
+        const $editor = $(this.$refs.excerptEditor);
+
+        $editor.summernote({
             height: 120,
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -68,21 +71,35 @@
             ],
             callbacks: {
                 onChange: (contents) => {
-                    if (typeof contents === 'string') {
-                        @this.set('excerpt', contents);
-                    }
+                    if (this.isUpdating) return;
+                    // Use debounced set to avoid too many requests
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => {
+                        @this.call('setExcerpt', contents);
+                    }, 100);
                 }
             }
         });
+
+        // Set initial content
+        $editor.summernote('code', @js($excerpt));
+
         if (isDark) {
-            $(this.$refs.excerptEditor).next('.note-editor').addClass('dark');
+            $editor.next('.note-editor').addClass('dark');
         }
+
+        // Listen for Livewire updates
+        Livewire.on('refreshSummernote', () => {
+            this.isUpdating = true;
+            $editor.summernote('code', @js($excerpt));
+            this.isUpdating = false;
+        });
     }
 }" wire:ignore>
                             <label class="block text-sm font-bold mb-2">Excerpt</label>
                             <textarea x-ref="excerptEditor" rows="3"
                                       class="w-full rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors"
-                                      placeholder="Brief summary of the post">{{ $excerpt }}</textarea>
+                                      placeholder="Brief summary of the post"></textarea>
                             <p class="text-xs text-zinc-500 mt-1">{{ strlen(strip_tags($excerpt)) }}/500 characters</p>
                             @error('excerpt')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
@@ -90,9 +107,12 @@
 
 <!-- Content -->
 <div x-data="{
+    isUpdating: false,
     init() {
         const isDark = document.documentElement.classList.contains('dark');
-        $(this.$refs.contentEditor).summernote({
+        const $editor = $(this.$refs.contentEditor);
+
+        $editor.summernote({
             height: 300,
             toolbar: [
                 ['style', ['style']],
@@ -103,10 +123,12 @@
             ],
             callbacks: {
                 onChange: (contents) => {
-                    // Ensure contents is a string, not JSON encoded
-                    if (typeof contents === 'string') {
-                        @this.set('content', contents);
-                    }
+                    if (this.isUpdating) return;
+                    // Use debounced call to avoid encoding issues
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => {
+                        @this.call('setContent', contents);
+                    }, 100);
                 },
                 onFullscreenEnter: function() {
                     document.body.classList.add('summernote-fullscreen');
@@ -119,16 +141,27 @@
                 }
             }
         });
+
+        // Set initial content using @js to ensure proper encoding
+        $editor.summernote('code', @js($content));
+
         if (isDark) {
-            $(this.$refs.contentEditor).next('.note-editor').addClass('dark');
+            $editor.next('.note-editor').addClass('dark');
         }
+
+        // Listen for Livewire updates
+        Livewire.on('refreshSummernote', () => {
+            this.isUpdating = true;
+            $editor.summernote('code', @js($content));
+            this.isUpdating = false;
+        });
     }
 }" wire:ignore>
                             <label class="block text-sm font-bold mb-2">Content</label>
                             <p class="text-xs text-zinc-500 mb-2">Supports: Code blocks, LaTeX math ($E=mc^2$ or $$...$$)</p>
                             <textarea x-ref="contentEditor" rows="15"
                                       class="w-full rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors"
-                                      placeholder="Write your blog post content here">{{ $content }}</textarea>
+                                      placeholder="Write your blog post content here"></textarea>
                             @error('content')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>

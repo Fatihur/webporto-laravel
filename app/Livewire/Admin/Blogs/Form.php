@@ -84,6 +84,27 @@ class Form extends Component
         }
     }
 
+    /**
+     * Set content from Summernote - called via Alpine.js
+     */
+    public function setContent(string $content): void
+    {
+        \Log::debug('setContent called', [
+            'preview' => substr($content, 0, 100),
+            'starts_with_quote' => str_starts_with(trim($content), '"'),
+            'ends_with_quote' => str_ends_with(trim($content), '"'),
+        ]);
+        $this->content = $content;
+    }
+
+    /**
+     * Set excerpt from Summernote - called via Alpine.js
+     */
+    public function setExcerpt(string $excerpt): void
+    {
+        $this->excerpt = $excerpt;
+    }
+
     public function updatedImage(): void
     {
         $this->validateOnly('image');
@@ -110,12 +131,22 @@ class Form extends Component
      */
     private function cleanHtml(string $html): string
     {
+        \Log::debug('cleanHtml input preview', ['preview' => substr($html, 0, 100)]);
+
         // Fix JSON-encoded strings (from Livewire/Alpine.js transmission)
-        if (str_starts_with($html, '"') && str_ends_with($html, '"')) {
-            $decoded = json_decode($html, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
-                $html = $decoded;
+        // Iteratively decode until no more JSON encoding detected
+        $maxIterations = 5;
+        while ($maxIterations-- > 0) {
+            $trimmed = trim($html);
+            if (str_starts_with($trimmed, '"') && str_ends_with($trimmed, '"')) {
+                $decoded = json_decode($trimmed, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
+                    $html = $decoded;
+                    \Log::debug('cleanHtml decoded JSON layer');
+                    continue;
+                }
             }
+            break;
         }
 
         // Fix escaped characters
@@ -124,6 +155,8 @@ class Form extends Component
         $html = str_replace("\\'", "'", $html);
         $html = str_replace('\\\\', '\\', $html);
 
+        \Log::debug('cleanHtml output preview', ['preview' => substr($html, 0, 100)]);
+
         return $html;
     }
 
@@ -131,9 +164,21 @@ class Form extends Component
     {
         $this->validate();
 
+        \Log::debug('BlogForm save - raw content preview', [
+            'content_preview' => substr($this->content, 0, 100),
+            'excerpt_preview' => substr($this->excerpt, 0, 100),
+            'content_starts_with_quote' => str_starts_with(trim($this->content), '"'),
+            'content_ends_with_quote' => str_ends_with(trim($this->content), '"'),
+        ]);
+
         // Clean content from Summernote JSON encoding
         $cleanContent = $this->cleanHtml($this->content);
         $cleanExcerpt = $this->cleanHtml($this->excerpt);
+
+        \Log::debug('BlogForm save - cleaned content preview', [
+            'clean_content_preview' => substr($cleanContent, 0, 100),
+            'clean_excerpt_preview' => substr($cleanExcerpt, 0, 100),
+        ]);
 
         $data = [
             'title' => $this->title,
