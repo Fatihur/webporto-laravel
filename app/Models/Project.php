@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 class Project extends Model
 {
-    use HasFactory, CacheInvalidatable;
+    use HasFactory, CacheInvalidatable, Searchable;
 
     protected $fillable = [
         'title',
@@ -116,12 +117,37 @@ class Project extends Model
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
-            'content' => $this->content,
+            'description' => strip_tags($this->description),
+            'content' => strip_tags($this->content),
             'category' => $this->category,
-            'tech_stack' => $this->tech_stack,
-            'tags' => $this->tags,
+            'tech_stack' => $this->tech_stack ?? [],
+            'tags' => $this->tags ?? [],
             'slug' => $this->slug,
+            'project_date' => $this->project_date?->timestamp,
+        ];
+    }
+
+    /**
+     * Get the index settings for Algolia.
+     */
+    public function scoutIndexSettings(): array
+    {
+        return [
+            'searchableAttributes' => [
+                'title',
+                'description',
+                'content',
+                'category',
+                'tags',
+                'tech_stack',
+            ],
+            'attributesForFaceting' => [
+                'category',
+                'tech_stack',
+            ],
+            'customRanking' => [
+                'desc(project_date)',
+            ],
         ];
     }
 }

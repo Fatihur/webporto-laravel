@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Searchable;
 
 class Blog extends Model
 {
-    use HasFactory, CacheInvalidatable;
+    use HasFactory, CacheInvalidatable, Searchable;
 
     protected $fillable = [
         'title',
@@ -124,11 +125,36 @@ class Blog extends Model
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'excerpt' => $this->excerpt,
-            'content' => $this->content,
+            'excerpt' => strip_tags($this->excerpt),
+            'content' => strip_tags($this->content),
             'category' => $this->category,
             'author' => $this->author,
             'slug' => $this->slug,
+            'is_published' => $this->is_published,
+            'published_at' => $this->published_at?->timestamp,
+        ];
+    }
+
+    /**
+     * Get the index settings for Algolia.
+     */
+    public function scoutIndexSettings(): array
+    {
+        return [
+            'searchableAttributes' => [
+                'title',
+                'excerpt',
+                'content',
+                'category',
+                'author',
+            ],
+            'attributesForFaceting' => [
+                'filterOnly(category)',
+                'filterOnly(is_published)',
+            ],
+            'customRanking' => [
+                'desc(published_at)',
+            ],
         ];
     }
 }

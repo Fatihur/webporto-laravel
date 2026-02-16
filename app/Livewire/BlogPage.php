@@ -79,7 +79,7 @@ class BlogPage extends Component
             $query->byCategory($this->category);
         }
 
-        // Filter by search term
+        // Filter by search term (database LIKE query)
         if ($this->search) {
             $searchTerm = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($searchTerm) {

@@ -14,24 +14,40 @@ class SearchComponent extends Component
     public string $query = '';
     public string $type = 'all'; // all, projects, blogs
     public array $results = [];
+    public bool $isSearching = false;
 
     public function updatedQuery()
     {
         $this->resetPage();
-    }
 
-    public function search()
-    {
-        if (strlen($this->query) < 3) {
+        if (strlen($this->query) < 2) {
             $this->results = [];
             return;
         }
 
+        $this->performSearch();
+    }
+
+    public function updatedType()
+    {
+        if (strlen($this->query) >= 2) {
+            $this->performSearch();
+        }
+    }
+
+    public function performSearch()
+    {
+        if (strlen($this->query) < 2) {
+            $this->results = [];
+            return;
+        }
+
+        $this->isSearching = true;
         $this->results = [];
 
         if ($this->type === 'all' || $this->type === 'projects') {
             $projects = Project::search($this->query)
-                ->take(10)
+                ->take(5)
                 ->get();
 
             foreach ($projects as $project) {
@@ -47,7 +63,7 @@ class SearchComponent extends Component
                 ->query(function ($builder) {
                     $builder->published();
                 })
-                ->take(10)
+                ->take(5)
                 ->get();
 
             foreach ($blogs as $blog) {
@@ -57,6 +73,14 @@ class SearchComponent extends Component
                 ];
             }
         }
+
+        $this->isSearching = false;
+    }
+
+    // Keep for backward compatibility
+    public function search()
+    {
+        $this->performSearch();
     }
 
     public function render()

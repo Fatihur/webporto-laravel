@@ -90,18 +90,18 @@ class ProjectFilter extends Component
     private function fetchProjectsFromDatabase()
     {
         $query = Project::query();
-        
+
         // Filter by category
         if ($this->selectedCategory) {
             $query->byCategory($this->selectedCategory);
         }
-        
+
         // Filter by tech stack
         if (!empty($this->selectedTechStacks)) {
             $query->byTechStack($this->selectedTechStacks);
         }
-        
-        // Filter by search term
+
+        // Filter by search term (database LIKE query)
         if ($this->search) {
             $searchTerm = '%' . strtolower($this->search) . '%';
             $query->where(function ($q) use ($searchTerm) {
@@ -110,10 +110,10 @@ class ProjectFilter extends Component
                   ->orWhereJsonContains('tags', $this->search);
             });
         }
-        
+
         // Order by date
         $query->recent();
-        
+
         return $query->get();
     }
 

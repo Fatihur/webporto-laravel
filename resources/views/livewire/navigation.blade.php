@@ -145,16 +145,18 @@
             x-show="searchOpen"
             style="display: none;"
             x-transition.opacity.duration.200ms
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] flex items-start justify-center pt-32"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] flex items-start justify-center pt-24 md:pt-32"
+            x-on:keydown.escape.window="searchOpen = false"
+            @close-search.window="searchOpen = false"
         >
             <div
                 x-show="searchOpen"
-                x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-150"
-                x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
                 x-on:click.outside="searchOpen = false"
                 class="w-full max-w-2xl mx-4"
             >

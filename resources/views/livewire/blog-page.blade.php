@@ -65,18 +65,23 @@
     <!-- Loading Skeleton -->
     <div wire:loading.delay class="space-y-12">
         @for($i = 0; $i < 3; $i++)
-            <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+            <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start animate-pulse">
                 <div class="w-full md:w-72 lg:w-80 shrink-0">
-                    <x-skeleton.card image class="aspect-[16/10] md:aspect-[4/3] rounded-2xl" />
+                    <div class="aspect-[16/10] md:aspect-[4/3] rounded-2xl bg-zinc-100 dark:bg-zinc-800"></div>
                 </div>
                 <div class="flex-1 py-2 space-y-4 w-full">
-                    <div class="flex gap-3">
-                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
-                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
-                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-24 animate-pulse"></div>
+                    <div class="flex items-center gap-3">
+                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full w-16"></div>
+                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full w-2"></div>
+                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full w-20"></div>
+                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full w-2"></div>
+                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full w-24"></div>
                     </div>
-                    <div class="h-8 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4 animate-pulse"></div>
-                    <x-skeleton.text lines="2" class="max-w-xl" />
+                    <div class="h-8 bg-zinc-100 dark:bg-zinc-800 rounded w-3/4"></div>
+                    <div class="space-y-2 max-w-xl">
+                        <div class="h-4 bg-zinc-100 dark:bg-zinc-800 rounded w-full"></div>
+                        <div class="h-4 bg-zinc-100 dark:bg-zinc-800 rounded w-5/6"></div>
+                    </div>
                 </div>
             </div>
             @if($i < 2)
