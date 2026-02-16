@@ -79,14 +79,6 @@ class Project extends Model
     }
 
     /**
-     * Get page views for project.
-     */
-    public function pageViews()
-    {
-        return $this->morphMany(PageView::class, 'viewable');
-    }
-
-    /**
      * Clear all cache entries related to this project.
      */
     public function clearModelCache(): void

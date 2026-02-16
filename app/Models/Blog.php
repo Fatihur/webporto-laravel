@@ -89,14 +89,6 @@ class Blog extends Model
     }
 
     /**
-     * Get page views for the blog.
-     */
-    public function pageViews()
-    {
-        return $this->morphMany(PageView::class, 'viewable');
-    }
-
-    /**
      * Clear all cache entries related to this blog.
      */
     public function clearModelCache(): void

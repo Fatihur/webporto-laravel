@@ -17,7 +17,6 @@ use App\Livewire\Admin\Contacts\Index as ContactsIndex;
 use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
 use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
 use App\Livewire\Admin\Comments\Index as CommentsIndex;
-use App\Livewire\Admin\Analytics\Dashboard as AnalyticsDashboard;
 use App\Livewire\SearchComponent;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Auth\SocialLoginController;
@@ -102,9 +101,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Search
     Route::get('/search', SearchComponent::class)->name('search');
-
-    // Analytics
-    Route::get('/analytics', AnalyticsDashboard::class)->name('admin.analytics');
 
     // Security
     Route::prefix('security')->name('security.')->group(function () {
