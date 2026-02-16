@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ContentPublished;
 use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -156,6 +157,13 @@ class Blog extends Model
      */
     protected static function booted(): void
     {
+        static::created(function ($blog) {
+            // Send newsletter when new blog is published
+            if ($blog->is_published) {
+                ContentPublished::dispatch($blog, 'blog');
+            }
+        });
+
         static::saved(function ($blog) {
             // Regenerate sitemap when blog is published/updated
             if ($blog->is_published) {

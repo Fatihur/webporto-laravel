@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ContentPublished;
 use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -149,6 +150,11 @@ class Project extends Model
      */
     protected static function booted(): void
     {
+        static::created(function ($project) {
+            // Send newsletter when new project is created
+            ContentPublished::dispatch($project, 'project');
+        });
+
         static::saved(function () {
             // Regenerate sitemap when project is saved/updated
             GenerateSitemap::dispatch()->delay(now()->addSeconds(5));

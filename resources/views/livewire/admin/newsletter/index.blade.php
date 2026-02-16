@@ -26,31 +26,72 @@
         </div>
     </div>
 
-    {{-- Queue Status --}}
-    @if($pendingJobs > 0 || $failedJobs > 0)
-    <div class="mb-6 flex flex-wrap gap-3">
-        @if($pendingJobs > 0)
-        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl px-4 py-3 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600 dark:text-yellow-400">
-                <path d="M12 8v4l3 3"/>
-                <circle cx="12" cy="12" r="10"/>
-            </svg>
-            <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $pendingJobs }} email(s) pending</span>
-        </div>
-        @endif
+    {{-- Settings & Queue Status --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {{-- Auto Newsletter Setting --}}
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-mint/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-mint">
+                        <path d="m22 2-7 20-4-9-9-4Z"/>
+                        <path d="M22 2 11 13"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg">Auto Newsletter</h3>
+                    <p class="text-zinc-500 text-sm mt-1">Automatically send newsletter when new blog or project is published.</p>
 
-        @if($failedJobs > 0)
-        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 dark:text-red-400">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" x2="9" y1="9" y2="15"/>
-                <line x1="9" x2="15" y1="9" y2="15"/>
-            </svg>
-            <span class="text-sm text-red-800 dark:text-red-200">{{ $failedJobs }} email(s) failed</span>
+                    <div class="mt-4 flex items-center gap-3">
+                        <button
+                            wire:click="toggleAutoNewsletter"
+                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors {{ $autoNewsletterEnabled ? 'bg-mint' : 'bg-zinc-200 dark:bg-zinc-700' }}"
+                        >
+                            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ $autoNewsletterEnabled ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                        </button>
+                        <span class="text-sm font-medium {{ $autoNewsletterEnabled ? 'text-green-600' : 'text-zinc-500' }}">
+                            {{ $autoNewsletterEnabled ? 'Enabled' : 'Disabled' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        @endif
+
+        {{-- Queue Status --}}
+        <div class="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 dark:text-blue-400">
+                        <path d="M12 8v4l3 3"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg">Queue Status</h3>
+                    <p class="text-zinc-500 text-sm mt-1">Pending and failed email jobs.</p>
+
+                    <div class="mt-4 flex flex-wrap gap-3">
+                        @if($pendingJobs > 0)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                            {{ $pendingJobs }} pending
+                        </span>
+                        @endif
+
+                        @if($failedJobs > 0)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                            {{ $failedJobs }} failed
+                        </span>
+                        @endif
+
+                        @if($pendingJobs === 0 && $failedJobs === 0)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            All caught up!
+                        </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    @endif
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

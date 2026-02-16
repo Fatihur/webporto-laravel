@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\Newsletter;
 
 use App\Models\NewsletterSubscriber;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -14,11 +16,50 @@ class Index extends Component
     public $statusFilter = 'all';
     public $sortField = 'subscribed_at';
     public $sortDirection = 'desc';
+    public $autoNewsletterEnabled;
 
     protected $queryString = [
         'search' => ['except' => ''],
         'statusFilter' => ['except' => 'all'],
     ];
+
+    public function mount()
+    {
+        $this->autoNewsletterEnabled = config('newsletter.auto_send', true);
+    }
+
+    public function toggleAutoNewsletter()
+    {
+        $newValue = !$this->autoNewsletterEnabled;
+        $this->autoNewsletterEnabled = $newValue;
+
+        // Update .env file (in production, you might want to use database settings instead)
+        $this->updateEnvValue('NEWSLETTER_AUTO_SEND', $newValue ? 'true' : 'false');
+
+        $this->dispatch('notify',
+            type: 'success',
+            message: $newValue ? 'Auto-newsletter enabled!' : 'Auto-newsletter disabled!'
+        );
+    }
+
+    private function updateEnvValue($key, $value)
+    {
+        $envPath = base_path('.env');
+        $content = file_get_contents($envPath);
+
+        if (str_contains($content, $key . '=')) {
+            $content = preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content);
+        } else {
+            $content .= "\n" . $key . '=' . $value;
+        }
+
+        file_put_contents($envPath, $content);
+
+        // Clear config cache
+        if (app()->configurationIsCached()) {
+            Artisan::call('config:clear');
+        }
+    }
 
     public function updatedSearch()
     {
