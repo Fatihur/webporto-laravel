@@ -35,7 +35,8 @@
       "Bash(pkill:*)",
       "Bash(ls -la:*)",
       "Bash(ls:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(php artisan:*)"
     ]
   }
 }

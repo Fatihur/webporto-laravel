@@ -59,9 +59,7 @@
 <div x-data="{
     init() {
         const isDark = document.documentElement.classList.contains('dark');
-        const $editor = $(this.$refs.excerptEditor);
-
-        $editor.summernote({
+        $(this.$refs.excerptEditor).summernote({
             height: 120,
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -74,14 +72,9 @@
                 }
             }
         });
-
-        // Set initial content
-        if ({{ json_encode($excerpt) }}) {
-            $editor.summernote('code', {{ json_encode($excerpt) }});
-        }
-
+        $(this.$refs.excerptEditor).summernote('code', {{ json_encode($excerpt) }});
         if (isDark) {
-            $editor.next('.note-editor').addClass('dark');
+            $(this.$refs.excerptEditor).next('.note-editor').addClass('dark');
         }
     }
 }" wire:ignore>
@@ -98,9 +91,7 @@
 <div x-data="{
     init() {
         const isDark = document.documentElement.classList.contains('dark');
-        const $editor = $(this.$refs.contentEditor);
-
-        $editor.summernote({
+        $(this.$refs.contentEditor).summernote({
             height: 300,
             toolbar: [
                 ['style', ['style']],
@@ -124,14 +115,9 @@
                 }
             }
         });
-
-        // Set initial content
-        if ({{ json_encode($content) }}) {
-            $editor.summernote('code', {{ json_encode($content) }});
-        }
-
+        $(this.$refs.contentEditor).summernote('code', {{ json_encode($content) }});
         if (isDark) {
-            $editor.next('.note-editor').addClass('dark');
+            $(this.$refs.contentEditor).next('.note-editor').addClass('dark');
         }
     }
 }" wire:ignore>
