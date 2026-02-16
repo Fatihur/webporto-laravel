@@ -1,8 +1,17 @@
 <div x-data="{
     notifications: [],
     init() {
-        Livewire.on('notify', (event) => {
-            this.add(event[0].type, event[0].message);
+        // Support both Livewire v2 and v3 syntax
+        if (typeof Livewire !== 'undefined' && Livewire.on) {
+            Livewire.on('notify', (event) => {
+                const data = Array.isArray(event) ? event[0] : event;
+                this.add(data.type, data.message);
+            });
+        }
+        // Also listen for browser events
+        window.addEventListener('notify', (event) => {
+            const data = event.detail || event;
+            this.add(data.type, data.message);
         });
     },
     add(type, message) {

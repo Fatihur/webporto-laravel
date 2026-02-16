@@ -125,9 +125,15 @@ class Index extends Component
             'unsubscribed' => NewsletterSubscriber::unsubscribed()->count(),
         ];
 
+        // Check pending jobs count
+        $pendingJobs = \DB::table('jobs')->count();
+        $failedJobs = \DB::table('failed_jobs')->count();
+
         return view('livewire.admin.newsletter.index', [
             'subscribers' => $subscribers,
             'stats' => $stats,
+            'pendingJobs' => $pendingJobs,
+            'failedJobs' => $failedJobs,
         ])->layout('layouts.admin');
     }
 }

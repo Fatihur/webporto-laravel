@@ -13,6 +13,9 @@ class Send extends Component
     public $previewMode = false;
     public $testMode = true;
     public $testEmail = '';
+    public $isSending = false;
+    public $sendProgress = 0;
+    public $totalSubscribers = 0;
 
     protected $rules = [
         'subject' => 'required|string|max:255',
@@ -27,6 +30,11 @@ class Send extends Component
         'testEmail.required_if' => 'Test email is required for test mode.',
     ];
 
+    public function mount()
+    {
+        $this->testEmail = auth()->user()?->email ?? '';
+    }
+
     public function updated($propertyName)
     {
         $this->validateOnly($propertyName);
@@ -34,7 +42,7 @@ class Send extends Component
 
     public function togglePreview()
     {
-        $this->validate(['subject', 'content']);
+        $this->validate(['subject' => 'required', 'content' => 'required']);
         $this->previewMode = !$this->previewMode;
     }
 
@@ -42,17 +50,27 @@ class Send extends Component
     {
         $this->validate();
 
-        $subscriber = NewsletterSubscriber::firstOrNew([
-            'email' => $this->testEmail,
-        ], [
-            'name' => 'Test User',
-            'status' => 'active',
-            'unsubscribe_token' => \Illuminate\Support\Str::random(64),
-        ]);
+        try {
+            $subscriber = NewsletterSubscriber::firstOrNew([
+                'email' => $this->testEmail,
+            ], [
+                'name' => 'Test User',
+                'status' => 'active',
+                'unsubscribe_token' => \Illuminate\Support\Str::random(64),
+            ]);
 
-        SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
+            // Save if new
+            if (!$subscriber->exists) {
+                $subscriber->subscribed_at = now();
+                $subscriber->save();
+            }
 
-        $this->dispatch('notify', type: 'success', message: 'Test email sent to ' . $this->testEmail);
+            SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
+
+            $this->dispatch('notify', type: 'success', message: 'Test email sent to ' . $this->testEmail);
+        } catch (\Exception $e) {
+            $this->dispatch('notify', type: 'error', message: 'Failed to send test email: ' . $e->getMessage());
+        }
     }
 
     public function sendNewsletter()
@@ -70,13 +88,19 @@ class Send extends Component
             return;
         }
 
+        $this->isSending = true;
+        $this->totalSubscribers = $count;
+        $this->sendProgress = 0;
+
         // Dispatch jobs for each subscriber
-        foreach ($activeSubscribers as $subscriber) {
+        foreach ($activeSubscribers as $index => $subscriber) {
             SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
+            $this->sendProgress = $index + 1;
         }
 
-        $this->reset(['subject', 'content', 'testMode', 'testEmail']);
-        $this->dispatch('notify', type: 'success', message: "Newsletter queued for {$count} subscribers.");
+        $this->isSending = false;
+        $this->reset(['subject', 'content', 'testMode', 'testEmail', 'previewMode']);
+        $this->dispatch('notify', type: 'success', message: "Newsletter queued for {$count} subscribers. Emails will be sent shortly.");
     }
 
     public function render()

@@ -26,6 +26,32 @@
         </div>
     </div>
 
+    {{-- Queue Status --}}
+    @if($pendingJobs > 0 || $failedJobs > 0)
+    <div class="mb-6 flex flex-wrap gap-3">
+        @if($pendingJobs > 0)
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl px-4 py-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600 dark:text-yellow-400">
+                <path d="M12 8v4l3 3"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span class="text-sm text-yellow-800 dark:text-yellow-200">{{ $pendingJobs }} email(s) pending</span>
+        </div>
+        @endif
+
+        @if($failedJobs > 0)
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 dark:text-red-400">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" x2="9" y1="9" y2="15"/>
+                <line x1="9" x2="15" y1="9" y2="15"/>
+            </svg>
+            <span class="text-sm text-red-800 dark:text-red-200">{{ $failedJobs }} email(s) failed</span>
+        </div>
+        @endif
+    </div>
+    @endif
+
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div class="bg-white dark:bg-zinc-800 rounded-xl p-6 border border-zinc-200 dark:border-zinc-700">
