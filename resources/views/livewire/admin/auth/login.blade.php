@@ -1,7 +1,10 @@
 <div class="w-full max-w-md px-6">
     <!-- Logo -->
     <div class="text-center mb-10">
-        <a href="{{ route('home') }}" class="text-3xl font-black tracking-tighter">ARTA</a>
+        <a href="{{ route('home') }}" class="flex items-center justify-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-xl">F</div>
+            <span class="text-3xl font-black tracking-tighter">{{ config('app.name') }}</span>
+        </a>
         <h1 class="mt-6 text-2xl font-bold">Admin Login</h1>
         <p class="mt-2 text-sm text-zinc-500">Sign in to access the admin dashboard</p>
     </div>

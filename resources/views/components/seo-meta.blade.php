@@ -9,8 +9,8 @@
 ])
 
 @php
-$siteName = 'ArtaPortfolio';
-$defaultDescription = 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.';
+$siteName = config('app.name', 'Fatih Porto');
+$defaultDescription = config('app.meta_description', 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.');
 $defaultImage = asset('images/og-default.jpg');
 
 $metaTitle = $title ? "{$title} | {$siteName}" : $siteName;

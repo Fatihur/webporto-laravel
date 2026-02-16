@@ -2,8 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Jobs\SendContactEmail;
+use App\Mail\ContactNotification;
 use App\Models\Contact;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ContactForm extends Component
@@ -56,10 +57,21 @@ class ContactForm extends Component
             'is_read' => false,
         ]);
 
-        // Dispatch email job
-        SendContactEmail::dispatch($contact);
+        // Send email immediately (without queue for instant delivery)
+        $emailSent = false;
+        try {
+            Mail::to(config('mail.admin_email', config('mail.from.address')))
+                ->send(new ContactNotification($contact));
+            $emailSent = true;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Contact email failed: ' . $e->getMessage());
+        }
 
-        $this->successMessage = 'Thank you! Your message has been sent successfully.';
+        if ($emailSent) {
+            $this->successMessage = 'Thank you! Your message has been sent successfully. We will get back to you soon.';
+        } else {
+            $this->successMessage = 'Your message has been saved, but we could not send the notification email. We will still review your message.';
+        }
 
         // Reset form
         $this->reset(['name', 'email', 'project_type', 'message']);

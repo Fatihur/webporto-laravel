@@ -10,13 +10,13 @@
             </p>
 
             <div class="space-y-6 md:space-y-8">
-                <a href="mailto:hello@artaputra.design" class="flex items-center gap-4 md:gap-6 group">
+                <a href="mailto:fatihur17@gmail.com" class="flex items-center gap-4 md:gap-6 group">
                     <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center group-hover:bg-mint transition-colors shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" md:width="24" md:height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     </div>
                     <div class="min-w-0">
                         <p class="text-[10px] md:text-xs font-black uppercase text-zinc-400">Email Me</p>
-                        <p class="text-base md:text-lg font-bold truncate">hello@artaputra.design</p>
+                        <p class="text-base md:text-lg font-bold truncate">fatihur17@gmail.com</p>
                     </div>
                 </a>
 

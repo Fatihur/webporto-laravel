@@ -28,7 +28,7 @@ class ContactNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.contact.notification',
+            view: 'emails.contact.notification',
             with: [
                 'contact' => $this->contact,
                 'adminUrl' => route('admin.contacts.index'),

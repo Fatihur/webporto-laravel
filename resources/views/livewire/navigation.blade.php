@@ -7,8 +7,8 @@
         <div class="flex items-center justify-between h-20">
             <!-- Logo -->
             <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3" x-on:click="megaMenuOpen = false">
-                <div class="w-10 h-10 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-lg">A</div>
-                <span class="font-black text-xl tracking-tight hidden sm:block">ArtaPortfolio</span>
+                <div class="w-10 h-10 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-lg">F</div>
+                <span class="font-black text-xl tracking-tight hidden sm:block">{{ config('app.name') }}</span>
             </a>
 
             <!-- Desktop Navigation -->

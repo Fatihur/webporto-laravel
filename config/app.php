@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Meta Description
+    |--------------------------------------------------------------------------
+    |
+    | This value is the default meta description for your application, which
+    | will be used in the SEO meta tags when a specific description is not
+    | provided for a page.
+    |
+    */
+
+    'meta_description' => env('APP_META_DESCRIPTION', 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

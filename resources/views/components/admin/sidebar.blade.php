@@ -7,7 +7,10 @@
             class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform transition-transform duration-200 lg:translate-x-0 flex flex-col">
         <!-- Logo -->
         <div class="p-6 border-b border-zinc-200 dark:border-zinc-800">
-            <a href="{{ route('home') }}" class="text-2xl font-black tracking-tighter">ARTA</a>
+            <a href="{{ route('home') }}" class="flex items-center gap-2 text-2xl font-black tracking-tighter">
+                <div class="w-8 h-8 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-sm">F</div>
+                <span>{{ config('app.name') }}</span>
+            </a>
             <p class="text-xs text-zinc-500 mt-1">Admin Panel</p>
         </div>
 
