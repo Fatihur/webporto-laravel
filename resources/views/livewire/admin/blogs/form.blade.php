@@ -68,7 +68,9 @@
             ],
             callbacks: {
                 onChange: (contents) => {
-                    @this.set('excerpt', contents);
+                    if (typeof contents === 'string') {
+                        @this.set('excerpt', contents);
+                    }
                 }
             }
         });
@@ -101,7 +103,10 @@
             ],
             callbacks: {
                 onChange: (contents) => {
-                    @this.set('content', contents);
+                    // Ensure contents is a string, not JSON encoded
+                    if (typeof contents === 'string') {
+                        @this.set('content', contents);
+                    }
                 },
                 onFullscreenEnter: function() {
                     document.body.classList.add('summernote-fullscreen');

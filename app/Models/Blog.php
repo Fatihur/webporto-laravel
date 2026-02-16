@@ -54,7 +54,11 @@ class Blog extends Model
      */
     public function setContentAttribute($value)
     {
-        $this->attributes['content'] = $this->cleanHtmlValue($value);
+        // Only clean if value is string and looks encoded
+        if (is_string($value) && str_starts_with($value, '"') && str_ends_with($value, '"')) {
+            $value = $this->cleanHtmlValue($value);
+        }
+        $this->attributes['content'] = $value;
     }
 
     /**
@@ -62,7 +66,11 @@ class Blog extends Model
      */
     public function setExcerptAttribute($value)
     {
-        $this->attributes['excerpt'] = $this->cleanHtmlValue($value);
+        // Only clean if value is string and looks encoded
+        if (is_string($value) && str_starts_with($value, '"') && str_ends_with($value, '"')) {
+            $value = $this->cleanHtmlValue($value);
+        }
+        $this->attributes['excerpt'] = $value;
     }
 
     /**

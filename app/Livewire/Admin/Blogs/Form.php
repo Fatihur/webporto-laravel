@@ -105,16 +105,41 @@ class Form extends Component
         }
     }
 
+    /**
+     * Clean HTML content from Summernote - fix escaped characters
+     */
+    private function cleanHtml(string $html): string
+    {
+        // Fix JSON-encoded strings (from Livewire/Alpine.js transmission)
+        if (str_starts_with($html, '"') && str_ends_with($html, '"')) {
+            $decoded = json_decode($html, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
+                $html = $decoded;
+            }
+        }
+
+        // Fix escaped characters
+        $html = str_replace('\\/', '/', $html);
+        $html = str_replace('\\"', '"', $html);
+        $html = str_replace("\\'", "'", $html);
+        $html = str_replace('\\\\', '\\', $html);
+
+        return $html;
+    }
+
     public function save(): void
     {
         $this->validate();
 
-        // Content cleaning is handled by Blog model mutators automatically
+        // Clean content from Summernote JSON encoding
+        $cleanContent = $this->cleanHtml($this->content);
+        $cleanExcerpt = $this->cleanHtml($this->excerpt);
+
         $data = [
             'title' => $this->title,
             'slug' => $this->slug,
-            'excerpt' => $this->excerpt,
-            'content' => $this->content,
+            'excerpt' => $cleanExcerpt,
+            'content' => $cleanContent,
             'category' => $this->category,
             'author' => $this->author,
             'published_at' => $this->is_published && $this->published_at ? $this->published_at : null,
