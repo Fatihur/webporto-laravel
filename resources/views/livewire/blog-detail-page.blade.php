@@ -63,7 +63,7 @@
     </div>
 
     <!-- Article Content -->
-    <article class="prose prose-lg dark:prose-invert max-w-none mb-20">
+    <article class="prose prose-lg dark:prose-invert max-w-none mb-21">
         {!! $post->content !!}
     </article>
 
