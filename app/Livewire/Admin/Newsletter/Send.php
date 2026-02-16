@@ -92,15 +92,27 @@ class Send extends Component
         $this->totalSubscribers = $count;
         $this->sendProgress = 0;
 
-        // Dispatch jobs for each subscriber
+        // Check if using sync driver - send emails immediately
+        $isSync = config('queue.default') === 'sync';
+
         foreach ($activeSubscribers as $index => $subscriber) {
             SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
             $this->sendProgress = $index + 1;
+
+            // If using sync driver, dispatch event after each email to update UI
+            if ($isSync) {
+                $this->dispatch('notify', type: 'info', message: "Sent to {$subscriber->email} ({$this->sendProgress}/{$count})");
+            }
         }
 
         $this->isSending = false;
         $this->reset(['subject', 'content', 'testMode', 'testEmail', 'previewMode']);
-        $this->dispatch('notify', type: 'success', message: "Newsletter queued for {$count} subscribers. Emails will be sent shortly.");
+
+        $message = $isSync
+            ? "Newsletter sent successfully to {$count} subscribers!"
+            : "Newsletter queued for {$count} subscribers. Emails will be sent shortly.";
+
+        $this->dispatch('notify', type: 'success', message: $message);
     }
 
     public function render()

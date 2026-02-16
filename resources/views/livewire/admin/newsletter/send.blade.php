@@ -166,6 +166,22 @@
         </div>
     </div>
 
+    {{-- No Subscribers Warning --}}
+    @if($activeSubscribersCount === 0)
+    <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-600 dark:text-yellow-400 mt-0.5">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4"/>
+                <path d="M12 16h.01"/>
+            </svg>
+            <div class="text-sm text-yellow-800 dark:text-yellow-200">
+                <p class="font-medium">No active subscribers found!</p>
+                <p class="mt-1">You need at least 1 active subscriber to send newsletter. Subscribe via the footer form on the homepage first.</p>
+            </div>
+        </div>
+    </div>
+    @else
     {{-- Info Card --}}
     <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
         <div class="flex items-start gap-3">
@@ -177,11 +193,12 @@
             <div class="text-sm text-blue-800 dark:text-blue-200">
                 <p class="font-medium">Before sending:</p>
                 <ul class="mt-1 list-disc list-inside space-y-1">
-                    <li>Make sure queue worker is running: <code class="bg-blue-100 dark:bg-blue-800 px-1.5 py-0.5 rounded">php artisan queue:work</code></li>
                     <li>Send a test email first to verify formatting</li>
-                    <li>Emails are sent via queue to prevent timeout</li>
+                    <li>Using sync driver - emails will send immediately</li>
+                    <li>Large subscriber lists may take time to process</li>
                 </ul>
             </div>
         </div>
     </div>
+    @endif
 </div>
