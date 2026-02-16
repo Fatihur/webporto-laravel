@@ -9,7 +9,7 @@
         </div>
     @endif
 
-    <form wire:submit="submit" class="space-y-6">
+    <form wire:submit="submit" class="space-y-4 md:space-y-6">
         <!-- Name Field -->
         <div>
             <label for="name" class="block text-sm font-bold mb-2">Name</label>
@@ -17,7 +17,7 @@
                 type="text"
                 id="name"
                 wire:model.live="name"
-                class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('name') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors"
+                class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('name') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors text-base"
                 placeholder="Your name"
             >
             @error('name')
@@ -35,7 +35,7 @@
                 type="email"
                 id="email"
                 wire:model.live="email"
-                class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('email') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors"
+                class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('email') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors text-base"
                 placeholder="your@email.com"
             >
             @error('email')
@@ -52,7 +52,7 @@
             <select
                 id="project_type"
                 wire:model.live="project_type"
-                class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('project_type') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors appearance-none cursor-pointer"
+                class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('project_type') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors appearance-none cursor-pointer text-base"
             >
                 <option value="">Select project type</option>
                 @foreach($projectTypes as $typeKey => $typeValue)
@@ -73,8 +73,8 @@
             <textarea
                 id="message"
                 wire:model.live="message"
-                rows="5"
-                class="w-full px-5 py-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('message') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors resize-none"
+                rows="4"
+                class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('message') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors resize-none text-base"
                 placeholder="Tell me about your project..."
             ></textarea>
             @error('message')
@@ -90,7 +90,7 @@
             type="submit"
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-not-allowed"
-            class="w-full bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-black py-4 rounded-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
+            class="w-full bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 font-black py-3.5 md:py-4 rounded-xl md:rounded-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 text-sm md:text-base"
         >
             <span wire:loading.remove>Send Message</span>
             <span wire:loading>Sending...</span>
