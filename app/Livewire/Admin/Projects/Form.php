@@ -74,8 +74,8 @@ class Form extends Component
             if ($project) {
                 $this->title = $project->title;
                 $this->slug = $project->slug;
-                $this->description = $project->description;
-                $this->content = $project->content;
+                $this->description = $this->cleanHtml($project->description);
+                $this->content = $this->cleanHtml($project->content);
                 $this->link = $project->link ?? '';
                 $this->category = $project->category;
                 $this->project_date = $project->project_date?->format('Y-m-d');
@@ -165,11 +165,15 @@ class Form extends Component
     {
         $this->validate();
 
+        // Clean HTML content
+        $cleanContent = $this->cleanHtml($this->content);
+        $cleanDescription = $this->cleanHtml($this->description);
+
         $data = [
             'title' => $this->title,
             'slug' => $this->slug,
-            'description' => $this->description,
-            'content' => $this->content,
+            'description' => $cleanDescription,
+            'content' => $cleanContent,
             'link' => $this->link,
             'category' => $this->category,
             'project_date' => $this->project_date,
@@ -227,5 +231,26 @@ class Form extends Component
     public function render()
     {
         return view('livewire.admin.projects.form')->layout('layouts.admin');
+    }
+
+    /**
+     * Clean HTML content by fixing escaped characters from Summernote/Livewire
+     */
+    private function cleanHtml(string $html): string
+    {
+        // Fix escaped forward slashes (\/) -> (/)
+        $html = str_replace('\\/', '/', $html);
+
+        // Fix other common escaped characters
+        $html = str_replace('\\"', '"', $html);
+        $html = str_replace("\\'", "'", $html);
+        $html = str_replace('\\\\', '\\', $html);
+
+        // Fix escaped newlines and tabs
+        $html = str_replace('\\n', "\n", $html);
+        $html = str_replace('\\r', "\r", $html);
+        $html = str_replace('\\t', "\t", $html);
+
+        return $html;
     }
 }

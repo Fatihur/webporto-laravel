@@ -63,8 +63,8 @@ class Form extends Component
             if ($blog) {
                 $this->title = $blog->title;
                 $this->slug = $blog->slug;
-                $this->excerpt = $blog->excerpt;
-                $this->content = $blog->content;
+                $this->excerpt = $this->cleanHtml($blog->excerpt);
+                $this->content = $this->cleanHtml($blog->content);
                 $this->category = $blog->category;
                 $this->author = $blog->author;
                 $this->published_at = $blog->published_at?->format('Y-m-d');
