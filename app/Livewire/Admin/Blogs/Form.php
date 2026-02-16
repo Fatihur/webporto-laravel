@@ -106,10 +106,28 @@ class Form extends Component
     }
 
     /**
-     * Clean HTML content by fixing escaped characters from Summernote/Livewire
+     * Clean HTML content by decoding JSON encoding and fixing escaped characters.
+     * Handles cases where content gets JSON-encoded (wrapped in quotes with escaped chars).
      */
     private function cleanHtml(string $html): string
     {
+        if (empty($html)) {
+            return $html;
+        }
+
+        // Iteratively decode JSON-encoded strings (content wrapped in "..." with escaped chars)
+        $maxIterations = 5;
+        while ($maxIterations-- > 0 && strlen($html) > 2) {
+            if ($html[0] === '"' && $html[strlen($html) - 1] === '"') {
+                $decoded = json_decode($html, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_string($decoded)) {
+                    $html = $decoded;
+                    continue;
+                }
+            }
+            break;
+        }
+
         // Fix escaped forward slashes (\/) -> (/)
         $html = str_replace('\\/', '/', $html);
 
@@ -130,9 +148,23 @@ class Form extends Component
     {
         $this->validate();
 
+        // DEBUG: Log raw content from Livewire before cleaning
+        \Log::info('Blog save - raw content from Livewire', [
+            'content_first_100' => substr($this->content, 0, 100),
+            'content_starts_with_quote' => str_starts_with($this->content, '"'),
+            'content_length' => strlen($this->content),
+            'excerpt_first_100' => substr($this->excerpt, 0, 100),
+        ]);
+
         // Clean content from Summernote JSON encoding
         $cleanContent = $this->cleanHtml($this->content);
         $cleanExcerpt = $this->cleanHtml($this->excerpt);
+
+        // DEBUG: Log cleaned content
+        \Log::info('Blog save - after cleanHtml', [
+            'content_first_100' => substr($cleanContent, 0, 100),
+            'content_starts_with_quote' => str_starts_with($cleanContent, '"'),
+        ]);
 
         $data = [
             'title' => $this->title,
