@@ -7,7 +7,7 @@
     />
 </x-slot>
 
-<main class="pt-32 pb-20 px-6 lg:px-12 max-w-4xl mx-auto">
+<main class="pt-32 pb-20 px-4 sm:px-6 lg:px-12 max-w-4xl mx-auto overflow-x-hidden">
     <!-- Back Link -->
     <a href="{{ route('blog.index') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors mb-8">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -19,21 +19,21 @@
 
     <!-- Article Header -->
     <header class="mb-12">
-        <div class="flex items-center gap-3 mb-4">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
             <span class="text-[10px] font-black uppercase tracking-widest text-mint">
                 {{ $post->category }}
             </span>
-            <span class="text-zinc-300 dark:text-zinc-700">•</span>
+            <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
             <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at?->format('M d, Y') }}</span>
-            <span class="text-zinc-300 dark:text-zinc-700">•</span>
+            <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
             <span class="text-xs text-zinc-500">{{ $post->read_time }} min read</span>
         </div>
 
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6 leading-tight">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6 leading-tight break-words">
             {{ $post->title }}
         </h1>
 
-        <p class="text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        <p class="text-lg sm:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed break-words">
             {!! $post->excerpt !!}
         </p>
 
@@ -63,14 +63,38 @@
     </div>
 
     <!-- Article Content -->
-    <article class="prose prose-lg dark:prose-invert max-w-none mb-21">
-        {!! $post->content !!}
+    <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none mb-12">
+        <div class="break-words overflow-x-auto">
+            {!! $post->content !!}
+        </div>
     </article>
+
+    <!-- Mobile Content Overflow Fix -->
+    <style>
+        .prose img,
+        .prose table,
+        .prose pre,
+        .prose iframe,
+        .prose video {
+            max-width: 100%;
+            height: auto;
+        }
+        .prose pre {
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .prose table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    </style>
 
     <!-- Comments Section -->
     <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
         <div class="flex items-center justify-between mb-8">
-            <h3 class="text-3xl font-bold tracking-tight">Comments</h3>
+            <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Comments</h3>
             <span class="text-sm font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
         </div>
 
@@ -102,7 +126,11 @@
             <!-- Skeleton Loading -->
             <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 @for($i = 0; $i < 2; $i++)
-                    㱬-skeleton.card image title description class="rounded-2xl" />
+                    <div class="animate-pulse">
+                        <div class="aspect-[16/10] rounded-2xl bg-zinc-200 dark:bg-zinc-800 mb-4"></div>
+                        <div class="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-1/4 mb-2"></div>
+                        <div class="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4"></div>
+                    </div>
                 @endfor
             </div>
 
@@ -127,7 +155,7 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="flex items-center gap-2 mb-2">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $related->category }}</span>
                             <span class="text-zinc-300 dark:text-zinc-700">•</span>
                             <span class="text-xs text-zinc-500">{{ $related->read_time }} min read</span>
@@ -140,10 +168,10 @@
     @endif
 
     <!-- CTA -->
-    <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 text-center">
-        <h3 class="text-2xl font-bold mb-4">Enjoyed this article?</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 mb-6">Let's discuss your project and create something amazing together.</p>
-        <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform">
+    <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 md:p-12 text-center">
+        <h3 class="text-xl sm:text-2xl font-bold mb-4">Enjoyed this article?</h3>
+        <p class="text-zinc-500 dark:text-zinc-400 mb-6 text-sm sm:text-base">Let's discuss your project and create something amazing together.</p>
+        <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold hover:scale-105 transition-transform text-sm sm:text-base">
             Get in Touch
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"/>

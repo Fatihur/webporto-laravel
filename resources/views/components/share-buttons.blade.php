@@ -40,7 +40,7 @@
     $iconSizeClass = $iconSizes[$size] ?? $iconSizes['md'];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
+<div {{ $attributes->merge(['class' => 'flex flex-wrap items-center gap-2']) }}>
     <!-- Twitter/X -->
     <a 
         href="{{ $shareUrls['twitter'] }}"
