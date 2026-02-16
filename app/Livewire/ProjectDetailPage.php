@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Jobs\TrackPageView;
 use App\Models\Project;
+use Illuminate\Support\Facades\Request;
 use Livewire\Component;
 
 class ProjectDetailPage extends Component
@@ -18,6 +20,14 @@ class ProjectDetailPage extends Component
         if (!$this->project) {
             abort(404);
         }
+
+        // Track page view
+        TrackPageView::dispatch(
+            $this->project,
+            Request::ip(),
+            Request::userAgent(),
+            Request::header('referer')
+        );
     }
 
     public function render()

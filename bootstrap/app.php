@@ -14,6 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\CacheHeaders::class,
         ]);
+
+        // Debug middleware hanya untuk local
+        if (env('APP_ENV') === 'local') {
+            $middleware->web(append: [
+                \App\Http\Middleware\DebugBlogContent::class,
+            ]);
+        }
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

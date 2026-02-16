@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -149,5 +150,20 @@ class Project extends Model
                 'desc(project_date)',
             ],
         ];
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            // Regenerate sitemap when project is saved/updated
+            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+        });
+
+        static::deleted(function () {
+            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+        });
     }
 }

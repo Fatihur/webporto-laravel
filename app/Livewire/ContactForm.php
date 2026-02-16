@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\SendContactEmail;
 use App\Models\Contact;
 use Livewire\Component;
 
@@ -47,13 +48,16 @@ class ContactForm extends Component
         $validated = $this->validate();
 
         // Save to database
-        Contact::create([
+        $contact = Contact::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'subject' => $validated['project_type'],
             'message' => $validated['message'],
             'is_read' => false,
         ]);
+
+        // Dispatch email job
+        SendContactEmail::dispatch($contact);
 
         $this->successMessage = 'Thank you! Your message has been sent successfully.';
 

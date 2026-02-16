@@ -26,6 +26,11 @@ class Form extends Component
     public bool $is_published = false;
     public int $read_time = 5;
 
+    // SEO fields
+    public ?string $meta_title = '';
+    public ?string $meta_description = '';
+    public ?string $meta_keywords = '';
+
     // Image upload
     public $image = null;
     public ?string $imagePreview = null;
@@ -50,6 +55,9 @@ class Form extends Component
             'published_at' => 'nullable|date',
             'is_published' => 'boolean',
             'read_time' => 'required|integer|min:1|max:120',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'meta_keywords' => 'nullable|string|max:255',
             'image' => $this->blogId ? 'nullable|image|max:2048' : 'nullable|image|max:2048',
         ];
     }
@@ -71,6 +79,9 @@ class Form extends Component
                 $this->is_published = $blog->is_published;
                 $this->read_time = $blog->read_time;
                 $this->imagePreview = $blog->image ? Storage::url($blog->image) : null;
+                $this->meta_title = $blog->meta_title;
+                $this->meta_description = $blog->meta_description;
+                $this->meta_keywords = $blog->meta_keywords;
             }
         } else {
             $this->published_at = now()->format('Y-m-d');
@@ -144,6 +155,9 @@ class Form extends Component
             'published_at' => $this->is_published && $this->published_at ? $this->published_at : null,
             'is_published' => $this->is_published,
             'read_time' => $this->read_time,
+            'meta_title' => $this->meta_title ?: null,
+            'meta_description' => $this->meta_description ?: null,
+            'meta_keywords' => $this->meta_keywords ?: null,
         ];
 
         // Handle image upload with optimization

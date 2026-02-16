@@ -269,6 +269,46 @@
                     @error('image')
                     <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
                 </div>
+
+                <!-- SEO Meta -->
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                    <h2 class="text-lg font-bold mb-4">SEO Meta</h2>
+
+                    <div class="space-y-4">
+                        <!-- Meta Title -->
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Meta Title</label>
+                            <input type="text" wire:model="meta_title"
+                                   class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors"
+                                   placeholder="SEO title (optional)">
+                            @error('meta_title')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            <p class="text-xs text-zinc-500 mt-1">{{ strlen($meta_title) }}/255 characters</p>
+                        </div>
+
+                        <!-- Meta Description -->
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Meta Description</label>
+                            <textarea wire:model="meta_description" rows="3"
+                                      class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors resize-none"
+                                      placeholder="SEO description (optional)">{{ $meta_description }}</textarea>
+                            @error('meta_description')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            <p class="text-xs text-zinc-500 mt-1">{{ strlen($meta_description) }}/500 characters</p>
+                        </div>
+
+                        <!-- Meta Keywords -->
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Meta Keywords</label>
+                            <input type="text" wire:model="meta_keywords"
+                                   class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors"
+                                   placeholder="keyword1, keyword2, keyword3">
+                            @error('meta_keywords')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            <p class="text-xs text-zinc-500 mt-1">Comma-separated keywords</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

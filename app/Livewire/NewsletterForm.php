@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Jobs\SendNewsletterConfirmation;
 use App\Models\NewsletterSubscriber;
 use Livewire\Component;
-use Illuminate\Support\Str;
 
 class NewsletterForm extends Component
 {
@@ -25,11 +25,10 @@ class NewsletterForm extends Component
     {
         $this->validate();
 
-        NewsletterSubscriber::create([
-            'email' => $this->email,
-            'token' => Str::random(64),
-            'status' => 'active',
-        ]);
+        $subscriber = NewsletterSubscriber::subscribe($this->email);
+
+        // Send confirmation email
+        SendNewsletterConfirmation::dispatch($subscriber);
 
         $this->reset('email');
         $this->success = true;

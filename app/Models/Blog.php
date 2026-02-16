@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -156,5 +157,22 @@ class Blog extends Model
                 'desc(published_at)',
             ],
         ];
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function ($blog) {
+            // Regenerate sitemap when blog is published/updated
+            if ($blog->is_published) {
+                GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+            }
+        });
+
+        static::deleted(function () {
+            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+        });
     }
 }
