@@ -109,11 +109,15 @@ class Form extends Component
     {
         $this->validate();
 
+        // Clean HTML content - fix escaped characters from Summernote
+        $cleanContent = $this->cleanHtml($this->content);
+        $cleanExcerpt = $this->cleanHtml($this->excerpt);
+
         $data = [
             'title' => $this->title,
             'slug' => $this->slug,
-            'excerpt' => $this->excerpt,
-            'content' => $this->content,
+            'excerpt' => $cleanExcerpt,
+            'content' => $cleanContent,
             'category' => $this->category,
             'author' => $this->author,
             'published_at' => $this->is_published && $this->published_at ? $this->published_at : null,
@@ -155,5 +159,26 @@ class Form extends Component
     public function render()
     {
         return view('livewire.admin.blogs.form')->layout('layouts.admin');
+    }
+
+    /**
+     * Clean HTML content by fixing escaped characters from Summernote/Livewire
+     */
+    private function cleanHtml(string $html): string
+    {
+        // Fix escaped forward slashes (\/) -> (/)
+        $html = str_replace('\\/', '/', $html);
+
+        // Fix other common escaped characters
+        $html = str_replace('\\"', '"', $html);
+        $html = str_replace("\\'", "'", $html);
+        $html = str_replace('\\\\', '\\', $html);
+
+        // Fix escaped newlines and tabs
+        $html = str_replace('\\n', "\n", $html);
+        $html = str_replace('\\r', "\r", $html);
+        $html = str_replace('\\t', "\t", $html);
+
+        return $html;
     }
 }
