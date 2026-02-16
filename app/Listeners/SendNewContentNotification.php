@@ -3,9 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\ContentPublished;
-use App\Jobs\SendNewsletterEmail;
+use App\Mail\NewsletterEmail;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SendNewContentNotification
 {
@@ -42,12 +43,19 @@ class SendNewContentNotification
             $emailContent = $this->getProjectEmailContent($content);
         }
 
-        // Send to all subscribers
+        // Send to all subscribers (immediately, without queue)
+        $sentCount = 0;
         foreach ($subscribers as $subscriber) {
-            SendNewsletterEmail::dispatch($subscriber, $subject, $emailContent);
+            try {
+                Mail::to($subscriber->email)
+                    ->send(new NewsletterEmail($subscriber, $emailContent, $subject));
+                $sentCount++;
+            } catch (\Exception $e) {
+                Log::error("Failed to send newsletter to {$subscriber->email}: " . $e->getMessage());
+            }
         }
 
-        Log::info("Newsletter queued for {$subscribers->count()} subscribers for new {$type}: {$content->title}");
+        Log::info("Newsletter sent to {$sentCount}/{$subscribers->count()} subscribers for new {$type}: {$content->title}");
     }
 
     /**

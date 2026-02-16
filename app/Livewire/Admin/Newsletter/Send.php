@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Admin\Newsletter;
 
-use App\Jobs\SendNewsletterEmail;
+use App\Mail\NewsletterEmail;
 use App\Models\NewsletterSubscriber;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class Send extends Component
@@ -65,7 +66,9 @@ class Send extends Component
                 $subscriber->save();
             }
 
-            SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
+            // Send email directly (without queue)
+            Mail::to($subscriber->email)
+                ->send(new NewsletterEmail($subscriber, $this->content, $this->subject));
 
             $this->dispatch('notify', type: 'success', message: 'Test email sent to ' . $this->testEmail);
         } catch (\Exception $e) {
@@ -92,25 +95,24 @@ class Send extends Component
         $this->totalSubscribers = $count;
         $this->sendProgress = 0;
 
-        // Check if using sync driver - send emails immediately
-        $isSync = config('queue.default') === 'sync';
-
+        $sentCount = 0;
         foreach ($activeSubscribers as $index => $subscriber) {
-            SendNewsletterEmail::dispatch($subscriber, $this->subject, $this->content);
-            $this->sendProgress = $index + 1;
-
-            // If using sync driver, dispatch event after each email to update UI
-            if ($isSync) {
-                $this->dispatch('notify', type: 'info', message: "Sent to {$subscriber->email} ({$this->sendProgress}/{$count})");
+            try {
+                Mail::to($subscriber->email)
+                    ->send(new NewsletterEmail($subscriber, $this->content, $this->subject));
+                $sentCount++;
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to send newsletter to {$subscriber->email}: " . $e->getMessage());
             }
+            $this->sendProgress = $index + 1;
         }
 
         $this->isSending = false;
         $this->reset(['subject', 'content', 'testMode', 'testEmail', 'previewMode']);
 
-        $message = $isSync
+        $message = $sentCount === $count
             ? "Newsletter sent successfully to {$count} subscribers!"
-            : "Newsletter queued for {$count} subscribers. Emails will be sent shortly.";
+            : "Newsletter sent to {$sentCount}/{$count} subscribers. Some emails failed.";
 
         $this->dispatch('notify', type: 'success', message: $message);
     }
