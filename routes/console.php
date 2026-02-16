@@ -7,6 +7,13 @@ use App\Models\Project;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schedule;
+
+// Auto-process queue every minute (for shared hosting without supervisor)
+Schedule::command('queue:work --stop-when-empty --max-time=55')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/queue-scheduler.log'));
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
