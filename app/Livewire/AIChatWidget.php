@@ -30,7 +30,7 @@ class AIChatWidget extends Component
         if (empty($this->chatHistory)) {
             $this->chatHistory[] = [
                 'role' => 'assistant',
-                'content' => 'Hi! 👋 Saya asisten AI Fatih (powered by OpenRouter). Ada yang bisa saya bantu tentang portfolio, project, atau blog?',
+                'content' => 'Halo! 👋 Aku Fay, asisten AI-nya Fatih. Mau tau tentang portfolio, project, atau blog? Chat aja!',
                 'timestamp' => now()->toIso8601String(),
             ];
             $this->saveChatHistory();
@@ -202,7 +202,7 @@ class AIChatWidget extends Component
         // Add welcome message
         $this->chatHistory[] = [
             'role' => 'assistant',
-            'content' => 'Hi! 👋 Saya asisten AI Fatih (powered by OpenRouter). Ada yang bisa saya bantu tentang portfolio, project, atau blog?',
+            'content' => 'Halo! 👋 Aku Fay, asisten AI-nya Fatih. Mau tau tentang portfolio, project, atau blog? Chat aja!',
             'timestamp' => now()->toIso8601String(),
         ];
         $this->saveChatHistory();
@@ -216,7 +216,7 @@ class AIChatWidget extends Component
     }
 
     /**
-     * Format message by removing markdown formatting and converting buttons.
+     * Format message by converting markdown to HTML and extracting buttons.
      */
     public function formatMessage(string $content): array
     {
@@ -235,28 +235,101 @@ class AIChatWidget extends Component
             $content
         );
 
-        // Remove markdown bold (**text**)
-        $content = preg_replace('/\*\*(.*?)\*\*/', '$1', $content);
+        // Convert markdown tables to HTML tables
+        $content = $this->convertMarkdownTablesToHtml($content);
 
-        // Remove markdown italic (*text*)
-        $content = preg_replace('/\*(.*?)\*/', '$1', $content);
+        // Convert markdown bold (**text**) to strong
+        $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
 
-        // Remove markdown code blocks
-        $content = preg_replace('/```[\s\S]*?```/', '', $content);
+        // Convert markdown italic (*text*) to em
+        $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
 
-        // Remove inline code
-        $content = preg_replace('/`(.*?)`/', '$1', $content);
+        // Remove markdown code blocks but keep content
+        $content = preg_replace_callback('/```[\s\S]*?```/', function ($matches) {
+            $code = trim(substr($matches[0], 3, -3));
 
-        // Remove markdown links [text](url) -> keep just text
-        $content = preg_replace('/\[(.*?)\]\(.*?\)/', '$1', $content);
+            return "<code class=\"bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-xs font-mono\">{$code}</code>";
+        }, $content);
 
-        // Clean up extra newlines
-        $content = preg_replace("/\n{3,}/", "\n\n", $content);
+        // Convert inline code
+        $content = preg_replace('/`(.*?)`/', '<code class="bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-xs font-mono">$1</code>', $content);
+
+        // Convert markdown links [text](url) to anchor tags
+        $content = preg_replace_callback('/\[(.*?)\]\(https?:\/\/.*?\)/', function ($matches) {
+            $text = $matches[1];
+            $url = preg_replace('/\[(.*?)\]\((.*?)\)/', '$2', $matches[0]);
+
+            return "<a href=\"{$url}\" target=\"_blank\" rel=\"noopener\" class=\"text-mint hover:underline\">{$text}</a>";
+        }, $content);
+
+        // Convert newlines to <br> tags (but not inside tables)
+        $content = preg_replace('/\n(?!<\/table>|<thead|<tbody|<tr|<td|<th)/', '<br>', $content);
+
+        // Clean up extra breaks
+        $content = preg_replace('/(<br>\s*){3,}/', '<br><br>', $content);
 
         return [
             'text' => trim($content),
             'buttons' => $buttons,
         ];
+    }
+
+    /**
+     * Convert markdown tables to HTML tables with Tailwind styling.
+     */
+    private function convertMarkdownTablesToHtml(string $content): string
+    {
+        // Pattern to match markdown tables
+        $pattern = '/\|(.+)\|\s*\n\|\s*[-:]+\s*\|.*\n((?:\|.+\|\s*\n?)+)/m';
+
+        return preg_replace_callback($pattern, function ($matches) {
+            $headerLine = trim($matches[1]);
+            $dataLines = trim($matches[2]);
+
+            // Parse headers
+            $headers = array_map('trim', explode('|', $headerLine));
+            $headers = array_filter($headers);
+
+            // Parse data rows
+            $rows = [];
+            foreach (explode("\n", $dataLines) as $line) {
+                $line = trim($line);
+                if (empty($line) || ! str_starts_with($line, '|')) {
+                    continue;
+                }
+                $cells = array_map('trim', explode('|', trim($line, '|')));
+                $rows[] = $cells;
+            }
+
+            // Build HTML table
+            $html = '<div class="overflow-x-auto my-3"><table class="w-full text-sm border-collapse">';
+
+            // Header
+            $html .= '<thead><tr class="bg-zinc-100 dark:bg-zinc-800">';
+            foreach ($headers as $header) {
+                $html .= "<th class=\"px-3 py-2 text-left font-semibold text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-zinc-700\">{$header}</th>";
+            }
+            $html .= '</tr></thead>';
+
+            // Body
+            $html .= '<tbody>';
+            foreach ($rows as $rowIndex => $row) {
+                $bgClass = $rowIndex % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50 dark:bg-zinc-800/50';
+                $html .= "<tr class=\"{$bgClass}\">";
+                foreach ($row as $cell) {
+                    // Strip markdown formatting from cell content
+                    $cell = preg_replace('/\*\*(.*?)\*\*/', '$1', $cell);
+                    $cell = preg_replace('/\*(.*?)\*/', '$1', $cell);
+                    $cell = preg_replace('/`/', '', $cell);
+                    $cell = trim($cell);
+                    $html .= "<td class=\"px-3 py-2 text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800\">{$cell}</td>";
+                }
+                $html .= '</tr>';
+            }
+            $html .= '</tbody></table></div>';
+
+            return $html;
+        }, $content);
     }
 
     public function render()

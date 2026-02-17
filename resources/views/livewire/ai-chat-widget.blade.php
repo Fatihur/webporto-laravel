@@ -119,7 +119,7 @@
                     <div class="flex justify-start" wire:key="assistant-msg-{{ $index }}">
                         <div class="max-w-[85%] bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-2xl rounded-tl-sm px-4 py-2">
                             @if (!empty($formatted['text']))
-                                <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ $formatted['text'] }}</p>
+                                <div class="text-sm leading-relaxed">{!! $formatted['text'] !!}</div>
                             @endif
                             @if (!empty($formatted['buttons']))
                                 <div class="flex flex-wrap gap-2 {{ !empty($formatted['text']) ? 'mt-3 pt-2 border-t border-zinc-200 dark:border-zinc-700' : '' }}">
