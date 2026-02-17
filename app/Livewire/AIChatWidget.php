@@ -123,7 +123,7 @@ class AIChatWidget extends Component
         $lowerMessage = strtolower($message);
 
         if (str_contains($lowerMessage, 'halo') || str_contains($lowerMessage, 'hi') || str_contains($lowerMessage, 'hello')) {
-            return "Halo! 👋 Saya adalah AI Assistant Fatih. Saat ini layanan AI sedang sementara tidak tersedia, tapi saya masih bisa membantu dengan informasi dasar.\n\nAnda bisa bertanya tentang:\n• Project portfolio Fatih\n• Blog dan artikel\n• Pengalaman kerja\n• Cara menghubungi";
+            return "Halo! 👋 Aku Fay, asisten AI-nya Fatih. Saat ini layanan AI lagi gangguan nih, tapi tenang, aku masih bisa bantu dengan info dasar 😄\n\nMau tau tentang:\n• Project portfolio Fatih\n• Blog dan artikel\n• Pengalaman kerja\n• Cara hubungi Fatih";
         }
 
         if (str_contains($lowerMessage, 'project') || str_contains($lowerMessage, 'portfolio')) {
