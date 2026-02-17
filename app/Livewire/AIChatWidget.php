@@ -235,11 +235,8 @@ class AIChatWidget extends Component
             $content
         );
 
-        // Convert markdown tables to HTML tables
-        $content = $this->convertMarkdownTablesToHtml($content);
-
-        // Convert markdown bold (**text**) to strong
-        $content = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $content);
+        // Convert markdown bold (**text**) to strong (darker color for visibility)
+        $content = preg_replace('/\*\*(.*?)\*\*/', '<strong class="font-semibold text-zinc-900 dark:text-white">$1</strong>', $content);
 
         // Convert markdown italic (*text*) to em
         $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
@@ -262,8 +259,8 @@ class AIChatWidget extends Component
             return "<a href=\"{$url}\" target=\"_blank\" rel=\"noopener\" class=\"text-mint hover:underline\">{$text}</a>";
         }, $content);
 
-        // Convert newlines to <br> tags (but not inside tables)
-        $content = preg_replace('/\n(?!<\/table>|<thead|<tbody|<tr|<td|<th)/', '<br>', $content);
+        // Convert newlines to <br> tags
+        $content = preg_replace('/\n/', '<br>', $content);
 
         // Clean up extra breaks
         $content = preg_replace('/(<br>\s*){3,}/', '<br><br>', $content);
@@ -272,64 +269,6 @@ class AIChatWidget extends Component
             'text' => trim($content),
             'buttons' => $buttons,
         ];
-    }
-
-    /**
-     * Convert markdown tables to HTML tables with Tailwind styling.
-     */
-    private function convertMarkdownTablesToHtml(string $content): string
-    {
-        // Pattern to match markdown tables
-        $pattern = '/\|(.+)\|\s*\n\|\s*[-:]+\s*\|.*\n((?:\|.+\|\s*\n?)+)/m';
-
-        return preg_replace_callback($pattern, function ($matches) {
-            $headerLine = trim($matches[1]);
-            $dataLines = trim($matches[2]);
-
-            // Parse headers
-            $headers = array_map('trim', explode('|', $headerLine));
-            $headers = array_filter($headers);
-
-            // Parse data rows
-            $rows = [];
-            foreach (explode("\n", $dataLines) as $line) {
-                $line = trim($line);
-                if (empty($line) || ! str_starts_with($line, '|')) {
-                    continue;
-                }
-                $cells = array_map('trim', explode('|', trim($line, '|')));
-                $rows[] = $cells;
-            }
-
-            // Build HTML table
-            $html = '<div class="overflow-x-auto my-3"><table class="w-full text-sm border-collapse">';
-
-            // Header
-            $html .= '<thead><tr class="bg-zinc-100 dark:bg-zinc-800">';
-            foreach ($headers as $header) {
-                $html .= "<th class=\"px-3 py-2 text-left font-semibold text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-zinc-700\">{$header}</th>";
-            }
-            $html .= '</tr></thead>';
-
-            // Body
-            $html .= '<tbody>';
-            foreach ($rows as $rowIndex => $row) {
-                $bgClass = $rowIndex % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50 dark:bg-zinc-800/50';
-                $html .= "<tr class=\"{$bgClass}\">";
-                foreach ($row as $cell) {
-                    // Strip markdown formatting from cell content
-                    $cell = preg_replace('/\*\*(.*?)\*\*/', '$1', $cell);
-                    $cell = preg_replace('/\*(.*?)\*/', '$1', $cell);
-                    $cell = preg_replace('/`/', '', $cell);
-                    $cell = trim($cell);
-                    $html .= "<td class=\"px-3 py-2 text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 dark:border-zinc-800\">{$cell}</td>";
-                }
-                $html .= '</tr>';
-            }
-            $html .= '</tbody></table></div>';
-
-            return $html;
-        }, $content);
     }
 
     public function render()
