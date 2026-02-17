@@ -8,7 +8,7 @@ use App\Ai\Agents\PortfolioAssistant;
 use App\Ai\Tools\GetExperiencesTool;
 use App\Ai\Tools\SearchBlogsTool;
 use App\Ai\Tools\SearchProjectsTool;
-use App\Livewire\AIChatWidget;
+use App\Livewire\AiChatWidget;
 use Illuminate\Foundation\Testing\TestCase;
 use Livewire\Livewire;
 
@@ -40,14 +40,14 @@ class AIAssistantTest extends TestCase
 
     public function test_chat_widget_livewire_component_can_be_rendered(): void
     {
-        Livewire::test(AIChatWidget::class)
+        Livewire::test(AiChatWidget::class)
             ->assertOk()
             ->assertViewIs('livewire.ai-chat-widget');
     }
 
     public function test_chat_widget_toggles_state(): void
     {
-        $component = Livewire::test(AIChatWidget::class);
+        $component = Livewire::test(AiChatWidget::class);
 
         // Should not throw exception
         $component->call('toggle');
@@ -58,7 +58,7 @@ class AIAssistantTest extends TestCase
 
     public function test_chat_widget_can_close(): void
     {
-        Livewire::test(AIChatWidget::class)
+        Livewire::test(AiChatWidget::class)
             ->set('isOpen', true)
             ->call('close')
             ->assertSet('isOpen', false);
@@ -66,14 +66,14 @@ class AIAssistantTest extends TestCase
 
     public function test_chat_widget_can_clear_chat(): void
     {
-        Livewire::test(AIChatWidget::class)
+        Livewire::test(AiChatWidget::class)
             ->call('clearChat')
             ->assertHasNoErrors();
     }
 
     public function test_chat_widget_has_welcome_message(): void
     {
-        $component = Livewire::test(AIChatWidget::class);
+        $component = Livewire::test(AiChatWidget::class);
         $history = $component->chatHistory;
 
         $this->assertNotEmpty($history);
