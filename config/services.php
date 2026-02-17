@@ -35,18 +35,4 @@ return [
         ],
     ],
 
-    'gemini' => [
-        'api_key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
-        'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
-    ],
-
-    'openrouter' => [
-        'api_key' => env('OPENROUTER_API_KEY'),
-        'model' => env('OPENROUTER_MODEL', 'mistralai/mistral-7b-instruct:free'),
-        'base_url' => 'https://openrouter.ai/api/v1',
-        'site_url' => env('APP_URL', 'http://localhost'),
-        'site_name' => env('APP_NAME', 'Portfolio'),
-    ],
-
 ];

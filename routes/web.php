@@ -118,8 +118,4 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/sessions', \App\Livewire\Admin\Security\SessionManager::class)->name('sessions');
     });
 
-    // Analytics
-    Route::prefix('analytics')->name('analytics.')->group(function () {
-        Route::get('/chat', \App\Livewire\Admin\Analytics\ChatAnalytics::class)->name('chat');
-    });
 });

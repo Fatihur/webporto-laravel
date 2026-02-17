@@ -43,7 +43,8 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "Bash(composer dump-autoload:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(composer remove:*)"
     ]
   }
 }

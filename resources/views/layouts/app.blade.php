@@ -193,9 +193,6 @@
 
     @include('components.footer')
 
-    <!-- AI Chat Bot -->
-    <livewire:chat-bot />
-
     <!-- Theme handling script -->
     <script>
         // Initialize theme from session/localStorage on page load
