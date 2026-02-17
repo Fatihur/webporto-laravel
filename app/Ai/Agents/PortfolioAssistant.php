@@ -20,9 +20,9 @@ use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-#[Provider('openrouter')]
+#[Provider('groq')]
 #[MaxSteps(5)]
-#[MaxTokens(200)]
+#[MaxTokens(500)]
 #[Temperature(0.7)]
 class PortfolioAssistant implements Agent, Conversational, HasTools
 {
