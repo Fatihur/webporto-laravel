@@ -193,6 +193,9 @@
 
     @include('components.footer')
 
+    <!-- AI Chat Widget -->
+    <livewire:ai-chat-widget />
+
     <!-- Theme handling script -->
     <script>
         // Initialize theme from session/localStorage on page load

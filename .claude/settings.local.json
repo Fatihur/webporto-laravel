@@ -44,7 +44,18 @@
       "WebFetch(domain:github.com)",
       "Bash(composer dump-autoload:*)",
       "Bash(php:*)",
-      "Bash(composer remove:*)"
+      "Bash(composer remove:*)",
+      "Bash(composer show:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(composer install:*)",
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__browser-logs",
+      "mcp__laravel-boost__tinker"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
 }
