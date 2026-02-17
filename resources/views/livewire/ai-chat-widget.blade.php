@@ -82,8 +82,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-sm text-zinc-900 dark:text-white">AI Assistant</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Powered by OpenRouter</p>
+                    <h3 class="font-semibold text-sm text-zinc-900 dark:text-white">Fay</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Asisten Portfolio</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
@@ -153,7 +153,7 @@
                             <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.15s;"></span>
                             <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.3s;"></span>
                         </div>
-                        <span class="text-xs text-zinc-500 dark:text-zinc-400">AI sedang berpikir...</span>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400">Fay sedang berpikir...</span>
                     </div>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                                 <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.15s;"></span>
                                 <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.3s;"></span>
                             </div>
-                            <span class="text-xs text-zinc-500 dark:text-zinc-400">AI sedang berpikir...</span>
+                            <span class="text-xs text-zinc-500 dark:text-zinc-400">Fay sedang berpikir...</span>
                         </div>
                     </div>
                 </div>
