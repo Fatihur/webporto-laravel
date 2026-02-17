@@ -1,29 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Livewire\HomePage;
-use App\Livewire\ProjectFilter;
-use App\Livewire\ProjectDetailPage;
-use App\Livewire\BlogPage;
-use App\Livewire\ContactPage;
-use App\Livewire\BlogDetailPage;
-use App\Livewire\Admin\Auth\Login;
-use App\Livewire\Admin\Dashboard;
-use App\Livewire\Admin\Projects\Index as ProjectsIndex;
-use App\Livewire\Admin\Projects\Form as ProjectsForm;
-use App\Livewire\Admin\Blogs\Index as BlogsIndex;
-use App\Livewire\Admin\Blogs\Form as BlogsForm;
-use App\Livewire\Admin\Contacts\Index as ContactsIndex;
-use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
-use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
-use App\Livewire\Admin\Comments\Index as CommentsIndex;
-use App\Livewire\SearchComponent;
-use App\Livewire\Admin\Newsletter\Index as NewsletterIndex;
-use App\Livewire\Admin\Newsletter\Send as NewsletterSend;
-use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\SeoController;
+use App\Livewire\Admin\Auth\Login;
+use App\Livewire\Admin\Blogs\Form as BlogsForm;
+use App\Livewire\Admin\Blogs\Index as BlogsIndex;
+use App\Livewire\Admin\Comments\Index as CommentsIndex;
+use App\Livewire\Admin\Contacts\Index as ContactsIndex;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
+use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
+use App\Livewire\Admin\Newsletter\Index as NewsletterIndex;
+use App\Livewire\Admin\Newsletter\Send as NewsletterSend;
+use App\Livewire\Admin\Projects\Form as ProjectsForm;
+use App\Livewire\Admin\Projects\Index as ProjectsIndex;
+use App\Livewire\Admin\SiteContacts\Index as SiteContactsIndex;
+use App\Livewire\BlogDetailPage;
+use App\Livewire\BlogPage;
+use App\Livewire\ContactPage;
+use App\Livewire\HomePage;
+use App\Livewire\ProjectDetailPage;
+use App\Livewire\ProjectFilter;
+use App\Livewire\SearchComponent;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +78,7 @@ Route::middleware(['guest'])->group(function () {
 // Admin Logout
 Route::post('/admin/logout', function () {
     Auth::logout();
+
     return redirect()->route('admin.login');
 })->name('admin.logout')->middleware('auth');
 
@@ -94,8 +96,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/blogs/create', BlogsForm::class)->name('admin.blogs.create');
     Route::get('/blogs/{id}/edit', BlogsForm::class)->name('admin.blogs.edit');
 
-    // Contacts
+    // Contacts (Messages)
     Route::get('/contacts', ContactsIndex::class)->name('admin.contacts.index');
+
+    // Site Contact Settings
+    Route::get('/site-contacts', SiteContactsIndex::class)->name('admin.site-contacts.index');
 
     // Experiences
     Route::get('/experiences', ExperiencesIndex::class)->name('admin.experiences.index');

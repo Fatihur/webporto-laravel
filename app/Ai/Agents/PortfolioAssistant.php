@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\GetExperiencesTool;
+use App\Ai\Tools\GetSiteContactsTool;
 use App\Ai\Tools\SearchBlogsTool;
 use App\Ai\Tools\SearchProjectsTool;
 use Illuminate\Support\Facades\Session;
@@ -45,6 +46,7 @@ You are a helpful AI assistant for Fatih's portfolio website. Your role is to he
 - If asked about projects, use the SearchProjectsTool
 - If asked about blogs/articles, use the SearchBlogsTool
 - If asked about work experience or career, use the GetExperiencesTool
+- If asked about contact information (email, WhatsApp, phone, social media, address), use the GetSiteContactsTool
 - Provide specific details like project titles, tech stacks, dates, and links when available
 - If you don't find relevant information, politely say so and offer to help with something else
 - For navigation help, guide users to the appropriate sections of the website
@@ -79,6 +81,7 @@ INSTRUCTIONS;
             new SearchProjectsTool,
             new SearchBlogsTool,
             new GetExperiencesTool,
+            new GetSiteContactsTool,
         ];
     }
 
