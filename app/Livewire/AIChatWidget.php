@@ -216,7 +216,7 @@ class AIChatWidget extends Component
     }
 
     /**
-     * Format message by converting markdown to HTML and extracting buttons.
+     * Format message by converting markdown to HTML and extracting buttons/suggestions.
      */
     public function formatMessage(string $content): array
     {
@@ -228,6 +228,21 @@ class AIChatWidget extends Component
                 $buttons[] = [
                     'label' => trim($matches[1]),
                     'url' => trim($matches[2]),
+                ];
+
+                return ''; // Remove from content
+            },
+            $content
+        );
+
+        // Parse suggestions [SUGGEST:Label|Question]
+        $suggestions = [];
+        $content = preg_replace_callback(
+            '/\[SUGGEST:(.*?)\|(.*?)\]/',
+            function ($matches) use (&$suggestions) {
+                $suggestions[] = [
+                    'label' => trim($matches[1]),
+                    'question' => trim($matches[2]),
                 ];
 
                 return ''; // Remove from content
@@ -268,6 +283,7 @@ class AIChatWidget extends Component
         return [
             'text' => trim($content),
             'buttons' => $buttons,
+            'suggestions' => $suggestions,
         ];
     }
 

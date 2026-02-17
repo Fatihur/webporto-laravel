@@ -11,6 +11,10 @@
             const message = this.inputMessage.trim();
             this.inputMessage = '';
 
+            await this.sendMessage(message);
+        },
+
+        async sendMessage(message) {
             // Tambahkan pesan user ke temporary messages
             this.tempMessages.push({ role: 'user', content: message });
             this.isThinking = true;
@@ -83,7 +87,7 @@
                 </div>
                 <div>
                     <h3 class="font-semibold text-sm text-zinc-900 dark:text-white">Fay</h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Asisten Portfolio</p>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Asisten AI</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
@@ -128,6 +132,25 @@
                                             {{ $button['label'] }}
                                         </a>
                                     @endforeach
+                                </div>
+                            @endif
+                            @if (!empty($formatted['suggestions']))
+                                <div class="mt-3 pt-2 border-t border-zinc-200 dark:border-zinc-700">
+                                    <p class="text-[10px] uppercase tracking-wider text-zinc-400 mb-2">Pertanyaan lanjutan</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach ($formatted['suggestions'] as $suggestion)
+                                            <button
+                                                type="button"
+                                                @click="sendMessage('{{ addslashes($suggestion['question']) }}')"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 rounded-lg hover:border-mint hover:text-mint dark:hover:border-mint dark:hover:text-mint transition-colors cursor-pointer"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                </svg>
+                                                {{ $suggestion['label'] }}
+                                            </button>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
                         </div>
