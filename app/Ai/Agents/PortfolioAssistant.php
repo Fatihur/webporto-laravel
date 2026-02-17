@@ -22,7 +22,7 @@ use Stringable;
 
 #[Provider('openrouter')]
 #[MaxSteps(5)]
-#[MaxTokens(1000)]
+#[MaxTokens(200)]
 #[Temperature(0.7)]
 class PortfolioAssistant implements Agent, Conversational, HasTools
 {
