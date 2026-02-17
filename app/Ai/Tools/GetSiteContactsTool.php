@@ -49,7 +49,7 @@ class GetSiteContactsTool implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'type' => $schema->string()->enum('email', 'whatsapp', 'phone', 'social', 'address', 'all')->description('Type of contact information to retrieve. Use "all" for complete contact info, "social" for social media links, or specific type.'),
+            'type' => $schema->string()->enum(['email', 'whatsapp', 'phone', 'social', 'address', 'all'])->description('Type of contact information to retrieve. Use "all" for complete contact info, "social" for social media links, or specific type.'),
         ];
     }
 
