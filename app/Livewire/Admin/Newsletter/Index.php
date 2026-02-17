@@ -4,7 +4,6 @@ namespace App\Livewire\Admin\Newsletter;
 
 use App\Models\NewsletterSubscriber;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,10 +12,21 @@ class Index extends Component
     use WithPagination;
 
     public $search = '';
+
     public $statusFilter = 'all';
+
     public $sortField = 'subscribed_at';
+
     public $sortDirection = 'desc';
+
     public $autoNewsletterEnabled;
+
+    // Bulk Actions
+    public array $selected = [];
+
+    public bool $selectAll = false;
+
+    public string $bulkAction = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -30,7 +40,7 @@ class Index extends Component
 
     public function toggleAutoNewsletter()
     {
-        $newValue = !$this->autoNewsletterEnabled;
+        $newValue = ! $this->autoNewsletterEnabled;
         $this->autoNewsletterEnabled = $newValue;
 
         // Update .env file (in production, you might want to use database settings instead)
@@ -47,10 +57,10 @@ class Index extends Component
         $envPath = base_path('.env');
         $content = file_get_contents($envPath);
 
-        if (str_contains($content, $key . '=')) {
-            $content = preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content);
+        if (str_contains($content, $key.'=')) {
+            $content = preg_replace('/'.$key.'=.*/', $key.'='.$value, $content);
         } else {
-            $content .= "\n" . $key . '=' . $value;
+            $content .= "\n".$key.'='.$value;
         }
 
         file_put_contents($envPath, $content);
@@ -110,6 +120,89 @@ class Index extends Component
         }
     }
 
+    public function updatedSelectAll($value): void
+    {
+        $subscribers = $this->getSubscribersForBulkAction();
+
+        if ($value) {
+            $this->selected = $subscribers->pluck('id')->toArray();
+        } else {
+            $this->selected = [];
+        }
+    }
+
+    public function executeBulkAction(): void
+    {
+        if (empty($this->selected)) {
+            $this->dispatch('notify', type: 'error', message: 'No items selected.');
+
+            return;
+        }
+
+        if (empty($this->bulkAction)) {
+            $this->dispatch('notify', type: 'error', message: 'Please select an action.');
+
+            return;
+        }
+
+        switch ($this->bulkAction) {
+            case 'delete':
+                $this->bulkDelete();
+                break;
+            case 'activate':
+                $this->bulkActivate();
+                break;
+            case 'deactivate':
+                $this->bulkDeactivate();
+                break;
+        }
+
+        $this->reset('selected', 'selectAll', 'bulkAction');
+    }
+
+    private function bulkDelete(): void
+    {
+        NewsletterSubscriber::whereIn('id', $this->selected)->delete();
+        $this->dispatch('notify', type: 'success', message: count($this->selected).' subscribers deleted successfully.');
+    }
+
+    private function bulkActivate(): void
+    {
+        NewsletterSubscriber::whereIn('id', $this->selected)->update([
+            'status' => 'active',
+            'subscribed_at' => now(),
+            'unsubscribed_at' => null,
+        ]);
+        $this->dispatch('notify', type: 'success', message: count($this->selected).' subscribers activated successfully.');
+    }
+
+    private function bulkDeactivate(): void
+    {
+        NewsletterSubscriber::whereIn('id', $this->selected)->update([
+            'status' => 'unsubscribed',
+            'unsubscribed_at' => now(),
+        ]);
+        $this->dispatch('notify', type: 'success', message: count($this->selected).' subscribers deactivated successfully.');
+    }
+
+    private function getSubscribersForBulkAction()
+    {
+        $query = NewsletterSubscriber::query();
+
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('email', 'like', '%'.$this->search.'%')
+                    ->orWhere('name', 'like', '%'.$this->search.'%');
+            });
+        }
+
+        if ($this->statusFilter !== 'all') {
+            $query->where('status', $this->statusFilter);
+        }
+
+        return $query->get();
+    }
+
     public function exportCsv()
     {
         $subscribers = NewsletterSubscriber::active()->get();
@@ -144,8 +237,8 @@ class Index extends Component
         // Search
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('email', 'like', '%' . $this->search . '%')
-                  ->orWhere('name', 'like', '%' . $this->search . '%');
+                $q->where('email', 'like', '%'.$this->search.'%')
+                    ->orWhere('name', 'like', '%'.$this->search.'%');
             });
         }
 

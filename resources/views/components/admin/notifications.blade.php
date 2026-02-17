@@ -7,11 +7,23 @@
                 const data = Array.isArray(event) ? event[0] : event;
                 this.add(data.type, data.message);
             });
+            Livewire.on('redirect-to-blog', (event) => {
+                const data = Array.isArray(event) ? event[0] : event;
+                if (data.url) {
+                    setTimeout(() => window.open(data.url, '_blank'), 500);
+                }
+            });
         }
         // Also listen for browser events
         window.addEventListener('notify', (event) => {
             const data = event.detail || event;
             this.add(data.type, data.message);
+        });
+        window.addEventListener('redirect-to-blog', (event) => {
+            const data = event.detail || event;
+            if (data.url) {
+                setTimeout(() => window.open(data.url, '_blank'), 500);
+            }
         });
     },
     add(type, message) {

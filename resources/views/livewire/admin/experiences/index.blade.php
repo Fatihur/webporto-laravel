@@ -16,10 +16,33 @@
     </div>
 
     @if(count($experiences) > 0)
+        <!-- Bulk Actions Bar -->
+        @if(count($selected) > 0)
+            <div class="bg-mint/10 dark:bg-mint/20 border border-mint/30 rounded-xl p-4 mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ count($selected) }} selected</span>
+                    <select wire:model="bulkAction" class="px-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm focus:ring-2 focus:ring-mint">
+                        <option value="">Select Action</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button wire:click="executeBulkAction" wire:confirm="Are you sure you want to execute this action?"
+                            class="px-4 py-1.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+                        Execute
+                    </button>
+                </div>
+                <button wire:click="$set('selected', [])" class="text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
+                    Clear selection
+                </button>
+            </div>
+        @endif
+
         <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
             <table class="w-full">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
                 <tr>
+                    <th class="px-4 py-4 text-left">
+                        <input type="checkbox" wire:model.live="selectAll" class="rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint">
+                    </th>
                     <th class="px-6 py-4 text-left text-sm font-bold">Order</th>
                     <th class="px-6 py-4 text-left text-sm font-bold">Company</th>
                     <th class="px-6 py-4 text-left text-sm font-bold">Role</th>
@@ -31,6 +54,9 @@
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
                 @foreach($experiences as $experience)
                     <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" wire:key="{{ $experience->id }}">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" value="{{ $experience->id }}" wire:model.live="selected" class="rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint">
+                        </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
                                 <button wire:click="moveUp({{ $experience->id }})"
@@ -79,6 +105,10 @@
                 @endforeach
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination -->
+        <div class="mt-6">
+            {{ $experiences->links() }}
         </div>
     @else
         <div

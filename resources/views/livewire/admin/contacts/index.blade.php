@@ -44,6 +44,28 @@
     </div>
 
     @if(count($contacts) > 0)
+        {{-- Bulk Actions Bar --}}
+        @if(count($selected) > 0)
+            <div class="bg-mint/10 dark:bg-mint/20 border border-mint/30 rounded-xl p-4 mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ count($selected) }} selected</span>
+                    <select wire:model="bulkAction" class="px-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm focus:ring-2 focus:ring-mint">
+                        <option value="">Select Action</option>
+                        <option value="markAsRead">Mark as Read</option>
+                        <option value="markAsUnread">Mark as Unread</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button wire:click="executeBulkAction" wire:confirm="Are you sure you want to execute this action?"
+                            class="px-4 py-1.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+                        Execute
+                    </button>
+                </div>
+                <button wire:click="$set('selected', [])" class="text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
+                    Clear selection
+                </button>
+            </div>
+        @endif
+
         <div class="space-y-4">
             @foreach($contacts as $contact)
                 <div wire:key="{{ $contact->id }}"
@@ -51,6 +73,8 @@
                     <!-- Header -->
                     <div class="p-6 flex items-start justify-between gap-4">
                         <div class="flex items-center gap-4">
+                            <!-- Checkbox -->
+                            <input type="checkbox" value="{{ $contact->id }}" wire:model.live="selected" class="rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint">
                             <!-- Avatar -->
                             <div class="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-lg font-bold text-zinc-500">
                                 {{ strtoupper(substr($contact->name, 0, 1)) }}

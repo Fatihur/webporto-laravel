@@ -16,9 +16,9 @@
         </a>
     </div>
 
-    <!-- Filters -->
+    <!-- Filters & Bulk Actions -->
     <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
-        <div class="flex flex-col sm:flex-row gap-4">
+        <div class="flex flex-col lg:flex-row gap-4">
             <!-- Search -->
             <div class="flex-1">
                 <div class="relative">
@@ -35,27 +35,43 @@
                 </div>
             </div>
 
-            <!-- Category Filter -->
-            <div class="sm:w-40">
+            <!-- Filters -->
+            <div class="flex flex-col sm:flex-row gap-3">
                 <select wire:model.live="categoryFilter"
-                        class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm">
+                        class="px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm">
                     <option value="">All Categories</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat }}">{{ ucwords($cat) }}</option>
                     @endforeach
                 </select>
-            </div>
 
-            <!-- Status Filter -->
-            <div class="sm:w-32">
                 <select wire:model.live="statusFilter"
-                        class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm">
+                        class="px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm">
                     <option value="">All Status</option>
                     <option value="published">Published</option>
                     <option value="drafts">Drafts</option>
                 </select>
             </div>
         </div>
+
+        <!-- Bulk Actions Bar -->
+        @if(count($selected) > 0)
+            <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center gap-4">
+                <span class="text-sm text-zinc-500">{{ count($selected) }} selected</span>
+                <select wire:model="bulkAction"
+                        class="px-4 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm">
+                    <option value="">Select Action</option>
+                    <option value="publish">Publish</option>
+                    <option value="unpublish">Unpublish</option>
+                    <option value="delete">Delete</option>
+                </select>
+                <button wire:click="executeBulkAction"
+                        wire:confirm="Are you sure you want to execute this action on {{ count($selected) }} items?"
+                        class="px-4 py-2 bg-mint text-zinc-950 rounded-xl font-bold hover:bg-mint/80 transition-colors text-sm">
+                    Execute
+                </button>
+            </div>
+        @endif
     </div>
 
     <!-- Skeleton Loading -->
@@ -63,6 +79,7 @@
         <table class="w-full">
             <thead class="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
             <tr>
+                <th class="px-6 py-4 text-left"></div></th>
                 <th class="px-6 py-4 text-left text-sm font-bold">Title</th>
                 <th class="px-6 py-4 text-left text-sm font-bold">Category</th>
                 <th class="px-6 py-4 text-left text-sm font-bold">Published</th>
@@ -73,6 +90,9 @@
             <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
             @for($i = 0; $i < 5; $i++)
                 <tr>
+                    <td class="px-6 py-4">
+                        <div class="w-4 h-4 rounded bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 rounded-lg bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
@@ -105,6 +125,10 @@
             <table class="w-full">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
                 <tr>
+                    <th class="px-6 py-4 text-left">
+                        <input type="checkbox" wire:model.live="selectAll"
+                               class="w-4 h-4 rounded border-zinc-300 text-mint focus:ring-mint">
+                    </th>
                     <th class="px-6 py-4 text-left text-sm font-bold cursor-pointer hover:text-mint transition-colors"
                         wire:click="sortBy('title')">
                         Title
@@ -127,6 +151,10 @@
                 <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
                 @foreach($blogs as $blog)
                     <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" wire:key="{{ $blog->id }}">
+                        <td class="px-6 py-4">
+                            <input type="checkbox" value="{{ $blog->id }}" wire:model.live="selected"
+                                   class="w-4 h-4 rounded border-zinc-300 text-mint focus:ring-mint">
+                        </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($blog->image)

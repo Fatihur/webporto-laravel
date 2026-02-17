@@ -58,6 +58,26 @@
                     Blog Posts
                 </a>
 
+                <!-- AI Blog Automation -->
+                <a href="{{ route('admin.ai-blog.index') }}"
+                   wire:navigate
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.ai-blog.*') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                        <path d="M5 3v4"/>
+                        <path d="M19 17v4"/>
+                        <path d="M3 5h4"/>
+                        <path d="M17 19h4"/>
+                    </svg>
+                    AI Blog
+                    @if(\App\Models\AiBlogAutomation::where('is_active', true)->count() > 0)
+                        <span class="ml-auto bg-mint text-zinc-950 text-xs font-bold px-2 py-0.5 rounded-full">
+                            {{ \App\Models\AiBlogAutomation::where('is_active', true)->count() }}
+                        </span>
+                    @endif
+                </a>
+
                 <!-- Comments -->
                 <a href="{{ route('admin.comments.index') }}"
                    wire:navigate

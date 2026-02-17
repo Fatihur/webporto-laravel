@@ -98,9 +98,9 @@
                     <!-- Image -->
                     <div class="w-full md:w-72 lg:w-80 shrink-0">
                         <div class="aspect-[16/10] md:aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                            @if($post->image)
+                            @if($post->image || $post->image_url)
                                 <img
-                                    src="{{ Storage::url($post->image) }}"
+                                    src="{{ $post->image_url ?? Storage::url($post->image) }}"
                                     alt="{{ $post->title }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                     loading="lazy"

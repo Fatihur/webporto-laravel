@@ -253,6 +253,15 @@
         });
     </script>
 
+    <!-- Redirect Handler -->
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('redirect-to-blog', (event) => {
+                window.open(event.url, '_blank');
+            });
+        });
+    </script>
+
     <!-- Notifications -->
     @include('components.admin.notifications')
 </body>

@@ -232,6 +232,18 @@
                 <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
                     <h2 class="text-lg font-bold mb-4">Featured Image</h2>
 
+                    <!-- Image Mode Toggle -->
+                    <div class="flex gap-2 mb-4">
+                        <button type="button" wire:click="switchImageMode('upload')"
+                                class="flex-1 py-2 px-3 rounded-lg text-sm font-bold transition-colors {{ $imageMode === 'upload' ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700' }}">
+                            Upload
+                        </button>
+                        <button type="button" wire:click="switchImageMode('url')"
+                                class="flex-1 py-2 px-3 rounded-lg text-sm font-bold transition-colors {{ $imageMode === 'url' ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700' }}">
+                            URL
+                        </button>
+                    </div>
+
                     <!-- Preview -->
                     @if($imagePreview)
                         <div class="relative aspect-video rounded-xl overflow-hidden mb-4 group">
@@ -252,22 +264,45 @@
                         </div>
                     @endif
 
-                    <div
-                        class="relative border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-4 text-center hover:border-mint transition-colors cursor-pointer overflow-hidden">
-                        <input type="file" wire:model="image" accept="image/*"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="mx-auto mb-2 text-zinc-400">
-                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                            <circle cx="9" cy="9" r="2"/>
-                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
-                        <p class="text-sm text-zinc-500">{{ $imagePreview ? 'Change' : 'Upload' }} image</p>
-                    </div>
-                    <div wire:loading wire:target="image" class="text-sm text-mint mt-2">Uploading...</div>
-                    @error('image')
-                    <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
+                    <!-- Upload Mode -->
+                    @if($imageMode === 'upload')
+                        <div class="relative border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-4 text-center hover:border-mint transition-colors cursor-pointer overflow-hidden">
+                            <input type="file" wire:model="image" accept="image/*"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="mx-auto mb-2 text-zinc-400">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                <circle cx="9" cy="9" r="2"/>
+                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                            </svg>
+                            <p class="text-sm text-zinc-500">{{ $imagePreview ? 'Change' : 'Upload' }} image</p>
+                        </div>
+                        <div wire:loading wire:target="image" class="text-sm text-mint mt-2">Uploading...</div>
+                        @error('image')
+                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
+                    @else
+                        <!-- URL Mode -->
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Image URL</label>
+                                <input type="url" wire:model.live="image_url"
+                                       class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
+                                       placeholder="https://example.com/image.jpg">
+                                @error('image_url')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Image Source/Attribution</label>
+                                <input type="text" wire:model="image_source"
+                                       class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
+                                       placeholder="e.g., Unsplash, Pexels, Pixabay">
+                                <p class="text-xs text-zinc-500 mt-1">Credit the image source</p>
+                                @error('image_source')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- SEO Meta -->

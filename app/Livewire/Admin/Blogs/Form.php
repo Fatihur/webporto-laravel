@@ -17,23 +17,42 @@ class Form extends Component
 
     // Form fields
     public string $title = '';
+
     public string $slug = '';
+
     public string $excerpt = '';
+
     public string $content = '';
+
     public string $category = '';
+
     public ?string $author = '';
+
     public ?string $published_at = '';
+
     public bool $is_published = false;
+
     public int $read_time = 5;
 
     // SEO fields
     public ?string $meta_title = '';
+
     public ?string $meta_description = '';
+
     public ?string $meta_keywords = '';
 
     // Image upload
     public $image = null;
+
     public ?string $imagePreview = null;
+
+    // External image URL
+    public ?string $image_url = '';
+
+    public ?string $image_source = '';
+
+    // Image input mode
+    public string $imageMode = 'upload'; // 'upload' or 'url'
 
     // Categories list
     public array $categories = [
@@ -47,7 +66,7 @@ class Form extends Component
     {
         return [
             'title' => 'required|min:3|max:255',
-            'slug' => 'required|unique:blogs,slug' . ($this->blogId ? ',' . $this->blogId : ''),
+            'slug' => 'required|unique:blogs,slug'.($this->blogId ? ','.$this->blogId : ''),
             'excerpt' => 'required|min:10|max:500',
             'content' => 'required',
             'category' => 'required|in:design,technology,tutorial,insights',
@@ -58,7 +77,10 @@ class Form extends Component
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string|max:255',
-            'image' => $this->blogId ? 'nullable|image|max:2048' : 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:2048',
+            'image_url' => 'nullable|url|max:2048',
+            'image_source' => 'nullable|string|max:500',
+            'imageMode' => 'required|in:upload,url',
         ];
     }
 
@@ -78,7 +100,10 @@ class Form extends Component
                 $this->published_at = $blog->published_at?->format('Y-m-d');
                 $this->is_published = $blog->is_published;
                 $this->read_time = $blog->read_time;
-                $this->imagePreview = $blog->image ? Storage::url($blog->image) : null;
+                $this->imagePreview = $blog->image ? Storage::url($blog->image) : ($blog->image_url ?? null);
+                $this->image_url = $blog->image_url;
+                $this->image_source = $blog->image_source;
+                $this->imageMode = $blog->image_url ? 'url' : 'upload';
                 $this->meta_title = $blog->meta_title;
                 $this->meta_description = $blog->meta_description;
                 $this->meta_keywords = $blog->meta_keywords;
@@ -90,7 +115,7 @@ class Form extends Component
 
     public function updatedTitle(): void
     {
-        if (!$this->blogId) {
+        if (! $this->blogId) {
             $this->slug = Str::slug($this->title);
         }
     }
@@ -107,12 +132,47 @@ class Form extends Component
     public function removeNewImage(): void
     {
         $this->image = null;
+        $this->image_url = '';
+        $this->image_source = '';
         if ($this->blogId) {
             // Restore original preview if editing
             $blog = Blog::find($this->blogId);
-            $this->imagePreview = $blog?->image ? Storage::url($blog->image) : null;
+            $this->imagePreview = $blog?->image ? Storage::url($blog->image) : ($blog?->image_url ?? null);
+            $this->image_url = $blog?->image_url ?? '';
+            $this->image_source = $blog?->image_source ?? '';
+            $this->imageMode = $blog?->image_url ? 'url' : 'upload';
         } else {
             $this->imagePreview = null;
+        }
+    }
+
+    public function updatedImageUrl(): void
+    {
+        if ($this->image_url) {
+            $this->imagePreview = $this->image_url;
+        }
+    }
+
+    public function switchImageMode(string $mode): void
+    {
+        $this->imageMode = $mode;
+        if ($mode === 'upload') {
+            $this->image_url = '';
+            $this->image_source = '';
+            if ($this->blogId) {
+                $blog = Blog::find($this->blogId);
+                $this->imagePreview = $blog?->image ? Storage::url($blog->image) : null;
+            } else {
+                $this->imagePreview = null;
+            }
+        } else {
+            $this->image = null;
+            if ($this->blogId) {
+                $blog = Blog::find($this->blogId);
+                $this->image_url = $blog?->image_url ?? '';
+                $this->image_source = $blog?->image_source ?? '';
+                $this->imagePreview = $blog?->image_url ?? null;
+            }
         }
     }
 
@@ -160,8 +220,8 @@ class Form extends Component
             'meta_keywords' => $this->meta_keywords ?: null,
         ];
 
-        // Handle image upload with optimization
-        if ($this->image) {
+        // Handle image based on mode
+        if ($this->imageMode === 'upload' && $this->image) {
             $imageService = app(ImageOptimizationService::class);
 
             if ($this->blogId) {
@@ -177,6 +237,22 @@ class Form extends Component
                 'blogs',
                 ['max_width' => 1200, 'max_height' => 800, 'quality' => 85]
             );
+            // Clear external URL when uploading
+            $data['image_url'] = null;
+            $data['image_source'] = null;
+        } elseif ($this->imageMode === 'url' && $this->image_url) {
+            // Use external URL
+            $data['image_url'] = $this->image_url;
+            $data['image_source'] = $this->image_source ?: null;
+            // Clear local image when using URL
+            if ($this->blogId) {
+                $oldBlog = Blog::find($this->blogId);
+                if ($oldBlog?->image) {
+                    $imageService = app(ImageOptimizationService::class);
+                    $imageService->delete($oldBlog->image);
+                }
+            }
+            $data['image'] = null;
         }
 
         if ($this->blogId) {

@@ -15,6 +15,11 @@ Schedule::command('queue:work --stop-when-empty --max-time=55')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/queue-scheduler.log'));
 
+// AI Blog Automation Scheduler
+Schedule::command('ai-blog:schedule-check')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/ai-blog-scheduler.log'));
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -56,7 +61,7 @@ Artisan::command('cache:warm', function () {
     // Warm up project categories
     $categories = ['graphic-design', 'software-dev', 'data-analysis', 'networking'];
     foreach ($categories as $category) {
-        Cache::remember('projects.category.' . $category, 1800, function () use ($category) {
+        Cache::remember('projects.category.'.$category, 1800, function () use ($category) {
             return Project::byCategory($category)->recent()->get();
         });
     }

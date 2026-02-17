@@ -40,12 +40,36 @@
         @endfor
     </div>
 
+    {{-- Bulk Actions Bar --}}
+    @if(count($selected) > 0)
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ count($selected) }} selected</span>
+                <select wire:model="bulkAction" class="px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select Action</option>
+                    <option value="approve">Approve</option>
+                    <option value="delete">Delete</option>
+                </select>
+                <button wire:click="executeBulkAction" wire:confirm="Are you sure you want to execute this action?"
+                        class="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                    Execute
+                </button>
+            </div>
+            <button wire:click="$set('selected', [])" class="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                Clear selection
+            </button>
+        </div>
+    @endif
+
     <!-- Desktop Table -->
     <div wire:loading.remove class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-900">
                     <tr>
+                        <th class="px-4 py-3 text-left">
+                            <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Blog
                         </th>
@@ -66,6 +90,9 @@
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse ($comments as $comment)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <input type="checkbox" value="{{ $comment->id }}" wire:model.live="selected" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500">
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="max-w-xs truncate text-sm text-gray-900 dark:text-white">
                                     {{ $comment->blog?->title ?? 'N/A' }}

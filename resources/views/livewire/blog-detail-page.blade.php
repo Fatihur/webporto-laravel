@@ -44,10 +44,10 @@
     </header>
 
     <!-- Featured Image -->
-    <div class="aspect-[21/9] rounded-3xl overflow-hidden mb-12 bg-zinc-100 dark:bg-zinc-800">
-        @if($post->image)
+    <div class="aspect-[21/9] rounded-3xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
+        @if($post->image || $post->image_url)
             <img
-                src="{{ Storage::url($post->image) }}"
+                src="{{ $post->image_url ?? Storage::url($post->image) }}"
                 alt="{{ $post->title }}"
                 class="w-full h-full object-cover"
             >
@@ -62,6 +62,13 @@
         @endif
     </div>
 
+    <!-- Image Source Attribution -->
+    @if($post->image_source)
+        <p class="text-xs text-zinc-500 text-right mb-8">
+            Image source: {{ $post->image_source }}
+        </p>
+    @endif
+
     <!-- Article Content -->
     <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none mb-12">
         <div class="break-words overflow-x-auto">
@@ -69,8 +76,36 @@
         </div>
     </article>
 
-    <!-- Mobile Content Overflow Fix -->
+    <!-- Content Formatting Fix -->
     <style>
+        /* Typography spacing */
+        .prose {
+            line-height: 1.8;
+        }
+        .prose p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+        .prose h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .prose h3 {
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.375rem;
+            font-weight: 600;
+        }
+        .prose ul, .prose ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+        /* Media responsive */
         .prose img,
         .prose table,
         .prose pre,
@@ -79,15 +114,39 @@
             max-width: 100%;
             height: auto;
         }
+        /* Code blocks */
         .prose pre {
             overflow-x: auto;
             white-space: pre-wrap;
             word-wrap: break-word;
+            padding: 1rem;
+            background: #f4f4f5;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
         }
+        .dark .prose pre {
+            background: #27272a;
+        }
+        .prose code {
+            font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+            font-size: 0.875em;
+        }
+        .prose p code, .prose li code {
+            background: #f4f4f5;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            color: #dc2626;
+        }
+        .dark .prose p code, .dark .prose li code {
+            background: #27272a;
+            color: #f87171;
+        }
+        /* Tables */
         .prose table {
             display: block;
             overflow-x: auto;
             white-space: nowrap;
+            margin-bottom: 1.5rem;
         }
     </style>
 
@@ -138,9 +197,9 @@
                 @foreach($relatedPosts as $related)
                     <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
-                            @if($related->image)
+                            @if($related->image || $related->image_url)
                                 <img
-                                    src="{{ Storage::url($related->image) }}"
+                                    src="{{ $related->image_url ?? Storage::url($related->image) }}"
                                     alt="{{ $related->title }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     loading="lazy"

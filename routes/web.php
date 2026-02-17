@@ -3,6 +3,10 @@
 use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SeoController;
+use App\Livewire\Admin\AiBlog\Dashboard as AiBlogDashboard;
+use App\Livewire\Admin\AiBlog\Form as AiBlogForm;
+use App\Livewire\Admin\AiBlog\Index as AiBlogIndex;
+use App\Livewire\Admin\AiBlog\Logs as AiBlogLogs;
 use App\Livewire\Admin\Auth\Login;
 use App\Livewire\Admin\Blogs\Form as BlogsForm;
 use App\Livewire\Admin\Blogs\Index as BlogsIndex;
@@ -116,6 +120,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Search
     Route::get('/search', SearchComponent::class)->name('search');
+
+    // AI Blog Automation
+    Route::prefix('ai-blog')->name('admin.ai-blog.')->group(function () {
+        Route::get('/', AiBlogIndex::class)->name('index');
+        Route::get('/create', AiBlogForm::class)->name('create');
+        Route::get('/{id}/edit', AiBlogForm::class)->name('edit');
+        Route::get('/logs', AiBlogLogs::class)->name('logs');
+        Route::get('/dashboard', AiBlogDashboard::class)->name('dashboard');
+    });
 
     // Security
     Route::prefix('security')->name('security.')->group(function () {

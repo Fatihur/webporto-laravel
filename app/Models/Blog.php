@@ -5,15 +5,15 @@ namespace App\Models;
 use App\Events\ContentPublished;
 use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Searchable;
 
 class Blog extends Model
 {
-    use HasFactory, CacheInvalidatable, Searchable;
+    use CacheInvalidatable, HasFactory, Searchable;
 
     protected $fillable = [
         'title',
@@ -22,6 +22,8 @@ class Blog extends Model
         'content',
         'category',
         'image',
+        'image_url',
+        'image_source',
         'read_time',
         'author',
         'published_at',
@@ -42,8 +44,8 @@ class Blog extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true)
-                     ->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now());
     }
 
     /**
@@ -96,18 +98,18 @@ class Blog extends Model
     {
         // Clear all blog pagination caches (first 10 pages)
         for ($i = 1; $i <= 10; $i++) {
-            Cache::forget('blog.posts.page.' . $i);
+            Cache::forget('blog.posts.page.'.$i);
         }
 
         // Clear categories cache
         Cache::forget('blog.categories');
 
         // Clear specific post cache
-        Cache::forget('blog.post.' . $this->slug);
+        Cache::forget('blog.post.'.$this->slug);
 
         // Clear related posts cache
         if ($this->category) {
-            Cache::forget('blog.related.' . $this->category);
+            Cache::forget('blog.related.'.$this->category);
         }
     }
 
