@@ -5,50 +5,27 @@ declare(strict_types=1);
 namespace App\Ai\Tools;
 
 use App\Models\SiteContact;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
+use Stringable;
 
 class GetSiteContactsTool implements Tool
 {
     /**
-     * Get the tool name.
+     * Get the description of the tool's purpose.
      */
-    public function name(): string
-    {
-        return 'get_site_contacts';
-    }
-
-    /**
-     * Get the tool description.
-     */
-    public function description(): string
+    public function description(): Stringable|string
     {
         return 'Get contact information including email, WhatsApp, phone, address, working hours, and social media links for the portfolio website.';
     }
 
     /**
-     * Get the tool parameters schema.
-     */
-    public function parameters(): array
-    {
-        return [
-            'type' => 'object',
-            'properties' => [
-                'type' => [
-                    'type' => 'string',
-                    'enum' => ['email', 'whatsapp', 'phone', 'social', 'address', 'all'],
-                    'description' => 'Type of contact information to retrieve. Use "all" for complete contact info, "social" for social media links, or specific type.',
-                ],
-            ],
-            'required' => ['type'],
-        ];
-    }
-
-    /**
      * Execute the tool.
      */
-    public function execute(array $arguments): string
+    public function handle(Request $request): Stringable|string
     {
-        $type = $arguments['type'] ?? 'all';
+        $type = $request['type'] ?? 'all';
 
         $contact = SiteContact::first();
 
@@ -64,6 +41,16 @@ class GetSiteContactsTool implements Tool
             'address' => $this->getAddressInfo($contact),
             default => $this->getAllInfo($contact),
         };
+    }
+
+    /**
+     * Get the tool's schema definition.
+     */
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'type' => $schema->string()->enum('email', 'whatsapp', 'phone', 'social', 'address', 'all')->description('Type of contact information to retrieve. Use "all" for complete contact info, "social" for social media links, or specific type.'),
+        ];
     }
 
     private function getEmailInfo(SiteContact $contact): string
