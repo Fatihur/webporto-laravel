@@ -261,51 +261,65 @@ class Form extends Component
         $this->isTranslating = true;
 
         try {
-            // Prepare content to translate
-            $contentToTranslate = [];
-            if (! empty($this->title)) {
-                $contentToTranslate[] = "TITLE: {$this->title}";
-            }
-            if (! empty($this->description)) {
-                $contentToTranslate[] = "DESCRIPTION: {$this->description}";
-            }
-            if (! empty($this->content)) {
-                // Strip HTML tags for cleaner translation
-                $plainContent = strip_tags($this->content);
-                $contentToTranslate[] = "CONTENT: {$plainContent}";
-            }
-
-            $textToTranslate = implode("\n\n", $contentToTranslate);
-
             $agent = agent(
-                instructions: 'You are a professional translator specializing in Indonesian to English translation for tech portfolio content. Translate naturally and professionally, maintaining technical accuracy. Return ONLY the translated text in the same format as input (TITLE:, DESCRIPTION:, CONTENT:).',
+                instructions: <<<'INSTRUCTIONS'
+You are a professional translator specializing in Indonesian to English translation for tech portfolio content.
+Translate naturally and professionally, maintaining technical accuracy.
+
+You must return a JSON object with this exact structure:
+{
+  "title": "translated title here",
+  "description": "translated description here",
+  "content": "translated content here"
+}
+
+If a field is empty or not provided, return empty string for that field.
+Preserve HTML formatting in content if present.
+INSTRUCTIONS,
             );
 
+            // Build input JSON
+            $input = [
+                'title' => $this->title,
+                'description' => strip_tags($this->description),
+                'content' => strip_tags($this->content),
+            ];
+
             $response = $agent->prompt(
-                "Translate the following Indonesian text to English. Maintain professional tech portfolio tone:\n\n{$textToTranslate}",
+                "Translate the following Indonesian text to English. Maintain professional tech portfolio tone:\n\n".json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
                 provider: Lab::Groq,
             );
 
             $translatedText = (string) $response;
 
-            // Parse translated content
-            if (preg_match('/TITLE:\s*(.+?)(?=\n\n|DESCRIPTION:|CONTENT:|$)/s', $translatedText, $titleMatch)) {
-                $this->title = trim($titleMatch[1]);
-                // Update slug if it's a new project
+            // Extract JSON from response
+            $json = $this->extractJsonFromResponse($translatedText);
+            $data = json_decode($json, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \RuntimeException('Failed to parse translation response: '.json_last_error_msg());
+            }
+
+            // Update fields
+            if (! empty($data['title'])) {
+                $this->title = trim($data['title']);
                 if (! $this->projectId) {
                     $this->slug = Str::slug($this->title);
                 }
             }
 
-            if (preg_match('/DESCRIPTION:\s*(.+?)(?=\n\n|TITLE:|CONTENT:|$)/s', $translatedText, $descMatch)) {
-                $this->description = trim($descMatch[1]);
+            if (! empty($data['description'])) {
+                $this->description = trim($data['description']);
             }
 
-            if (preg_match('/CONTENT:\s*(.+?)(?=\n\n|TITLE:|DESCRIPTION:|$)/s', $translatedText, $contentMatch)) {
-                $translatedContent = trim($contentMatch[1]);
-                // Convert plain text back to simple HTML paragraphs
-                $paragraphs = explode("\n\n", $translatedContent);
-                $htmlParagraphs = array_map(fn ($p) => '<p>'.trim($p).'</p>', array_filter($paragraphs));
+            if (! empty($data['content'])) {
+                $translatedContent = trim($data['content']);
+                // Convert plain text paragraphs to HTML
+                $paragraphs = preg_split('/\n\s*\n/', $translatedContent);
+                $htmlParagraphs = array_map(
+                    fn ($p) => '<p>'.trim($p).'</p>',
+                    array_filter($paragraphs, fn ($p) => ! empty(trim($p)))
+                );
                 $this->content = implode("\n", $htmlParagraphs);
             }
 
@@ -315,6 +329,30 @@ class Form extends Component
         } finally {
             $this->isTranslating = false;
         }
+    }
+
+    /**
+     * Extract JSON from AI response text
+     */
+    private function extractJsonFromResponse(string $text): string
+    {
+        // Try to find JSON between code blocks
+        if (preg_match('/```(?:json)?\s*([\s\S]*?)```/', $text, $matches)) {
+            return trim($matches[1]);
+        }
+
+        // Try to find JSON between curly braces
+        if (preg_match('/\{[\s\S]*\}/', $text, $matches)) {
+            return $matches[0];
+        }
+
+        // Return as-is if it looks like JSON
+        $trimmed = trim($text);
+        if (str_starts_with($trimmed, '{') && str_ends_with($trimmed, '}')) {
+            return $trimmed;
+        }
+
+        throw new \RuntimeException('No valid JSON found in response');
     }
 
     public function render()
