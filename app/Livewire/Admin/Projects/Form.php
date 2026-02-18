@@ -6,8 +6,11 @@ use App\Models\Project;
 use App\Services\ImageOptimizationService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Ai\Enums\Lab;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+
+use function Laravel\Ai\agent;
 
 class Form extends Component
 {
@@ -17,14 +20,23 @@ class Form extends Component
 
     // Form fields
     public string $title = '';
+
     public string $slug = '';
+
     public string $description = '';
+
     public string $content = '';
+
     public ?string $link = '';
+
     public string $category = '';
+
     public ?string $project_date = '';
+
     public array $tags = [];
+
     public array $tech_stack = [];
+
     public bool $is_featured = false;
 
     // Stats as array of objects
@@ -32,9 +44,13 @@ class Form extends Component
 
     // Image uploads
     public $thumbnail = null;
+
     public $thumbnailPreview = null;
+
     public array $gallery = [];
+
     public array $galleryPreviews = [];
+
     public array $existingGallery = [];
 
     // Categories list
@@ -45,11 +61,14 @@ class Form extends Component
         'networking' => 'Networking',
     ];
 
+    // Translation
+    public bool $isTranslating = false;
+
     protected function rules(): array
     {
         return [
             'title' => 'required|min:3|max:255',
-            'slug' => 'required|unique:projects,slug' . ($this->projectId ? ',' . $this->projectId : ''),
+            'slug' => 'required|unique:projects,slug'.($this->projectId ? ','.$this->projectId : ''),
             'description' => 'required|min:10',
             'content' => 'required',
             'link' => 'nullable|url|max:500',
@@ -93,7 +112,7 @@ class Form extends Component
 
     public function updatedTitle(): void
     {
-        if (!$this->projectId) {
+        if (! $this->projectId) {
             $this->slug = Str::slug($this->title);
         }
     }
@@ -144,7 +163,7 @@ class Form extends Component
     public function addTag(string $value, string $type = 'tags'): void
     {
         $value = trim($value);
-        if ($value && !in_array($value, $this->$type)) {
+        if ($value && ! in_array($value, $this->$type)) {
             $this->$type[] = $value;
         }
     }
@@ -179,7 +198,7 @@ class Form extends Component
             'project_date' => $this->project_date,
             'tags' => $this->tags,
             'tech_stack' => $this->tech_stack,
-            'stats' => array_filter($this->stats, fn($stat) => !empty($stat['label']) && !empty($stat['value'])),
+            'stats' => array_filter($this->stats, fn ($stat) => ! empty($stat['label']) && ! empty($stat['value'])),
             'is_featured' => $this->is_featured,
         ];
 
@@ -226,6 +245,76 @@ class Form extends Component
 
         $this->dispatch('notify', type: 'success', message: $message);
         $this->redirectRoute('admin.projects.index', navigate: true);
+    }
+
+    /**
+     * Translate project content to English using AI
+     */
+    public function translateToEnglish(): void
+    {
+        if (empty($this->title) && empty($this->description) && empty($this->content)) {
+            $this->dispatch('notify', type: 'error', message: 'Please fill in at least title, description, or content before translating.');
+
+            return;
+        }
+
+        $this->isTranslating = true;
+
+        try {
+            // Prepare content to translate
+            $contentToTranslate = [];
+            if (! empty($this->title)) {
+                $contentToTranslate[] = "TITLE: {$this->title}";
+            }
+            if (! empty($this->description)) {
+                $contentToTranslate[] = "DESCRIPTION: {$this->description}";
+            }
+            if (! empty($this->content)) {
+                // Strip HTML tags for cleaner translation
+                $plainContent = strip_tags($this->content);
+                $contentToTranslate[] = "CONTENT: {$plainContent}";
+            }
+
+            $textToTranslate = implode("\n\n", $contentToTranslate);
+
+            $agent = agent(
+                instructions: 'You are a professional translator specializing in Indonesian to English translation for tech portfolio content. Translate naturally and professionally, maintaining technical accuracy. Return ONLY the translated text in the same format as input (TITLE:, DESCRIPTION:, CONTENT:).',
+            );
+
+            $response = $agent->prompt(
+                "Translate the following Indonesian text to English. Maintain professional tech portfolio tone:\n\n{$textToTranslate}",
+                provider: Lab::Groq,
+            );
+
+            $translatedText = (string) $response;
+
+            // Parse translated content
+            if (preg_match('/TITLE:\s*(.+?)(?=\n\n|DESCRIPTION:|CONTENT:|$)/s', $translatedText, $titleMatch)) {
+                $this->title = trim($titleMatch[1]);
+                // Update slug if it's a new project
+                if (! $this->projectId) {
+                    $this->slug = Str::slug($this->title);
+                }
+            }
+
+            if (preg_match('/DESCRIPTION:\s*(.+?)(?=\n\n|TITLE:|CONTENT:|$)/s', $translatedText, $descMatch)) {
+                $this->description = trim($descMatch[1]);
+            }
+
+            if (preg_match('/CONTENT:\s*(.+?)(?=\n\n|TITLE:|DESCRIPTION:|$)/s', $translatedText, $contentMatch)) {
+                $translatedContent = trim($contentMatch[1]);
+                // Convert plain text back to simple HTML paragraphs
+                $paragraphs = explode("\n\n", $translatedContent);
+                $htmlParagraphs = array_map(fn ($p) => '<p>'.trim($p).'</p>', array_filter($paragraphs));
+                $this->content = implode("\n", $htmlParagraphs);
+            }
+
+            $this->dispatch('notify', type: 'success', message: 'Content translated to English successfully!');
+        } catch (\Throwable $e) {
+            $this->dispatch('notify', type: 'error', message: 'Translation failed: '.$e->getMessage());
+        } finally {
+            $this->isTranslating = false;
+        }
     }
 
     public function render()

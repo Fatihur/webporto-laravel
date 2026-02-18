@@ -260,11 +260,45 @@
                             {{ $projectId ? 'Update Project' : 'Create Project' }}
                         </button>
 
+                        <!-- Translate Button -->
+                        <button type="button"
+                                wire:click="translateToEnglish"
+                                wire:loading.attr="disabled"
+                                wire:target="translateToEnglish"
+                                class="w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 wire:loading.remove
+                                 wire:target="translateToEnglish">
+                                <path d="m5 8 6 6"/>
+                                <path d="m4 14 6-6 2-3"/>
+                                <path d="M2 5h12"/>
+                                <path d="M7 2h1"/>
+                                <path d="m22 22-5-10-5 10"/>
+                                <path d="M14 18h6"/>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="animate-spin"
+                                 wire:loading
+                                 wire:target="translateToEnglish">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                            <span wire:loading.remove wire:target="translateToEnglish">Translate to English</span>
+                            <span wire:loading wire:target="translateToEnglish">Translating...</span>
+                        </button>
+
                         <a href="{{ route('admin.projects.index') }}" wire:navigate
                            class="w-full px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:border-zinc-400 transition-colors flex items-center justify-center">
                             Cancel
                         </a>
                     </div>
+
+                    <p class="text-xs text-zinc-500 mt-3 text-center">
+                        Translate title, description, and content to English using AI
+                    </p>
                 </div>
 
                 <!-- Category & Date -->
