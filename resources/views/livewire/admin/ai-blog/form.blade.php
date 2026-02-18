@@ -52,6 +52,25 @@
                             @error('content_prompt')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
+
+                        <!-- Content Angles -->
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Content Angles (Pilih Minimal 1)</label>
+                            <p class="text-xs text-zinc-500 mb-3">Sistem akan rotate angle untuk setiap artikel agar variatif.</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                @foreach($availableContentAngles as $key => $label)
+                                    <label class="flex items-center gap-2 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors {{ in_array($key, $content_angles) ? 'bg-mint/10 border-mint dark:bg-mint/10 dark:border-mint' : '' }}">
+                                        <input type="checkbox" wire:model="content_angles" value="{{ $key }}"
+                                               class="w-4 h-4 rounded border-zinc-300 text-mint focus:ring-mint">
+                                        <span class="text-sm">{{ $label }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('content_angles')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            @error('content_angles.*')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
                 </div>
 

@@ -5,15 +5,15 @@ namespace App\Models;
 use App\Events\ContentPublished;
 use App\Jobs\GenerateSitemap;
 use App\Traits\CacheInvalidatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Searchable;
 
 class Project extends Model
 {
-    use HasFactory, CacheInvalidatable, Searchable;
+    use CacheInvalidatable, HasFactory, Searchable;
 
     protected $fillable = [
         'title',
@@ -90,16 +90,16 @@ class Project extends Model
         // Clear all category caches
         $categories = ['graphic-design', 'software-dev', 'data-analysis', 'networking'];
         foreach ($categories as $category) {
-            Cache::forget('projects.category.' . $category);
+            Cache::forget('projects.category.'.$category);
         }
         Cache::forget('projects.category.all');
 
         // Clear specific project cache if exists
-        Cache::forget('project.' . $this->slug);
+        Cache::forget('project.'.$this->slug);
 
         // Clear related projects cache
         if ($this->category) {
-            Cache::forget('projects.related.' . $this->category);
+            Cache::forget('projects.related.'.$this->category);
         }
     }
 
@@ -157,11 +157,13 @@ class Project extends Model
 
         static::saved(function () {
             // Regenerate sitemap when project is saved/updated
-            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+            // Commented out - spatie/laravel-sitemap not installed on Hostinger
+            // GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
         });
 
         static::deleted(function () {
-            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+            // Commented out - spatie/laravel-sitemap not installed on Hostinger
+            // GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
         });
     }
 }

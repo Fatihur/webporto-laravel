@@ -34,10 +34,14 @@ class Form extends Component
 
     public ?string $image_url = null;
 
+    public array $content_angles = ['tutorial'];
+
     // Options
     public array $categories = [];
 
     public array $frequencies = [];
+
+    public array $availableContentAngles = [];
 
     // Test prompt properties
     public bool $showTestModal = false;
@@ -54,6 +58,8 @@ class Form extends Component
             'name' => 'required|min:3|max:255',
             'topic_prompt' => 'required|min:10',
             'content_prompt' => 'required|min:10',
+            'content_angles' => 'required|array|min:1',
+            'content_angles.*' => 'in:'.implode(',', array_keys(AiBlogAutomation::getContentAngles())),
             'category' => 'required|in:design,technology,tutorial,insights',
             'frequency' => 'required|in:daily,weekly,monthly,custom',
             'scheduled_at' => 'required|date_format:H:i',
@@ -69,6 +75,7 @@ class Form extends Component
         $this->automationId = $id;
         $this->categories = AiBlogAutomation::getCategories();
         $this->frequencies = AiBlogAutomation::getFrequencies();
+        $this->availableContentAngles = AiBlogAutomation::getContentAngles();
 
         if ($id) {
             $automation = AiBlogAutomation::find($id);
@@ -76,6 +83,7 @@ class Form extends Component
                 $this->name = $automation->name;
                 $this->topic_prompt = $automation->topic_prompt;
                 $this->content_prompt = $automation->content_prompt;
+                $this->content_angles = $automation->content_angles ?? ['tutorial'];
                 $this->category = $automation->category;
                 $this->image_url = $automation->image_url;
                 $this->frequency = $automation->frequency;
@@ -95,6 +103,7 @@ class Form extends Component
             'name' => $this->name,
             'topic_prompt' => $this->topic_prompt,
             'content_prompt' => $this->content_prompt,
+            'content_angles' => $this->content_angles,
             'category' => $this->category,
             'image_url' => $this->image_url ?: null,
             'frequency' => $this->frequency,
@@ -148,10 +157,17 @@ class Form extends Component
         try {
             $agent = app(BlogWriterAgent::class);
 
+            // Use first selected content angle for testing
+            $testAngle = $this->content_angles[0] ?? 'tutorial';
+            $targetAudience = (new AiBlogAutomation)->getTargetAudienceForAngle($testAngle);
+
             $result = $agent->generateArticle(
                 topicPrompt: $this->topic_prompt,
                 contentPrompt: $this->content_prompt ?: 'Write an engaging article in Indonesian language.',
-                category: $this->category
+                category: $this->category,
+                contentAngle: $testAngle,
+                targetAudience: $targetAudience,
+                history: []
             );
 
             $this->testResult = $result;

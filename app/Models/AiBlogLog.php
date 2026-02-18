@@ -16,6 +16,7 @@ class AiBlogLog extends Model
         'blog_id',
         'status',
         'generated_title',
+        'content_angle',
         'error_message',
         'started_at',
         'completed_at',
@@ -90,11 +91,12 @@ class AiBlogLog extends Model
     /**
      * Mark this log as successful.
      */
-    public function markAsSuccess(Blog $blog, string $title): void
+    public function markAsSuccess(Blog $blog, string $title, ?string $contentAngle = null): void
     {
         $this->status = 'success';
         $this->blog_id = $blog->id;
         $this->generated_title = $title;
+        $this->content_angle = $contentAngle;
         $this->completed_at = now();
         $this->save();
     }

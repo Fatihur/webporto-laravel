@@ -44,7 +44,7 @@
     }"
      x-init="$wire.on('chat-updated', () => {
          $nextTick(() => scrollToBottom());
-     })"
+     });"
 >
     {{-- Chat Toggle Button --}}
     <button
@@ -104,9 +104,23 @@
             </div>
         </div>
 
+        {{-- Large Hi Animation (Above Messages) --}}
+        @if(empty($chatHistory) || count($chatHistory) <= 1)
+            <div class="flex justify-center pt-6 pb-2 bg-gradient-to-b from-mint/5 to-transparent">
+                <div class="w-40 h-40">
+                    <lottie-player
+                        src="{{ asset('hi.json') }}"
+                        background="transparent"
+                        speed="1"
+                        loop
+                        autoplay>
+                    </lottie-player>
+                </div>
+            </div>
+        @endif
+
         {{-- Messages Area --}}
         <div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar" id="chat-messages">
-            {{-- Server Messages --}}
             @foreach ($chatHistory as $index => $msg)
                 @if ($msg['role'] === 'user')
                     {{-- User Message --}}
@@ -171,10 +185,14 @@
             <div x-show="isThinking" x-transition class="flex justify-start">
                 <div class="max-w-[85%] bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3">
                     <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-1">
-                            <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0s;"></span>
-                            <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.15s;"></span>
-                            <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.3s;"></span>
+                        <div class="w-16 h-16">
+                            <lottie-player
+                                src="{{ asset('thinking.json') }}"
+                                background="transparent"
+                                speed="1"
+                                loop
+                                autoplay>
+                            </lottie-player>
                         </div>
                         <span class="text-xs text-zinc-500 dark:text-zinc-400">Fay sedang berpikir...</span>
                     </div>
@@ -186,10 +204,14 @@
                 <div class="flex justify-start" wire:key="thinking-server">
                     <div class="max-w-[85%] bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3">
                         <div class="flex items-center gap-3">
-                            <div class="flex items-center gap-1">
-                                <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0s;"></span>
-                                <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.15s;"></span>
-                                <span class="w-2 h-2 bg-mint rounded-full animate-pulse" style="animation-delay: 0.3s;"></span>
+                            <div class="w-16 h-16">
+                                <lottie-player
+                                    src="{{ asset('thinking.json') }}"
+                                    background="transparent"
+                                    speed="1"
+                                    loop
+                                    autoplay>
+                                </lottie-player>
                             </div>
                             <span class="text-xs text-zinc-500 dark:text-zinc-400">Fay sedang berpikir...</span>
                         </div>
@@ -224,4 +246,7 @@
             </form>
         </div>
     </div>
+
+    {{-- Lottie Player Script --}}
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </div>

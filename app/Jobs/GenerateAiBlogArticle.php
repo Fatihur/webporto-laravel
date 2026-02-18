@@ -40,11 +40,21 @@ class GenerateAiBlogArticle implements ShouldQueue
         try {
             DB::beginTransaction();
 
-            // Generate article using AI
+            // Get content angle rotation
+            $contentAngle = $this->automation->getNextContentAngle();
+            $targetAudience = $this->automation->getTargetAudienceForAngle($contentAngle);
+
+            // Get history of previously written articles for this automation
+            $history = $this->getArticleHistory();
+
+            // Generate article using AI with history-aware and angle rotation
             $articleData = $agent->generateArticle(
                 topicPrompt: $this->automation->topic_prompt,
                 contentPrompt: $this->automation->content_prompt,
-                category: $this->automation->category
+                category: $this->automation->category,
+                contentAngle: $contentAngle,
+                targetAudience: $targetAudience,
+                history: $history
             );
 
             // Generate unique slug
@@ -72,11 +82,12 @@ class GenerateAiBlogArticle implements ShouldQueue
                 'meta_keywords' => $this->generateKeywords($articleData['title'], $this->automation->category),
             ]);
 
-            // Update log as successful
-            $log->markAsSuccess($blog, $articleData['title']);
+            // Update log as successful with content angle info
+            $log->markAsSuccess($blog, $articleData['title'], $contentAngle);
 
-            // Update automation run times
+            // Update automation run times and mark angle as used
             $this->automation->updateNextRun();
+            $this->automation->markAngleAsUsed($contentAngle);
 
             DB::commit();
 
@@ -182,5 +193,22 @@ class GenerateAiBlogArticle implements ShouldQueue
         $categoryKeyword = $categoryKeywords[$category] ?? $category;
 
         return $titleWords.', '.$categoryKeyword;
+    }
+
+    /**
+     * Get history of previously generated articles for this automation.
+     *
+     * @return array<int, string>
+     */
+    private function getArticleHistory(): array
+    {
+        // Get successful article titles from this automation (last 20)
+        return AiBlogLog::where('ai_blog_automation_id', $this->automation->id)
+            ->where('status', 'success')
+            ->whereNotNull('generated_title')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->pluck('generated_title')
+            ->toArray();
     }
 }

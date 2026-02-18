@@ -168,13 +168,15 @@ class Blog extends Model
 
         static::saved(function ($blog) {
             // Regenerate sitemap when blog is published/updated
-            if ($blog->is_published) {
-                GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
-            }
+            // Commented out - spatie/laravel-sitemap not installed on Hostinger
+            // if ($blog->is_published) {
+            //     GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+            // }
         });
 
         static::deleted(function () {
-            GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
+            // Commented out - spatie/laravel-sitemap not installed on Hostinger
+            // GenerateSitemap::dispatch()->delay(now()->addSeconds(5));
         });
     }
 }
