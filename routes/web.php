@@ -127,6 +127,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/create', AiBlogForm::class)->name('create');
         Route::get('/{id}/edit', AiBlogForm::class)->name('edit');
         Route::get('/logs', AiBlogLogs::class)->name('logs');
+    });
+
+    // AI Knowledge Base
+    Route::prefix('knowledge')->name('admin.knowledge.')->group(function () {
+        Route::get('/', \App\Livewire\Admin\Knowledge\Index::class)->name('index');
+        Route::get('/create', \App\Livewire\Admin\Knowledge\Form::class)->name('create');
+        Route::get('/{id}/edit', \App\Livewire\Admin\Knowledge\Form::class)->name('edit');
         Route::get('/dashboard', AiBlogDashboard::class)->name('dashboard');
     });
 

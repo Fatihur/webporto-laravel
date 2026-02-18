@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Ai\Agents\PortfolioAssistant;
+use App\Services\UserContextService;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Throwable;
@@ -21,10 +22,20 @@ class AIChatWidget extends Component
 
     public ?string $conversationId = null;
 
+    public array $userContexts = [];
+
+    protected UserContextService $contextService;
+
+    public function boot(): void
+    {
+        $this->contextService = new UserContextService;
+    }
+
     public function mount(): void
     {
         $this->conversationId = Session::get('ai_conversation_id');
         $this->chatHistory = Session::get('ai_chat_history', []);
+        $this->loadUserContexts();
 
         // Add welcome message if no history
         if (empty($this->chatHistory)) {
@@ -35,6 +46,14 @@ class AIChatWidget extends Component
             ];
             $this->saveChatHistory();
         }
+    }
+
+    /**
+     * Load user contexts for display in UI
+     */
+    private function loadUserContexts(): void
+    {
+        $this->userContexts = $this->contextService->getAll();
     }
 
     public function toggle(): void
@@ -63,7 +82,11 @@ class AIChatWidget extends Component
             return;
         }
 
-        // Add user message to history (tambahkan lagi untuk sinkronisasi)
+        // Extract context from user message (ISOLATED per session)
+        $this->contextService->extractFromMessage($userMessage);
+        $this->loadUserContexts(); // Refresh UI
+
+        // Add user message to history
         $this->chatHistory[] = [
             'role' => 'user',
             'content' => $userMessage,
@@ -84,7 +107,9 @@ class AIChatWidget extends Component
                 $agent = $agent->continue($this->conversationId);
             }
 
-            $response = $agent->prompt($userMessage);
+            // Build prompt with context (ISOLATED)
+            $promptWithContext = $this->buildPromptWithContext($userMessage);
+            $response = $agent->prompt($promptWithContext);
 
             // Save conversation ID for continuity
             if ($response->conversationId) {
@@ -113,6 +138,20 @@ class AIChatWidget extends Component
 
         // Dispatch event untuk scroll ke bawah setelah response
         $this->dispatch('chat-updated');
+    }
+
+    /**
+     * Build prompt with user context (ISOLATED per session)
+     */
+    private function buildPromptWithContext(string $message): string
+    {
+        $context = $this->contextService->getForAiPrompt();
+
+        if (empty($context)) {
+            return $message;
+        }
+
+        return $context."\n\nPertanyaan user: ".$message;
     }
 
     /**
@@ -192,12 +231,20 @@ class AIChatWidget extends Component
         return "Maaf, layanan AI sedang sementara tidak tersedia. Silakan coba lagi nanti atau hubungi Fatih langsung melalui halaman Contact.\n\nAnda bisa bertanya tentang:\n• Project portfolio\n• Blog/artikel\n• Pengalaman kerja\n• Cara menghubungi Fatih";
     }
 
+    /**
+     * Clear chat history AND user context (full reset)
+     */
     public function clearChat(): void
     {
         $this->chatHistory = [];
         $this->conversationId = null;
+        $this->userContexts = [];
+
         Session::forget('ai_conversation_id');
         Session::forget('ai_chat_history');
+
+        // Clear isolated context for this session only
+        $this->contextService->clearAll();
 
         // Add welcome message
         $this->chatHistory[] = [
@@ -206,6 +253,31 @@ class AIChatWidget extends Component
             'timestamp' => now()->toIso8601String(),
         ];
         $this->saveChatHistory();
+    }
+
+    /**
+     * Clear only user context (keep chat history)
+     */
+    public function clearContext(): void
+    {
+        $this->contextService->clearAll();
+        $this->userContexts = [];
+
+        $this->chatHistory[] = [
+            'role' => 'assistant',
+            'content' => 'Oke! Aku sudah lupa semua informasi tentang kamu. Kita mulai dari awal ya! 👋',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        $this->saveChatHistory();
+    }
+
+    /**
+     * Forget specific context type
+     */
+    public function forgetContext(string $type): void
+    {
+        $this->contextService->forget($type);
+        $this->loadUserContexts();
     }
 
     private function saveChatHistory(): void

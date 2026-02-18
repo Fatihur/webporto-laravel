@@ -91,6 +91,44 @@
                 </div>
             </div>
             <div class="flex items-center gap-1">
+                {{-- Context Menu Dropdown --}}
+                <div x-data="{ showContext: false }" class="relative">
+                    <button @click="showContext = !showContext" type="button"
+                            class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors {{ !empty($userContexts) ? 'text-mint' : '' }}"
+                            title="Your Info">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </button>
+
+                    {{-- Context Dropdown --}}
+                    <div x-show="showContext" @click.away="showContext = false"
+                         x-transition class="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 z-50"
+                         style="display: none;">
+                        <div class="p-3">
+                            <p class="text-xs font-semibold text-zinc-500 uppercase mb-2">Info Tersimpan</p>
+                            @if(!empty($userContexts))
+                                <div class="space-y-1.5">
+                                    @foreach($userContexts as $type => $value)
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="capitalize text-zinc-600 dark:text-zinc-400">{{ str_replace('_', ' ', $type) }}:</span>
+                                            <span class="font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[100px]" title="{{ $value }}">{{ $value }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-zinc-200 dark:border-zinc-700">
+                                    <button wire:click="clearContext" @click="showContext = false"
+                                            class="text-xs text-red-500 hover:text-red-600 w-full text-left">
+                                        Hapus Semua Info
+                                    </button>
+                                </div>
+                            @else
+                                <p class="text-xs text-zinc-400 italic">Belum ada info tersimpan</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <button wire:click="clearChat" type="button" class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors" title="Clear chat">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
