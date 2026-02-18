@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Data\CategoryData;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Navigation extends Component

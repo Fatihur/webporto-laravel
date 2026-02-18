@@ -1,7 +1,17 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800"
-    x-data="{ mobileMenuOpen: false, megaMenuOpen: false, searchOpen: false }"
-    x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false; searchOpen = false"
-    x-on:open-search.window="searchOpen = true"
+     x-data="{
+         mobileMenuOpen: false,
+         megaMenuOpen: false,
+         searchOpen: false,
+         currentPath: window.location.pathname,
+         isActive(path) {
+             if (path === '/') return this.currentPath === '/';
+             return this.currentPath.startsWith(path);
+         }
+     }"
+     x-init="document.addEventListener('livewire:navigated', () => { currentPath = window.location.pathname })"
+     x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false; searchOpen = false"
+     x-on:open-search.window="searchOpen = true"
 >
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
         <div class="flex items-center justify-between h-20">
@@ -13,14 +23,14 @@
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center gap-1">
-                <a href="{{ route('home') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">Home</a>
+                <a href="{{ route('home') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold transition-colors" x-bind:class="isActive('/') ? 'bg-mint/20 text-mint ring-1 ring-mint/50' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">Home</a>
 
                 <!-- Projects Mega Menu -->
                 <div class="relative">
                     <button
                         x-on:click="megaMenuOpen = !megaMenuOpen"
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                        x-bind:class="megaMenuOpen ? 'bg-zinc-100 dark:bg-zinc-900' : ''"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-colors"
+                        x-bind:class="isActive('/project') ? 'bg-mint/20 text-mint ring-1 ring-mint/50' : (megaMenuOpen ? 'bg-zinc-100 dark:bg-zinc-900' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900')"
                     >
                         Projects
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-200" x-bind:class="megaMenuOpen ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
@@ -51,8 +61,8 @@
                     </div>
                 </div>
 
-                <a href="{{ route('blog.index') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">Blog</a>
-                <a href="{{ route('contact.index') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">Contact</a>
+                <a href="{{ route('blog.index') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold transition-colors" x-bind:class="isActive('/blog') ? 'bg-mint/20 text-mint ring-1 ring-mint/50' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">Blog</a>
+                <a href="{{ route('contact.index') }}" wire:navigate class="px-5 py-2.5 rounded-full text-sm font-bold transition-colors" x-bind:class="isActive('/contact') ? 'bg-mint/20 text-mint ring-1 ring-mint/50' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">Contact</a>
             </div>
 
             <!-- Right Side -->
@@ -101,15 +111,15 @@
                     <div class="mb-8">
                         <p class="text-xs font-black uppercase tracking-widest text-zinc-400 mb-4 px-2">Navigation</p>
                         <div class="space-y-1">
-                            <a href="{{ route('home') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors font-bold">
+                            <a href="{{ route('home') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-bold" x-bind:class="isActive('/') ? 'bg-mint/20 text-mint' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                                 Home
                             </a>
-                            <a href="{{ route('blog.index') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors font-bold">
+                            <a href="{{ route('blog.index') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-bold" x-bind:class="isActive('/blog') ? 'bg-mint/20 text-mint' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
                                 Blog
                             </a>
-                            <a href="{{ route('contact.index') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors font-bold">
+                            <a href="{{ route('contact.index') }}" wire:navigate x-on:click="mobileMenuOpen = false" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-bold" x-bind:class="isActive('/contact') ? 'bg-mint/20 text-mint' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                 Contact
                             </a>

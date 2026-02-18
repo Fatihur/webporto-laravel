@@ -49,16 +49,23 @@
         <!-- Project Type Field -->
         <div>
             <label for="project_type" class="block text-sm font-bold mb-2">Project Type</label>
-            <select
-                id="project_type"
-                wire:model.live="project_type"
-                class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('project_type') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors appearance-none cursor-pointer text-base"
-            >
-                <option value="">Select project type</option>
-                @foreach($projectTypes as $typeKey => $typeValue)
-                    <option value="{{ $typeKey }}">{{ $typeValue }}</option>
-                @endforeach
-            </select>
+            <div class="relative">
+                <select
+                    id="project_type"
+                    wire:model.live="project_type"
+                    class="w-full px-4 md:px-5 py-3.5 md:py-4 rounded-xl md:rounded-2xl bg-zinc-50 dark:bg-zinc-900 border-2 {{ $errors->has('project_type') ? 'border-red-400 dark:border-red-800' : 'border-zinc-100 dark:border-zinc-800' }} focus:border-mint focus:outline-none transition-colors appearance-none cursor-pointer text-base pr-12"
+                >
+                    <option value="">Select project type</option>
+                    @foreach($projectTypes as $typeKey => $typeValue)
+                        <option value="{{ $typeKey }}">{{ $typeValue }}</option>
+                    @endforeach
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-500 dark:text-zinc-400">
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </div>
+            </div>
             @error('project_type')
                 <p class="mt-2 text-sm text-red-500 flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>

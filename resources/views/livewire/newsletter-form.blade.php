@@ -17,7 +17,7 @@
                     type="email"
                     wire:model="email"
                     placeholder="Enter your email"
-                    class="w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-800 border-0 rounded-xl text-sm focus:ring-2 focus:ring-mint"
+                    class="w-full px-4 py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:ring-2 focus:ring-mint focus:border-transparent"
                     required
                 >
                 @error('email')

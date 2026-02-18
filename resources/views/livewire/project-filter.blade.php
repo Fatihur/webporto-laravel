@@ -53,14 +53,14 @@
         <div class="flex flex-wrap gap-3">
             <button
                 wire:click="filterByCategory(null)"
-                class="px-5 py-2.5 rounded-full text-sm font-bold transition-all {{ $selectedCategory === null ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
+                class="px-5 py-2.5 rounded-full text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 {{ $selectedCategory === null ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
             >
                 All Projects
             </button>
             @foreach($categories as $cat)
                 <button
                     wire:click="filterByCategory('{{ $cat['id'] }}')"
-                    class="px-5 py-2.5 rounded-full text-sm font-bold transition-all {{ $selectedCategory === $cat['id'] ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
+                    class="px-5 py-2.5 rounded-full text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 {{ $selectedCategory === $cat['id'] ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
                 >
                     {{ $cat['name'] }}
                 </button>

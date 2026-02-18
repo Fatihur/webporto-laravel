@@ -13,7 +13,7 @@
         </div>
 
         <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center">
-            <p class="text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.4em] text-[10px] sm:text-[11px] mb-6 sm:mb-8">
+            <p class="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-[0.4em] text-[10px] sm:text-[11px] mb-6 sm:mb-8">
                 / welcome to my Portfolio
             </p>
 
@@ -21,19 +21,19 @@
                 Hi, I'm <span class="text-mint">Fatih</span>
             </h1>
 
-            <p class="text-lg sm:text-xl md:text-2xl font-semibold text-zinc-400 dark:text-zinc-500 mb-12 tracking-tight">
+            <p class="text-lg sm:text-xl md:text-2xl font-semibold text-zinc-500 dark:text-zinc-400 mb-12 tracking-tight">
                 Tech enthusiast
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-                <button class="group w-full sm:min-w-[200px] bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-8 py-4 rounded-full font-bold hover:scale-105 transition-all flex items-center justify-center gap-3">
+                <button class="group w-full sm:min-w-[200px] bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-8 py-4 rounded-full font-bold hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 flex items-center justify-center gap-3">
                     Download CV
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 </button>
                 <a
                     href="https://wa.me/6287758962661?text=Halo%20Fatih%2C%20saya%20tertarik%20dengan%20portfolio%20Anda.%20Boleh%20berdiskusi%3F"
                     target="_blank"
-                    class="w-full sm:min-w-[200px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all flex items-center justify-center gap-3"
+                    class="w-full sm:min-w-[200px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-mint dark:hover:border-mint transition-all flex items-center justify-center gap-3"
                 >
                     Let's Talk
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>

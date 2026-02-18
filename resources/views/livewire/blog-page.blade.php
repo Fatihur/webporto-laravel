@@ -46,14 +46,14 @@
             <div class="flex flex-wrap justify-center gap-2 mt-6">
                 <button
                     wire:click="$set('category', '')"
-                    class="px-4 py-2 rounded-full text-xs font-bold transition-all {{ $category === '' ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
+                    class="px-4 py-2 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 {{ $category === '' ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
                 >
                     All
                 </button>
                 @foreach($categories as $cat)
                     <button
                         wire:click="$set('category', '{{ $cat }}')"
-                        class="px-4 py-2 rounded-full text-xs font-bold transition-all {{ $category === $cat ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
+                        class="px-4 py-2 rounded-full text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 {{ $category === $cat ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800' }}"
                     >
                         {{ ucwords($cat) }}
                     </button>
