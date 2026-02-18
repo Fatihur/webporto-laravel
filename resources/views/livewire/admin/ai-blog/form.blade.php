@@ -1,5 +1,5 @@
 <div>
-    <div class="mb-8">
+    <div class="mb-6 sm:mb-8">
         <a href="{{ route('admin.ai-blog.index') }}" wire:navigate
            class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-mint transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -9,15 +9,15 @@
             </svg>
             Back to Automations
         </a>
-        <h1 class="text-3xl font-bold mt-4">{{ $automationId ? 'Edit Automation' : 'New Automation' }}</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold mt-4">{{ $automationId ? 'Edit Automation' : 'New Automation' }}</h1>
     </div>
 
-    <form wire:submit="save" class="space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <form wire:submit="save" class="space-y-4 sm:space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             <!-- Left Column - Main Configuration -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
                 <!-- Basic Info -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Configuration</h2>
 
                     <div class="space-y-4">
@@ -57,7 +57,7 @@
                         <div>
                             <label class="block text-sm font-bold mb-2">Content Angles (Pilih Minimal 1)</label>
                             <p class="text-xs text-zinc-500 mb-3">Sistem akan rotate angle untuk setiap artikel agar variatif.</p>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 @foreach($availableContentAngles as $key => $label)
                                     <label class="flex items-center gap-2 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors {{ in_array($key, $content_angles) ? 'bg-mint/10 border-mint dark:bg-mint/10 dark:border-mint' : '' }}">
                                         <input type="checkbox" wire:model="content_angles" value="{{ $key }}"
@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- Prompt Tips -->
-                <div class="bg-violet/10 dark:bg-violet/5 rounded-2xl border border-violet/20 p-6">
+                <div class="bg-violet/10 dark:bg-violet/5 rounded-xl sm:rounded-2xl border border-violet/20 p-4 sm:p-6">
                     <h3 class="text-sm font-bold text-violet mb-2 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -96,9 +96,9 @@
             </div>
 
             <!-- Right Column - Settings -->
-            <div class="space-y-6">
+            <div class="space-y-4 sm:space-y-6">
                 <!-- Actions -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Actions</h2>
 
                     <div class="space-y-3">
@@ -135,7 +135,7 @@
                 </div>
 
                 <!-- Schedule Settings -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Schedule</h2>
 
                     <div class="space-y-4">
@@ -173,7 +173,7 @@
                 </div>
 
                 <!-- Category & Publishing -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Publishing</h2>
 
                     <div class="space-y-4">
@@ -244,7 +244,7 @@
     <!-- Test Prompt Modal -->
     <div x-show="$wire.showTestModal"
          x-cloak
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+         class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50"
          wire:click.self="closeTestModal"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
@@ -252,7 +252,7 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
              x-transition:enter="transition ease-out duration-200"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
@@ -260,7 +260,7 @@
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95">
                 <!-- Modal Header -->
-                <div class="flex items-center justify-between p-6 border-b border-zinc-200 dark:border-zinc-800">
+                <div class="flex items-center justify-between p-4 sm:p-6 border-b border-zinc-200 dark:border-zinc-800">
                     <h3 class="text-xl font-bold">Test Prompt Result</h3>
                     <button type="button" wire:click="closeTestModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -271,7 +271,7 @@
                 </div>
 
                 <!-- Modal Content -->
-                <div class="p-6 overflow-y-auto flex-1">
+                <div class="p-4 sm:p-6 overflow-y-auto flex-1">
                     @if($isTesting)
                         <div class="flex flex-col items-center justify-center py-12" wire:key="testing-state">
                             <div class="w-12 h-12 border-4 border-violet/20 border-t-violet rounded-full animate-spin mb-4"></div>
@@ -299,7 +299,7 @@
                             </div>
 
                             <!-- Meta Info -->
-                            <div class="grid grid-cols-2 gap-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
                                 <div>
                                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Meta Title</label>
                                     <p class="text-sm mt-1">{{ $testResult['meta_title'] ?? '-' }}</p>
@@ -308,7 +308,7 @@
                                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Read Time</label>
                                     <p class="text-sm mt-1">{{ $testResult['estimated_read_time'] ?? '5' }} minutes</p>
                                 </div>
-                                <div class="col-span-2">
+                                <div class="sm:col-span-2">
                                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Meta Description</label>
                                     <p class="text-sm mt-1 text-zinc-600 dark:text-zinc-400">{{ $testResult['meta_description'] ?? '-' }}</p>
                                 </div>
@@ -352,12 +352,12 @@
                 </div>
 
                 <!-- Modal Footer -->
-                <div class="flex items-center justify-end gap-3 p-6 border-t border-zinc-200 dark:border-zinc-800">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 p-4 sm:p-6 border-t border-zinc-200 dark:border-zinc-800">
                     <button type="button" wire:click="closeTestModal" class="px-6 py-2 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:border-zinc-400 transition-colors">
                         Close
                     </button>
                     @if($testResult && !$isTesting)
-                        <div class="flex items-center gap-3" wire:key="footer-actions-{{ md5($testResult['title'] ?? 'empty') }}">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3" wire:key="footer-actions-{{ md5($testResult['title'] ?? 'empty') }}">
                             <button type="button" wire:click="testPrompt" class="px-6 py-2 bg-violet/10 text-violet rounded-xl font-bold hover:bg-violet/20 transition-colors">
                                 Regenerate
                             </button>

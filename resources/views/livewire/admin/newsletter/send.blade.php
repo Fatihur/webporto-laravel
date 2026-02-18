@@ -1,16 +1,16 @@
-<div class="p-6 max-w-4xl mx-auto" x-data="{ init() { $wire.testEmail = '{{ auth()?->user()?->email ?? '' }}' } }">
+<div class="p-4 sm:p-6 max-w-4xl mx-auto" x-data="{ init() { $wire.testEmail = '{{ auth()?->user()?->email ?? '' }}' } }">
     @php use Illuminate\Support\Str; @endphp
 
     {{-- Header --}}
-    <div class="flex items-center gap-4 mb-8">
-        <a href="{{ route('admin.newsletter.index') }}" wire:navigate class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 sm:mb-8">
+        <a href="{{ route('admin.newsletter.index') }}" wire:navigate class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors self-start">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m15 18-6-6 6-6"/>
             </svg>
         </a>
         <div>
-            <h1 class="text-2xl font-bold">Send Newsletter</h1>
-            <p class="text-zinc-500 mt-1">Compose and send newsletter to {{ number_format($activeSubscribersCount) }} active subscribers.</p>
+            <h1 class="text-xl sm:text-2xl font-bold">Send Newsletter</h1>
+            <p class="text-zinc-500 mt-1 text-sm sm:text-base">Compose and send newsletter to {{ number_format($activeSubscribersCount) }} active subscribers.</p>
         </div>
     </div>
 
@@ -28,8 +28,8 @@
     @endif
 
     {{-- Form --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700">
-        <div class="p-6 space-y-6">
+    <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800">
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {{-- Subject --}}
             <div>
                 <label class="block text-sm font-medium mb-2">Subject <span class="text-red-500">*</span></label>
@@ -120,7 +120,7 @@
         </div>
 
         {{-- Actions --}}
-        <div class="px-6 py-4 border-t border-zinc-200 dark:border-zinc-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="px-4 sm:px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
             <button
                 wire:click="togglePreview"
                 wire:loading.attr="disabled"
@@ -131,7 +131,7 @@
                 {{ $previewMode ? 'Hide Preview' : 'Show Preview' }}
             </button>
 
-            <div class="flex items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 @if($testMode)
                     <button
                         wire:click="sendTest"

@@ -1,5 +1,5 @@
 <div>
-    <div class="mb-8">
+    <div class="mb-6 sm:mb-8">
         <a href="{{ route('admin.experiences.index') }}" wire:navigate
            class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-mint transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -9,11 +9,11 @@
             </svg>
             Back to Experience
         </a>
-        <h1 class="text-3xl font-bold mt-4">{{ $experienceId ? 'Edit Experience' : 'Add Experience' }}</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold mt-4">{{ $experienceId ? 'Edit Experience' : 'Add Experience' }}</h1>
     </div>
 
     <form wire:submit="save" class="max-w-2xl">
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6 space-y-4 sm:space-y-6">
             <!-- Company -->
             <div>
                 <label class="block text-sm font-bold mb-2">Company</label>
@@ -45,7 +45,7 @@
             </div>
 
             <!-- Dates -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold mb-2">Start Date</label>
                     <input type="date" wire:model="start_date"
@@ -82,9 +82,9 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                 <button type="submit"
-                        class="px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2">
+                        class="w-full sm:w-auto px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
@@ -95,7 +95,7 @@
                 </button>
 
                 <a href="{{ route('admin.experiences.index') }}" wire:navigate
-                   class="px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:border-zinc-400 transition-colors">
+                   class="w-full sm:w-auto px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:border-zinc-400 transition-colors flex items-center justify-center">
                     Cancel
                 </a>
             </div>

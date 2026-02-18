@@ -1,14 +1,14 @@
 <div>
     <!-- Page Title -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold">Dashboard</h1>
-        <p class="text-zinc-500 mt-1">Welcome back! Here's what's happening with your portfolio.</p>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+        <p class="text-zinc-500 mt-1 text-sm sm:text-base">Welcome back! Here's what's happening with your portfolio.</p>
     </div>
 
     <!-- Skeleton Loading -->
-    <div wire:loading.delay class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div wire:loading.delay class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
         @for($i = 0; $i < 4; $i++)
-            <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+            <div class="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800">
                 <div class="flex items-center justify-between">
                     <div class="space-y-2">
                         <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
@@ -21,9 +21,9 @@
     </div>
 
     <!-- Stats Grid -->
-    <div wire:loading.remove class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div wire:loading.remove class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
         <!-- Projects -->
-        <a href="{{ route('admin.projects.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-mint transition-colors">
+        <a href="{{ route('admin.projects.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-mint transition-colors">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-zinc-500 mb-1">Projects</p>
@@ -39,7 +39,7 @@
         </a>
 
         <!-- Blog Posts -->
-        <a href="{{ route('admin.blogs.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-violet transition-colors">
+        <a href="{{ route('admin.blogs.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-violet transition-colors">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-zinc-500 mb-1">Blog Posts</p>
@@ -57,7 +57,7 @@
         </a>
 
         <!-- Contacts -->
-        <a href="{{ route('admin.contacts.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-lime transition-colors">
+        <a href="{{ route('admin.contacts.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-lime transition-colors">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-zinc-500 mb-1">Messages</p>
@@ -76,7 +76,7 @@
         </a>
 
         <!-- Experience -->
-        <a href="{{ route('admin.experiences.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 transition-colors">
+        <a href="{{ route('admin.experiences.index') }}" wire:navigate class="bg-white dark:bg-zinc-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 transition-colors">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-zinc-500 mb-1">Experience</p>
@@ -95,10 +95,10 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
         <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
-        <div class="flex flex-wrap gap-4">
-            <a href="{{ route('admin.projects.create') }}" wire:navigate class="inline-flex items-center gap-2 px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform">
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+            <a href="{{ route('admin.projects.create') }}" wire:navigate class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform text-sm sm:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14"/>
                     <path d="M12 5v14"/>
@@ -106,7 +106,7 @@
                 New Project
             </a>
 
-            <a href="{{ route('admin.blogs.create') }}" wire:navigate class="inline-flex items-center gap-2 px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+            <a href="{{ route('admin.blogs.create') }}" wire:navigate class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-sm sm:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14"/>
                     <path d="M12 5v14"/>
@@ -114,7 +114,7 @@
                 New Blog Post
             </a>
 
-            <a href="{{ route('admin.experiences.create') }}" wire:navigate class="inline-flex items-center gap-2 px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+            <a href="{{ route('admin.experiences.create') }}" wire:navigate class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-sm sm:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14"/>
                     <path d="M12 5v14"/>

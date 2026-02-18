@@ -20,7 +20,7 @@
                 <!-- Dashboard -->
                 <a href="{{ route('admin.dashboard') }}"
                    wire:navigate
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
+                   class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-colors min-h-[44px] {{ request()->routeIs('admin.dashboard') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="7" height="9" x="3" y="3" rx="1"/>
@@ -156,24 +156,24 @@
         <!-- Bottom Actions -->
         <div class="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
             <!-- Back to Site -->
-            <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+            <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors touch-manipulation">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
-                View Website
+                <span class="text-sm font-medium">View Website</span>
             </a>
 
             <!-- Logout -->
             <form action="{{ route('admin.logout') }}" method="POST" class="block">
                 @csrf
-                <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                <button type="submit" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors touch-manipulation">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                         <polyline points="16 17 21 12 16 7"/>
                         <line x1="21" x2="9" y1="12" y2="12"/>
                     </svg>
-                    Logout
+                    <span class="text-sm font-medium">Logout</span>
                 </button>
             </form>
         </div>

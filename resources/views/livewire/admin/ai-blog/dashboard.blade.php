@@ -1,9 +1,9 @@
 <div>
     <!-- Page Title -->
-    <div class="flex items-center justify-between mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-bold">AI Blog Dashboard</h1>
-            <p class="text-zinc-500 mt-1">Overview of AI blog automation</p>
+            <h1 class="text-2xl sm:text-3xl font-bold">AI Blog Dashboard</h1>
+            <p class="text-zinc-500 mt-1 text-sm sm:text-base">Overview of AI blog automation</p>
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.ai-blog.logs') }}" wire:navigate
@@ -19,93 +19,94 @@
                 View Logs
             </a>
             <a href="{{ route('admin.ai-blog.create') }}" wire:navigate
-               class="inline-flex items-center gap-2 px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform">
+               class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-xl font-bold hover:scale-105 transition-transform text-sm sm:text-base">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14"/>
                     <path d="M12 5v14"/>
                 </svg>
-                New Automation
+                <span class="hidden sm:inline">New Automation</span>
+                <span class="sm:hidden">New</span>
             </a>
         </div>
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
         <!-- Total Automations -->
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-violet/10 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" class="text-violet">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-violet/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" class="text-violet sm:w-6 sm:h-6">
                         <path d="M12 3v18"/>
                         <path d="M3 12h18"/>
                         <path d="m19 5-7 7-7-7"/>
                         <path d="m19 19-7-7-7 7"/>
                     </svg>
                 </div>
-                <span class="text-2xl font-bold">{{ $stats['total_automations'] }}</span>
+                <span class="text-xl sm:text-2xl font-bold">{{ $stats['total_automations'] }}</span>
             </div>
-            <p class="text-sm text-zinc-500">Total Automations</p>
+            <p class="text-xs sm:text-sm text-zinc-500">Total Automations</p>
         </div>
 
         <!-- Active Automations -->
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" class="text-green-600">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" class="text-green-600 sm:w-6 sm:h-6">
                         <circle cx="12" cy="12" r="10"/>
                         <path d="m9 12 2 2 4-4"/>
                     </svg>
                 </div>
-                <span class="text-2xl font-bold">{{ $stats['active_automations'] }}</span>
+                <span class="text-xl sm:text-2xl font-bold">{{ $stats['active_automations'] }}</span>
             </div>
-            <p class="text-sm text-zinc-500">Active Automations</p>
+            <p class="text-xs sm:text-sm text-zinc-500">Active Automations</p>
         </div>
 
         <!-- Total Generated -->
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-mint/10 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" class="text-mint">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-mint/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" class="text-mint sm:w-6 sm:h-6">
                         <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z"/>
                         <path d="M18 14h-8"/>
                         <path d="M15 18h-5"/>
                         <path d="M10 6h8v4h-8V6Z"/>
                     </svg>
                 </div>
-                <span class="text-2xl font-bold">{{ $stats['total_generated'] }}</span>
+                <span class="text-xl sm:text-2xl font-bold">{{ $stats['total_generated'] }}</span>
             </div>
-            <p class="text-sm text-zinc-500">Articles Generated</p>
+            <p class="text-xs sm:text-sm text-zinc-500">Articles Generated</p>
         </div>
 
         <!-- Today's Generated -->
-        <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" class="text-blue-600">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" class="text-blue-600 sm:w-6 sm:h-6">
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
                 </div>
-                <span class="text-2xl font-bold">{{ $stats['today_generated'] }}</span>
+                <span class="text-xl sm:text-2xl font-bold">{{ $stats['today_generated'] }}</span>
             </div>
-            <p class="text-sm text-zinc-500">Generated Today</p>
+            <p class="text-xs sm:text-sm text-zinc-500">Generated Today</p>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Daily Stats Chart -->
-        <div class="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-            <h2 class="text-lg font-bold mb-4">Last 7 Days Activity</h2>
+        <div class="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <h2 class="text-base sm:text-lg font-bold mb-4">Last 7 Days Activity</h2>
             <div class="space-y-3">
                 @foreach($dailyStats as $day)
-                    <div class="flex items-center gap-4">
-                        <div class="w-24 text-sm text-zinc-500">{{ $day['date'] }}</div>
-                        <div class="flex-1 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex">
+                    <div class="flex items-center gap-2 sm:gap-4">
+                        <div class="w-16 sm:w-24 text-xs sm:text-sm text-zinc-500 flex-shrink-0">{{ $day['date'] }}</div>
+                        <div class="flex-1 h-6 sm:h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex">
                             @if($day['success'] > 0 || $day['failed'] > 0)
                                 @if($day['success'] > 0)
                                     <div class="h-full bg-mint flex items-center justify-center text-xs font-bold text-zinc-950"
@@ -139,10 +140,10 @@
         </div>
 
         <!-- Right Column -->
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
             <!-- Upcoming Runs -->
-            <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-                <h2 class="text-lg font-bold mb-4">Upcoming Runs</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+                <h2 class="text-base sm:text-lg font-bold mb-4">Upcoming Runs</h2>
                 @if(count($upcomingRuns) > 0)
                     <div class="space-y-3">
                         @foreach($upcomingRuns as $run)
@@ -166,8 +167,8 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
-                <h2 class="text-lg font-bold mb-4">Recent Activity</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+                <h2 class="text-base sm:text-lg font-bold mb-4">Recent Activity</h2>
                 @if(count($recentLogs) > 0)
                     <div class="space-y-3">
                         @foreach($recentLogs as $log)

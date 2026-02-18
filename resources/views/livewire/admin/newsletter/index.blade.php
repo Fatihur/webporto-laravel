@@ -147,19 +147,21 @@
 
     {{-- Bulk Actions Bar --}}
     @if(count($selected) > 0)
-        <div class="bg-mint/10 dark:bg-mint/20 border border-mint/30 rounded-xl p-4 mb-4 flex items-center justify-between">
-            <div class="flex items-center gap-4">
+        <div class="bg-mint/10 dark:bg-mint/20 border border-mint/30 rounded-xl p-4 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ count($selected) }} selected</span>
-                <select wire:model="bulkAction" class="px-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm focus:ring-2 focus:ring-mint">
-                    <option value="">Select Action</option>
-                    <option value="activate">Activate</option>
-                    <option value="deactivate">Deactivate</option>
-                    <option value="delete">Delete</option>
-                </select>
-                <button wire:click="executeBulkAction" wire:confirm="Are you sure you want to execute this action?"
-                        class="px-4 py-1.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
-                    Execute
-                </button>
+                <div class="flex items-center gap-2">
+                    <select wire:model="bulkAction" class="px-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm focus:ring-2 focus:ring-mint">
+                        <option value="">Select Action</option>
+                        <option value="activate">Activate</option>
+                        <option value="deactivate">Deactivate</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button wire:click="executeBulkAction" wire:confirm="Are you sure you want to execute this action?"
+                            class="px-4 py-1.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+                        Execute
+                    </button>
+                </div>
             </div>
             <button wire:click="$set('selected', [])" class="text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
                 Clear selection
@@ -193,8 +195,73 @@
         </div>
     </div>
 
+    {{-- Skeleton Loading - Desktop --}}
+    <div wire:loading.delay class="hidden md:block bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
+                <tr>
+                    <th class="px-4 py-4 text-left">
+                        <div class="w-4 h-4 rounded bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
+                    </th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase text-zinc-500">Email</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase text-zinc-500">Name</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase text-zinc-500">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-bold uppercase text-zinc-500">Subscribed</th>
+                    <th class="px-6 py-4 text-right text-xs font-bold uppercase text-zinc-500">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                @for($i = 0; $i < 5; $i++)
+                    <tr>
+                        <td class="px-4 py-4">
+                            <div class="w-4 h-4 rounded bg-zinc-200 dark:bg-zinc-700 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-40 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-24 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-5 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-16 ml-auto animate-pulse"></div>
+                        </td>
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Skeleton Loading - Mobile --}}
+    <div wire:loading.delay class="md:hidden space-y-3">
+        @for($i = 0; $i < 5; $i++)
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                <div class="flex items-start gap-3 mb-3">
+                    <div class="w-4 h-4 mt-1 rounded bg-zinc-200 dark:bg-zinc-700 animate-pulse flex-shrink-0"></div>
+                    <div class="flex-1 space-y-2 min-w-0">
+                        <div class="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4 animate-pulse"></div>
+                        <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-1/2 animate-pulse"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="h-5 bg-zinc-200 dark:bg-zinc-700 rounded w-16 animate-pulse"></div>
+                    <div class="h-3 bg-zinc-200 dark:bg-zinc-700 rounded w-20 animate-pulse"></div>
+                </div>
+                <div class="flex gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-700">
+                    <div class="w-9 h-9 bg-zinc-200 dark:bg-zinc-700 rounded-lg animate-pulse"></div>
+                    <div class="w-9 h-9 bg-zinc-200 dark:bg-zinc-700 rounded-lg animate-pulse"></div>
+                </div>
+            </div>
+        @endfor
+    </div>
+
     {{-- Subscribers Table --}}
-    <div class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+    <div wire:loading.remove class="hidden md:block bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
@@ -317,6 +384,90 @@
         {{-- Pagination --}}
         @if($subscribers->hasPages())
             <div class="px-6 py-4 border-t border-zinc-200 dark:border-zinc-700">
+                {{ $subscribers->links() }}
+            </div>
+        @endif
+    </div>
+
+    {{-- Mobile Cards --}}
+    <div wire:loading.remove class="md:hidden space-y-3">
+        @forelse($subscribers as $subscriber)
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700" wire:key="mobile-{{ $subscriber->id }}">
+                {{-- Header: Email + Status --}}
+                <div class="flex items-start justify-between gap-3 mb-2">
+                    <div class="flex items-start gap-3 flex-1 min-w-0">
+                        <input type="checkbox" value="{{ $subscriber->id }}" wire:model.live="selected" class="mt-1 rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint flex-shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-medium text-sm line-clamp-1">{{ $subscriber->email }}</h3>
+                            @if($subscriber->name)
+                                <p class="text-xs text-zinc-500">{{ $subscriber->name }}</p>
+                            @endif
+                        </div>
+                    </div>
+                    @if($subscriber->isActive())
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-full flex-shrink-0">Active</span>
+                    @else
+                        <span class="px-2 py-0.5 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-full flex-shrink-0">Unsubscribed</span>
+                    @endif
+                </div>
+
+                {{-- Date --}}
+                <div class="text-xs text-zinc-500 mb-3 ml-7">
+                    {{ $subscriber->subscribed_at?->diffForHumans() ?? '-' }}
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-700 ml-7">
+                    <button
+                        wire:click="toggleStatus({{ $subscriber->id }})"
+                        class="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+                        title="{{ $subscriber->isActive() ? 'Unsubscribe' : 'Activate' }}"
+                    >
+                        @if($subscriber->isActive())
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <line x1="17" x2="22" y1="8" y2="13"/>
+                                <line x1="22" x2="17" y1="8" y2="13"/>
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <line x1="19" x2="19" y1="8" y2="14"/>
+                                <line x1="22" x2="16" y1="11" y2="11"/>
+                            </svg>
+                        @endif
+                    </button>
+
+                    <button
+                        wire:click="deleteSubscriber({{ $subscriber->id }})"
+                        wire:confirm="Are you sure you want to delete this subscriber?"
+                        class="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+                        title="Delete"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-12 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                <div class="text-zinc-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <p class="text-lg font-medium">No subscribers found</p>
+                    <p class="text-sm mt-1">Try adjusting your search or filters</p>
+                </div>
+            </div>
+        @endforelse
+
+        @if($subscribers->hasPages())
+            <div class="mt-4">
                 {{ $subscribers->links() }}
             </div>
         @endif

@@ -1,5 +1,5 @@
 <div>
-    <div class="mb-8">
+    <div class="mb-6 sm:mb-8">
         <a href="{{ route('admin.blogs.index') }}" wire:navigate
            class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-mint transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -9,8 +9,8 @@
             </svg>
             Back to Blog Posts
         </a>
-        <div class="flex items-center justify-between mt-4">
-            <h1 class="text-3xl font-bold">{{ $blogId ? 'Edit Blog Post' : 'New Blog Post' }}</h1>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
+            <h1 class="text-2xl sm:text-3xl font-bold">{{ $blogId ? 'Edit Blog Post' : 'New Blog Post' }}</h1>
 
             @if($blogId)
                 <a href="{{ route('blog.show', $slug) }}" target="_blank"
@@ -26,12 +26,12 @@
         </div>
     </div>
 
-    <form wire:submit="save" class="space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <form wire:submit="save" class="space-y-4 sm:space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             <!-- Left Column - Main Content -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
                 <!-- Basic Info -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Content</h2>
 
                     <div class="space-y-4">
@@ -134,9 +134,9 @@
             </div>
 
             <!-- Right Column - Settings -->
-            <div class="space-y-6">
+            <div class="space-y-4 sm:space-y-6">
                 <!-- Publish Actions -->
-                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
                     <h2 class="text-lg font-bold mb-4">Actions</h2>
 
                     <div class="space-y-3">
