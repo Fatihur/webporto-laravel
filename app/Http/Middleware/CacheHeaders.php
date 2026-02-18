@@ -17,10 +17,12 @@ class CacheHeaders
     {
         $response = $next($request);
 
-        // Skip for authenticated users and admin routes
-        if (auth()->check() || $request->is('admin/*')) {
+        // Skip for authenticated users, admin routes, and Livewire routes
+        if (auth()->check() || $request->is('admin/*') || $request->is('livewire*')) {
             $response->headers->set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
             $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('X-LiteSpeed-Cache-Control', 'no-cache');
+
             return $response;
         }
 
@@ -28,6 +30,7 @@ class CacheHeaders
         if ($request->is('build/*') || $request->is('storage/*')) {
             $response->headers->set('Cache-Control', 'public, max-age=31536000, immutable');
             $response->headers->set('Expires', now()->addYear()->toRfc7231String());
+
             return $response;
         }
 
@@ -38,6 +41,7 @@ class CacheHeaders
         if ($request->is('/') || $request->is('projects') || $request->is('projects/*') || $request->is('blog') || $request->is('blog/*') || $request->is('contact')) {
             $response->headers->set('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=3600');
             $response->headers->set('Vary', 'Accept-Encoding');
+
             return $response;
         }
 

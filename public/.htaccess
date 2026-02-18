@@ -13,6 +13,10 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # LiteSpeed Cache: Disable cache for Livewire routes
+    RewriteCond %{REQUEST_URI} ^/livewire [NC]
+    RewriteRule .* - [E=Cache-Control:no-cache,E=Pragma:no-cache]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -22,6 +26,14 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# LiteSpeed Cache: Disable cache for Livewire and admin routes
+<IfModule LiteSpeed>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} ^/livewire [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/admin [NC]
+    RewriteRule .* - [E=Cache-Control:no-cache]
 </IfModule>
 
 # Enable Compression

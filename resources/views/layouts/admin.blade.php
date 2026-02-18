@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.svg') }}">
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <meta name="theme-color" content="#76D7A4">
+    <meta name="litespeed-cache-control" content="no-cache">
 
     <title>@yield('title', 'Admin Dashboard') - {{ config('app.name') }}</title>
 
