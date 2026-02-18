@@ -1,25 +1,6 @@
-{{-- Touch-friendly styles for mobile game --}}
-<style>
-    .touch-manipulation {
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-    }
-    /* Prevent zoom on iOS input focus */
-    input[type="number"].touch-manipulation {
-        font-size: 16px;
-    }
-    /* Smooth transitions for buttons */
-    .touch-manipulation {
-        transition: transform 0.1s ease, background-color 0.2s ease, opacity 0.2s ease;
-    }
-    .touch-manipulation:active:not(:disabled) {
-        transform: scale(0.96);
-    }
-</style>
-
 <div class="fixed bottom-6 right-6 z-[9999]"
      x-data="{
-        open: @entangle('isOpen'),
+        isOpen: @entangle('isOpen'),
         inputMessage: '',
         tempMessages: [],
         isThinking: false,
@@ -97,25 +78,28 @@
             }
         }
     }"
-     x-init="
-         $wire.on('chat-updated', () => {
-             $nextTick(() => scrollToBottom());
-         });
-         $wire.on('game-ended', () => {
-             $nextTick(() => scrollToBottom());
-         });
-     "
+     x-init="$wire.on('chat-updated', () => { $nextTick(() => scrollToBottom()); });"
 >
+    {{-- Touch-friendly styles --}}
+    <style>
+        .touch-manipulation {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input[type="number"].touch-manipulation {
+            font-size: 16px;
+        }
+        .touch-manipulation {
+            transition: transform 0.1s ease, background-color 0.2s ease, opacity 0.2s ease;
+        }
+        .touch-manipulation:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+    </style>
     {{-- Chat Toggle Button --}}
     <button
-        x-show="!open"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-75"
-        x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-75"
-        wire:click="toggle"
+        x-show="!isOpen"
+        @click="isOpen = true"
         type="button"
         class="flex items-center justify-center w-12 h-12 bg-mint rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
         aria-label="Open chat assistant">
@@ -126,14 +110,14 @@
 
     {{-- Chat Window --}}
     <div
-        x-show="open"
+        x-show="isOpen"
         x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-        x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-        @click.away="$wire.close()"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-90"
+        @click.outside="isOpen = false"
         class="flex flex-col w-80 sm:w-96 h-[480px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden origin-bottom-right"
         style="display: none;"
     >
@@ -194,7 +178,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </button>
-                <button wire:click="close" type="button" class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <button @click="isOpen = false" type="button" class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
