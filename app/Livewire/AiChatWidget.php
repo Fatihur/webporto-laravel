@@ -24,6 +24,13 @@ class AIChatWidget extends Component
 
     public array $userContexts = [];
 
+    // Game State
+    public ?array $activeGame = null;
+
+    public int $gameScore = 0;
+
+    public int $gameStreak = 0;
+
     protected UserContextService $contextService;
 
     public function boot(): void
@@ -36,6 +43,11 @@ class AIChatWidget extends Component
         $this->conversationId = Session::get('ai_conversation_id');
         $this->chatHistory = Session::get('ai_chat_history', []);
         $this->loadUserContexts();
+
+        // Load game state
+        $this->activeGame = Session::get('ai_active_game');
+        $this->gameScore = Session::get('ai_game_score', 0);
+        $this->gameStreak = Session::get('ai_game_streak', 0);
 
         // Add welcome message if no history
         if (empty($this->chatHistory)) {
@@ -79,6 +91,27 @@ class AIChatWidget extends Component
         $userMessage = trim($message);
 
         if (empty($userMessage)) {
+            return;
+        }
+
+        // Handle stop game command FIRST (before treating as game answer)
+        $stopCommands = ['stop', 'stop game', 'end', 'end game', 'berhenti', 'keluar', 'quit', 'exit'];
+        if ($this->activeGame && in_array(strtolower($userMessage), $stopCommands)) {
+            // Add user message to history
+            $this->chatHistory[] = [
+                'role' => 'user',
+                'content' => $userMessage,
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->endGame();
+            return;
+        }
+
+        // Check if we're in active game mode (and not a game command)
+        if ($this->activeGame && !str_starts_with(strtolower($userMessage), 'game:')) {
+            // Handle as game answer
+            $this->handleGameAnswer($userMessage);
             return;
         }
 
@@ -161,8 +194,39 @@ class AIChatWidget extends Component
     {
         $lowerMessage = strtolower($message);
 
+        // Check for game commands
+        if (str_contains($lowerMessage, 'main game') || str_contains($lowerMessage, 'mulai game')) {
+            return "🎮 **Pilih Game:**\n\n[BUTTON:Math Quiz|game:math]\n[BUTTON:Teka-Teki|game:puzzle]\n[BUTTON:Tech Quiz|game:quiz]\n\nAtau ketik:\n• \"math\" - Quiz matematika\n• \"puzzle\" - Teka-teki logika\n• \"quiz\" - Quiz teknologi";
+        }
+
+        if (str_contains($lowerMessage, 'math') || str_contains($lowerMessage, 'matematika')) {
+            $this->startGame('math');
+
+            return "🧮 **Math Quiz dimulai!**\n\nScore: {$this->gameScore}\nStreak: {$this->gameStreak}\n\n".$this->activeGame['question']."\n\n[INPUT:number|game_answer]\n\n[BUTTON:Stop Game|game:end]";
+        }
+
+        if (str_contains($lowerMessage, 'puzzle') || str_contains($lowerMessage, 'teka-teki')) {
+            $this->startGame('puzzle');
+            $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+
+            return "🧩 **Teka-Teki dimulai!**\n\nScore: {$this->gameScore}\n\n".$this->activeGame['question']."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]";
+        }
+
+        if (str_contains($lowerMessage, 'quiz') && ! str_contains($lowerMessage, 'math')) {
+            $this->startGame('quiz');
+            $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+
+            return "📚 **Tech Quiz dimulai!**\n\nScore: {$this->gameScore}\n\n".$this->activeGame['question']."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]";
+        }
+
+        if (str_contains($lowerMessage, 'stop game') || str_contains($lowerMessage, 'end game')) {
+            $this->endGame();
+
+            return '';
+        }
+
         if (str_contains($lowerMessage, 'halo') || str_contains($lowerMessage, 'hi') || str_contains($lowerMessage, 'hello')) {
-            return "Halo! 👋 Aku Fay, asisten AI-nya Fatih. Saat ini layanan AI lagi gangguan nih, tapi tenang, aku masih bisa bantu dengan info dasar 😄\n\nMau tau tentang:\n• Project portfolio Fatih\n• Blog dan artikel\n• Pengalaman kerja\n• Cara hubungi Fatih";
+            return "Halo! 👋 Aku Fay, asisten AI-nya Fatih. Saat ini layanan AI lagi gangguan nih, tapi tenang, aku masih bisa bantu dengan info dasar 😄\n\nMau tau tentang:\n• Project portfolio Fatih\n• Blog dan artikel\n• Pengalaman kerja\n• Cara hubungi Fatih\n\nAtau mau main game? Ketik \"main game\"! 🎮";
         }
 
         if (str_contains($lowerMessage, 'project') || str_contains($lowerMessage, 'portfolio')) {
@@ -239,9 +303,15 @@ class AIChatWidget extends Component
         $this->chatHistory = [];
         $this->conversationId = null;
         $this->userContexts = [];
+        $this->activeGame = null;
+        $this->gameScore = 0;
+        $this->gameStreak = 0;
 
         Session::forget('ai_conversation_id');
         Session::forget('ai_chat_history');
+        Session::forget('ai_active_game');
+        Session::forget('ai_game_score');
+        Session::forget('ai_game_streak');
 
         // Clear isolated context for this session only
         $this->contextService->clearAll();
@@ -285,6 +355,335 @@ class AIChatWidget extends Component
         // Keep only last 20 messages to prevent session bloat
         $this->chatHistory = array_slice($this->chatHistory, -20);
         Session::put('ai_chat_history', $this->chatHistory);
+
+        // Save game state
+        Session::put('ai_active_game', $this->activeGame);
+        Session::put('ai_game_score', $this->gameScore);
+        Session::put('ai_game_streak', $this->gameStreak);
+    }
+
+    // ==========================================
+    // GAME METHODS
+    // ==========================================
+
+    /**
+     * Start a new game session
+     */
+    public function startGame(string $gameType): void
+    {
+        $this->activeGame = [
+            'type' => $gameType,
+            'question' => null,
+            'answer' => null,
+            'options' => null,
+            'startTime' => now()->timestamp,
+        ];
+
+        $welcomeMessages = [
+            'math' => '🧮 **Math Quiz dimulai!**\n\nJawab soal matematika secepat mungkin!\n+10 poin untuk setiap jawaban benar\n🔥 Streak bonus untuk jawaban berturut-turut!',
+            'puzzle' => '🧩 **Teka-Teki dimulai!**\n\nTebak teka-teki logika ini!\n+10 poin untuk setiap jawaban benar',
+            'quiz' => '📚 **Tech Quiz dimulai!**\n\nUji pengetahuan teknologimu!\n+10 poin untuk setiap jawaban benar',
+        ];
+
+        // Send game welcome message
+        $this->chatHistory[] = [
+            'role' => 'assistant',
+            'content' => $welcomeMessages[$gameType] ?? '🎮 Game dimulai!',
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        switch ($gameType) {
+            case 'math':
+                $this->generateMathQuestion();
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => "Score: {$this->gameScore}\nStreak: {$this->gameStreak}\n\n".$this->activeGame['question']."\n\n[INPUT:number|game_answer]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+            case 'puzzle':
+                $this->generatePuzzleQuestion();
+                $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => "Score: {$this->gameScore}\n\n".$this->activeGame['question']."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+            case 'quiz':
+                $this->generateQuizQuestion();
+                $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => "Score: {$this->gameScore}\n\n".$this->activeGame['question']."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+        }
+
+        $this->saveChatHistory();
+        $this->dispatch('chat-updated');
+    }
+
+    /**
+     * Submit answer for active game
+     */
+    public function submitGameAnswer($answer): void
+    {
+        if (! $this->activeGame) {
+            return;
+        }
+
+        $isCorrect = $answer == $this->activeGame['answer'];
+
+        if ($isCorrect) {
+            $this->gameScore += 10;
+            $this->gameStreak++;
+            $bonus = $this->gameStreak >= 3 ? ' 🔥 Streak x'.$this->gameStreak.'!' : '';
+            $response = '🎉 Betul! +10 poin'.$bonus;
+        } else {
+            $this->gameStreak = 0;
+            $correctAnswer = $this->activeGame['answer'];
+            $response = '❌ Salah! Jawaban yang benar: '.$correctAnswer;
+        }
+
+        $this->chatHistory[] = [
+            'role' => 'assistant',
+            'content' => $response,
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        // Generate next question
+        switch ($this->activeGame['type']) {
+            case 'math':
+                $this->generateMathQuestion();
+                $mathQuestion = "🧮 **Math Quiz**\n\nScore: {$this->gameScore}\nStreak: {$this->gameStreak}\n\n".$this->activeGame['question'];
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => $mathQuestion."\n\n[INPUT:number|game_answer]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+            case 'puzzle':
+                $this->generatePuzzleQuestion();
+                $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+                $puzzleQuestion = "🧩 **Teka-Teki**\n\nScore: {$this->gameScore}\n\n".$this->activeGame['question'];
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => $puzzleQuestion."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+            case 'quiz':
+                $this->generateQuizQuestion();
+                $optionsText = implode("\n", array_map(fn ($i, $opt) => ($i + 1).'. '.$opt, array_keys($this->activeGame['options']), $this->activeGame['options']));
+                $quizQuestion = "📚 **Tech Quiz**\n\nScore: {$this->gameScore}\n\n".$this->activeGame['question'];
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => $quizQuestion."\n\n".$optionsText."\n\n[SELECT:game_answer|".implode(',', $this->activeGame['options'])."]\n\n[BUTTON:Stop Game|game:end]",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                break;
+        }
+
+        $this->saveChatHistory();
+        $this->dispatch('chat-updated');
+    }
+
+    /**
+     * End current game session
+     */
+    public function endGame(): void
+    {
+        if ($this->activeGame) {
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => '🏁 Game selesai!\nFinal Score: '.$this->gameScore.'\nThanks for playing! 🎮',
+                'timestamp' => now()->toIso8601String(),
+            ];
+        }
+
+        $this->activeGame = null;
+        $this->gameScore = 0;
+        $this->gameStreak = 0;
+        $this->saveChatHistory();
+        $this->dispatch('chat-updated');
+    }
+
+    /**
+     * Handle text message as potential game answer
+     */
+    private function handleGameAnswer(string $message): void
+    {
+        // Try to parse as number for math game
+        if ($this->activeGame['type'] === 'math') {
+            $answer = (int) filter_var($message, FILTER_SANITIZE_NUMBER_INT);
+            if ($answer !== 0 || $message === '0') {
+                $this->submitGameAnswer($answer);
+                return;
+            }
+        }
+
+        // For select-based games, check if message is option number
+        if (in_array($this->activeGame['type'], ['puzzle', 'quiz'])) {
+            $answer = (int) $message - 1; // Convert 1-based to 0-based
+            if ($answer >= 0 && $answer < count($this->activeGame['options'])) {
+                $this->submitGameAnswer($answer);
+                return;
+            }
+        }
+
+        // If not recognized as answer, show hint
+        $this->chatHistory[] = [
+            'role' => 'user',
+            'content' => $message,
+            'timestamp' => now()->toIso8601String(),
+        ];
+        $this->chatHistory[] = [
+            'role' => 'assistant',
+            'content' => "❓ Aku lagi nunggu jawaban game nih! Gunakan input yang tersedia atau ketik angka jawabanmu.\n\nKetik **stop** untuk berhenti main.",
+            'timestamp' => now()->toIso8601String(),
+        ];
+        $this->saveChatHistory();
+        $this->dispatch('chat-updated');
+    }
+
+    /**
+     * Generate math question
+     */
+    private function generateMathQuestion(): void
+    {
+        $operations = ['+', '-', '*'];
+        $operation = $operations[array_rand($operations)];
+
+        // Difficulty increases with streak
+        $max = min(10 + ($this->gameStreak * 2), 50);
+
+        $num1 = rand(1, $max);
+        $num2 = rand(1, $max);
+
+        // Ensure positive result for subtraction
+        if ($operation === '-' && $num1 < $num2) {
+            [$num1, $num2] = [$num2, $num1];
+        }
+
+        $question = "Berapa {$num1} {$operation} {$num2}?";
+
+        switch ($operation) {
+            case '+':
+                $answer = $num1 + $num2;
+                break;
+            case '-':
+                $answer = $num1 - $num2;
+                break;
+            case '*':
+                $answer = $num1 * $num2;
+                break;
+            default:
+                $answer = 0;
+        }
+
+        $this->activeGame['question'] = $question;
+        $this->activeGame['answer'] = $answer;
+        $this->activeGame['input_type'] = 'number';
+        $this->activeGame['options'] = null;
+    }
+
+    /**
+     * Generate puzzle/teka-teki question
+     */
+    private function generatePuzzleQuestion(): void
+    {
+        $puzzles = [
+            [
+                'question' => '🧩 Teka-teki: Aku punya lobang di tengah, tapi aku bisa menampung air. Apakah aku?',
+                'options' => ['Gelas', 'Ember', 'Spons', 'Piring'],
+                'answer' => 2, // Spons (index 2)
+            ],
+            [
+                'question' => '🧩 Teka-teki: Semakin banyak aku diambil, semakin banyak aku tinggalkan. Apakah aku?',
+                'options' => ['Uang', 'Jejak', 'Waktu', 'Memori'],
+                'answer' => 1, // Jejak (index 1)
+            ],
+            [
+                'question' => '🧩 Teka-teki: Aku selalu naik tapi tidak pernah turun. Apakah aku?',
+                'options' => ['Balon', 'Usia', 'Harga', 'Tangga'],
+                'answer' => 1, // Usia (index 1)
+            ],
+            [
+                'question' => '🧩 Teka-teki: Apa yang punya 4 kaki di pagi hari, 2 kaki di siang hari, dan 3 kaki di malam hari?',
+                'options' => ['Kursi', 'Manusia', 'Meja', 'Binatang'],
+                'answer' => 1, // Manusia (index 1)
+            ],
+            [
+                'question' => '🧩 Teka-teki: Aku ringan seperti bulu, tapi orang terkuat pun tidak bisa memegangku lebih dari 5 menit. Apakah aku?',
+                'options' => ['Bulu', 'Napas', 'Asap', 'Kapas'],
+                'answer' => 1, // Napas (index 1)
+            ],
+            [
+                'question' => '🧩 Teka-teki: Apa yang hancur ketika kamu sebut namanya?',
+                'options' => ['Cermin', 'Kesunyian', 'Hati', 'Es'],
+                'answer' => 1, // Kesunyian (index 1)
+            ],
+        ];
+
+        $puzzle = $puzzles[array_rand($puzzles)];
+
+        $this->activeGame['question'] = $puzzle['question'];
+        $this->activeGame['answer'] = $puzzle['answer'];
+        $this->activeGame['input_type'] = 'select';
+        $this->activeGame['options'] = $puzzle['options'];
+    }
+
+    /**
+     * Generate multiple choice quiz
+     */
+    private function generateQuizQuestion(): void
+    {
+        $quizzes = [
+            [
+                'question' => '📚 Apa kepanjangan dari HTML?',
+                'options' => ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyper Transfer Mark Language', 'Home Tool Markup Language'],
+                'answer' => 0,
+            ],
+            [
+                'question' => '📚 Bahasa pemrograman apa yang digunakan framework Laravel?',
+                'options' => ['Python', 'JavaScript', 'PHP', 'Ruby'],
+                'answer' => 2,
+            ],
+            [
+                'question' => '📚 CSS digunakan untuk?',
+                'options' => ['Membuat struktur web', 'Mendesain tampilan web', 'Membuat logika program', 'Mengelola database'],
+                'answer' => 1,
+            ],
+            [
+                'question' => '📚 Apa fungsi utama dari Git?',
+                'options' => ['Membuat website', 'Version control / Mengelola versi kode', 'Database management', 'Server hosting'],
+                'answer' => 1,
+            ],
+            [
+                'question' => '📚 Manakah yang BUKAN merupakan database?',
+                'options' => ['MySQL', 'MongoDB', 'PostgreSQL', 'Bootstrap'],
+                'answer' => 3,
+            ],
+            [
+                'question' => '📚 Apa kepanjangan dari API?',
+                'options' => ['Application Programming Interface', 'Advanced Program Integration', 'Automated Processing Instruction', 'Application Process Interface'],
+                'answer' => 0,
+            ],
+            [
+                'question' => '📚 Framework CSS yang populer saat ini?',
+                'options' => ['jQuery', 'Bootstrap', 'Tailwind CSS', 'Semua benar'],
+                'answer' => 3,
+            ],
+        ];
+
+        $quiz = $quizzes[array_rand($quizzes)];
+
+        $this->activeGame['question'] = $quiz['question'];
+        $this->activeGame['answer'] = $quiz['answer'];
+        $this->activeGame['input_type'] = 'select';
+        $this->activeGame['options'] = $quiz['options'];
     }
 
     /**
@@ -292,7 +691,30 @@ class AIChatWidget extends Component
      */
     public function formatMessage(string $content): array
     {
-        // Parse buttons first [BUTTON:Label|/path]
+        // Game inputs (to be rendered specially)
+        $gameInputs = [];
+
+        // Parse number input [INPUT:number|game_answer]
+        if (preg_match('/\[INPUT:(.*?)\|(game_answer)\]/', $content, $matches)) {
+            $gameInputs[] = [
+                'type' => 'number',
+                'action' => $matches[2],
+            ];
+            $content = preg_replace('/\[INPUT:(.*?)\|game_answer\]/', '', $content);
+        }
+
+        // Parse select input [SELECT:game_answer|option1,option2,option3]
+        if (preg_match('/\[SELECT:(game_answer)\|(.*?)\]/', $content, $matches)) {
+            $options = explode(',', $matches[2]);
+            $gameInputs[] = [
+                'type' => 'select',
+                'action' => $matches[1],
+                'options' => array_map('trim', $options),
+            ];
+            $content = preg_replace('/\[SELECT:game_answer\|.*?\]/', '', $content);
+        }
+
+        // Parse buttons first [BUTTON:Label|/path] or [BUTTON:Label|game:xxx]
         $buttons = [];
         $content = preg_replace_callback(
             '/\[BUTTON:(.*?)\|(.*?)\]/',
@@ -300,6 +722,7 @@ class AIChatWidget extends Component
                 $buttons[] = [
                     'label' => trim($matches[1]),
                     'url' => trim($matches[2]),
+                    'isGameAction' => str_starts_with(trim($matches[2]), 'game:'),
                 ];
 
                 return ''; // Remove from content
@@ -356,6 +779,7 @@ class AIChatWidget extends Component
             'text' => trim($content),
             'buttons' => $buttons,
             'suggestions' => $suggestions,
+            'gameInputs' => $gameInputs,
         ];
     }
 

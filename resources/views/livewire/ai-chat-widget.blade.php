@@ -15,6 +15,20 @@
         },
 
         async sendMessage(message) {
+            // Check if this is a game button click
+            if (message.startsWith('game:')) {
+                const gameType = message.replace('game:', '');
+                await this.startGame(gameType);
+                return;
+            }
+
+            // Check if this is ending game - treat as normal message
+            if (message === 'game:end') {
+                // Send as normal message to be processed
+                await this.sendMessage('stop game');
+                return;
+            }
+
             // Tambahkan pesan user ke temporary messages
             this.tempMessages.push({ role: 'user', content: message });
             this.isThinking = true;
@@ -32,6 +46,28 @@
                 this.isThinking = false;
                 this.tempMessages = [];
                 console.error('Error:', e);
+            }
+        },
+
+        async startGame(gameType) {
+            this.isThinking = true;
+            try {
+                await this.$wire.startGame(gameType);
+                this.isThinking = false;
+            } catch (e) {
+                this.isThinking = false;
+                console.error('Error starting game:', e);
+            }
+        },
+
+        async submitGameAnswer(answer) {
+            this.isThinking = true;
+            try {
+                await this.$wire.submitGameAnswer(answer);
+                this.isThinking = false;
+            } catch (e) {
+                this.isThinking = false;
+                console.error('Error submitting answer:', e);
             }
         },
 
@@ -180,9 +216,19 @@
                             @if (!empty($formatted['buttons']))
                                 <div class="flex flex-wrap gap-2 {{ !empty($formatted['text']) ? 'mt-3 pt-2 border-t border-zinc-200 dark:border-zinc-700' : '' }}">
                                     @foreach ($formatted['buttons'] as $button)
-                                        <a href="{{ $button['url'] }}" class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-mint text-zinc-950 rounded-lg hover:opacity-80 transition-opacity">
-                                            {{ $button['label'] }}
-                                        </a>
+                                        @if ($button['isGameAction'])
+                                            <button
+                                                type="button"
+                                                @click="sendMessage('{{ $button['url'] }}')"
+                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-mint text-zinc-950 rounded-lg hover:opacity-80 transition-opacity"
+                                            >
+                                                {{ $button['label'] }}
+                                            </button>
+                                        @else
+                                            <a href="{{ $button['url'] }}" class="inline-flex items-center px-3 py-1.5 text-xs font-medium bg-mint text-zinc-950 rounded-lg hover:opacity-80 transition-opacity">
+                                                {{ $button['label'] }}
+                                            </a>
+                                        @endif
                                     @endforeach
                                 </div>
                             @endif
@@ -203,6 +249,46 @@
                                             </button>
                                         @endforeach
                                     </div>
+                                </div>
+                            @endif
+
+                            {{-- Game Inputs --}}
+                            @if (!empty($formatted['gameInputs']))
+                                <div class="mt-3 pt-2 border-t border-zinc-200 dark:border-zinc-700">
+                                    @foreach ($formatted['gameInputs'] as $input)
+                                        @if ($input['type'] === 'number')
+                                            <div x-data="{ answer: '' }" class="flex gap-2">
+                                                <input
+                                                    type="number"
+                                                    x-model="answer"
+                                                    @keydown.enter.prevent="if(answer) { submitGameAnswer(parseInt(answer)); answer = ''; }"
+                                                    placeholder="Jawaban..."
+                                                    class="flex-1 px-3 py-2 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-mint focus:border-transparent text-zinc-900 dark:text-white"
+                                                >
+                                                <button
+                                                    type="button"
+                                                    @click="if(answer) { submitGameAnswer(parseInt(answer)); answer = ''; }"
+                                                    class="px-4 py-2 text-sm font-medium bg-mint text-zinc-950 rounded-lg hover:opacity-80 transition-opacity"
+                                                >
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        @elseif ($input['type'] === 'select')
+                                            <div class="flex flex-col gap-2">
+                                                <select
+                                                    x-data="{ selected: '' }"
+                                                    x-model="selected"
+                                                    @change="if(selected) { submitGameAnswer(parseInt(selected)); selected = ''; }"
+                                                    class="w-full px-3 py-2 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-mint focus:border-transparent text-zinc-900 dark:text-white"
+                                                >
+                                                    <option value="">Pilih jawaban...</option>
+                                                    @foreach ($input['options'] as $index => $option)
+                                                        <option value="{{ $index }}">{{ $option }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             @endif
                         </div>

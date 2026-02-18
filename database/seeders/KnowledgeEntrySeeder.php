@@ -276,6 +276,47 @@ TEXT,
                 'tags' => ['benefits', 'why', 'testimonial', 'advantage', 'professional'],
                 'is_active' => true,
             ],
+            [
+                'title' => 'Game & Fun Facts',
+                'content' => <<<'TEXT'
+**Game Interaktif di Chatbot Fay:**
+
+Fay punya beberapa game seru yang bisa dimainkan:
+
+**1. Math Quiz 🧮**
+- Quiz matematika dengan soal penjumlahan, pengurangan, perkalian
+- Difficulty meningkat seiring streak
+- +10 poin untuk setiap jawaban benar
+- Streak bonus untuk jawaban berturut-turut
+- Ketik "math" atau "matematika" untuk mulai
+
+**2. Teka-Teki 🧩**
+- Teka-teki logika dan riddles
+- Pilihan ganda dengan 4 opsi
+- Soal random setiap sesi
+- Ketik "puzzle" atau "teka-teki" untuk mulai
+
+**3. Tech Quiz 📚**
+- Quiz pengetahuan teknologi
+- Tentang HTML, CSS, JavaScript, Laravel, Git, dll
+- Pilihan ganda dengan 4 opsi
+- Ketik "quiz" untuk mulai
+
+**Cara Main:**
+- Ketik "main game" untuk lihat menu
+- Pilih game yang mau dimainkan
+- Jawab dengan input yang tersedia atau ketik angka
+- Ketik "stop game" untuk berhenti
+
+**Fun Facts:**
+- Fay adalah AI assistant yang dibuat khusus untuk website portfolio Fatih
+- Fay bisa ingat nama dan info user selama session
+- Fay menggunakan teknologi Laravel AI (Laravel\Ai)
+TEXT,
+                'category' => 'general',
+                'tags' => ['game', 'fun', 'interactive', 'quiz', 'math', 'puzzle', 'main', 'seru'],
+                'is_active' => true,
+            ],
         ];
 
         foreach ($entries as $entry) {
