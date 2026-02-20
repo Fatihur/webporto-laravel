@@ -11,6 +11,9 @@
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <meta name="theme-color" content="#76D7A4">
 
+    <!-- View Transitions API -->
+    <meta name="view-transition" content="same-origin">
+
     {{ $seo ?? '' }}
 
     <!-- Resource Hints for External Assets -->
@@ -122,6 +125,28 @@
         [wire\:loading\.flex] {
             display: flex;
         }
+
+        /* View Transitions fallback rules */
+        @supports (view-transition-name: root) {
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 0.4s;
+            }
+            ::view-transition-old(root) {
+                animation-name: fadeOut;
+            }
+            ::view-transition-new(root) {
+                animation-name: fadeIn;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 
     @livewireStyles
@@ -195,6 +220,91 @@
 
     <!-- AI Chat Widget -->
     <livewire:ai-chat-widget />
+
+    <!-- Global Toast Notifications -->
+    <div x-data="{ toasts: [] }" 
+         @notify.window="
+            let id = Date.now();
+            toasts.push({ id: id, message: $event.detail.message, type: $event.detail.type || 'info' });
+            setTimeout(() => { toasts = toasts.filter(t => t.id !== id) }, 3000);
+         "
+         class="fixed bottom-24 right-4 sm:bottom-4 sm:right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+    >
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:translate-x-4"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:translate-x-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 w-72 pointer-events-auto backdrop-blur-md"
+                 :class="{
+                    'bg-mint/10 dark:bg-mint/10 border-mint/20 dark:border-mint/20 text-mint': toast.type === 'success',
+                    'bg-red-500/10 dark:bg-red-500/10 border-red-500/20 dark:border-red-500/20 text-red-500': toast.type === 'error',
+                    'bg-white/80 dark:bg-zinc-900/80 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100': toast.type === 'info'
+                 }">
+                 <div class="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                      :class="{
+                         'bg-mint/20 text-mint': toast.type === 'success',
+                         'bg-red-500/20 text-red-500': toast.type === 'error',
+                         'bg-zinc-100 dark:bg-zinc-800 text-zinc-500': toast.type === 'info'
+                      }">
+                      <template x-if="toast.type === 'success'">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      </template>
+                      <template x-if="toast.type === 'error'">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </template>
+                      <template x-if="toast.type === 'info'">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      </template>
+                 </div>
+                 <div class="flex-1 text-sm font-semibold" x-text="toast.message"></div>
+                 <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                 </button>
+            </div>
+        </template>
+    </div>
+
+    <!-- Global Image Lightbox -->
+    <div x-data="{ 
+            open: false, 
+            imgSrc: '', 
+            init() {
+                window.addEventListener('open-lightbox', (e) => {
+                    this.imgSrc = e.detail;
+                    this.open = true;
+                    document.body.style.overflow = 'hidden';
+                });
+                this.$watch('open', value => {
+                    if(!value) document.body.style.overflow = 'auto';
+                });
+            }
+         }"
+         x-show="open"
+         style="display: none;"
+         class="fixed inset-0 z-[110] bg-zinc-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+    >
+        <button @click="open = false" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <img :src="imgSrc" @click.outside="open = false" class="max-w-full max-h-full rounded-2xl shadow-2xl object-contain" 
+             x-show="open"
+             x-transition:enter="transition ease-out duration-300 delay-100"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-90"
+        >
+    </div>
 
     <!-- Theme handling script -->
     <script>

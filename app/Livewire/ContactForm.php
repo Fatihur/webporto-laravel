@@ -10,9 +10,13 @@ use Livewire\Component;
 class ContactForm extends Component
 {
     public string $name = '';
+
     public string $email = '';
+
     public string $project_type = '';
+
     public string $message = '';
+
     public ?string $successMessage = null;
 
     public array $projectTypes = [
@@ -64,13 +68,15 @@ class ContactForm extends Component
                 ->send(new ContactNotification($contact));
             $emailSent = true;
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Contact email failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Contact email failed: '.$e->getMessage());
         }
 
         if ($emailSent) {
             $this->successMessage = 'Thank you! Your message has been sent successfully. We will get back to you soon.';
+            $this->dispatch('notify', message: 'Message sent successfully!', type: 'success');
         } else {
             $this->successMessage = 'Your message has been saved, but we could not send the notification email. We will still review your message.';
+            $this->dispatch('notify', message: 'Message saved, but email failed.', type: 'error');
         }
 
         // Reset form

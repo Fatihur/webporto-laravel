@@ -78,12 +78,119 @@
         </p>
     @endif
 
-    <!-- Article Content -->
-    <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none mb-12 transition-all duration-1000 delay-500 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
-        <div class="break-words overflow-x-auto">
-            {!! $post->content !!}
-        </div>
-    </article>
+    <!-- Article Content & TOC -->
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+        <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none flex-1 transition-all duration-1000 delay-500 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'"
+                 x-data="{
+                    headings: [],
+                    init() {
+                        this.$nextTick(() => {
+                            // Lightbox
+                            this.$el.querySelectorAll('img').forEach(img => {
+                                img.style.cursor = 'zoom-in';
+                                img.addEventListener('click', () => {
+                                    $dispatch('open-lightbox', img.src);
+                                });
+                            });
+                            
+                            // Copy Code
+                            this.$el.querySelectorAll('pre').forEach(pre => {
+                                pre.style.position = 'relative';
+                                let btn = document.createElement('button');
+                                btn.className = 'absolute top-2 right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-zinc-400 hover:text-white transition-colors text-xs flex items-center justify-center backdrop-blur-sm z-10 group opacity-0 group-hover/pre:opacity-100 transition-opacity';
+                                btn.innerHTML = `<svg class='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'/></svg>`;
+                                btn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    let clone = pre.cloneNode(true);
+                                    let b = clone.querySelector('button');
+                                    if(b) b.remove();
+                                    navigator.clipboard.writeText(clone.innerText.trim());
+                                    
+                                    let originalHtml = btn.innerHTML;
+                                    btn.innerHTML = `<svg class='w-4 h-4 text-mint' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg>`;
+                                    $dispatch('notify', {message: 'Code copied to clipboard!', type: 'success'});
+                                    setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+                                };
+                                pre.classList.add('group/pre');
+                                pre.appendChild(btn);
+                            });
+
+                            // TOC
+                            let headers = this.$el.querySelectorAll('h2, h3');
+                            headers.forEach((h, i) => {
+                                if(!h.id) {
+                                    h.id = h.innerText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                                    if(!h.id) h.id = 'heading-' + i;
+                                }
+                                this.headings.push({
+                                    id: h.id,
+                                    text: h.innerText,
+                                    level: h.tagName.toLowerCase()
+                                });
+                            });
+                            $dispatch('toc-generated', this.headings);
+                        });
+                    }
+                 }"
+        >
+            <div class="break-words overflow-x-auto">
+                {!! $post->content !!}
+            </div>
+        </article>
+
+        <!-- TOC Sidebar -->
+        <aside class="hidden lg:block w-64 shrink-0 transition-all duration-1000 delay-500 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+            <div class="sticky top-32" x-data="{ 
+                headings: [], 
+                activeId: '',
+                init() {
+                    window.addEventListener('toc-generated', (e) => {
+                        this.headings = e.detail;
+                        if(this.headings.length > 0) this.activeId = this.headings[0].id;
+                    });
+                    
+                    window.addEventListener('scroll', () => {
+                        let current = this.headings.length > 0 ? this.headings[0].id : '';
+                        for (let h of this.headings) {
+                            let el = document.getElementById(h.id);
+                            if (el && el.getBoundingClientRect().top < 150) {
+                                current = h.id;
+                            }
+                        }
+                        this.activeId = current;
+                    });
+                },
+                scrollTo(id) {
+                    let el = document.getElementById(id);
+                    if(el) {
+                        window.scrollTo({
+                            top: el.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            }">
+                <template x-if="headings.length > 0">
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-widest text-zinc-400 mb-4 px-2">Table of Contents</h4>
+                        <nav class="space-y-1 border-l border-zinc-200 dark:border-zinc-800">
+                            <template x-for="h in headings" :key="h.id">
+                                <a :href="'#' + h.id"
+                                   @click.prevent="scrollTo(h.id)"
+                                   class="block px-3 py-1.5 text-sm transition-all duration-200 border-l-2 -ml-px"
+                                   :class="{
+                                       'pl-6 text-zinc-500': h.level === 'h3',
+                                       'pl-3 font-bold border-mint text-mint': activeId === h.id,
+                                       'border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-600': activeId !== h.id
+                                   }"
+                                   x-text="h.text"></a>
+                            </template>
+                        </nav>
+                    </div>
+                </template>
+            </div>
+        </aside>
+    </div>
 
     <!-- Content Formatting Fix -->
     <style>

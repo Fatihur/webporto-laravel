@@ -3,14 +3,19 @@
 namespace App\Livewire;
 
 use App\Models\Contact;
+use App\Models\SiteContact;
 use Livewire\Component;
 
 class ContactPage extends Component
 {
     public string $name = '';
+
     public string $email = '';
+
     public string $subject = '';
+
     public string $message = '';
+
     public bool $success = false;
 
     protected function rules(): array
@@ -42,6 +47,10 @@ class ContactPage extends Component
 
     public function render()
     {
-        return view('livewire.contact-page')->layout('layouts.app');
+        $siteContact = SiteContact::getSettings();
+
+        return view('livewire.contact-page', [
+            'siteContact' => $siteContact,
+        ])->layout('layouts.app');
     }
 }

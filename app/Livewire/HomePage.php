@@ -5,12 +5,14 @@ namespace App\Livewire;
 use App\Data\CategoryData;
 use App\Models\Experience;
 use App\Models\Project;
+use App\Models\SiteContact;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class HomePage extends Component
 {
     public array $categories = [];
+
     public array $tags = [];
 
     public array $aboutMe = [];
@@ -59,10 +61,14 @@ class HomePage extends Component
                 ->get();
         });
 
+        // Get site contact settings
+        $siteContact = SiteContact::getSettings();
+
         return view('livewire.home-page', [
             'featuredProjects' => $featuredProjects,
             'experiences' => $experiences,
             'aboutMe' => $this->aboutMe,
+            'siteContact' => $siteContact,
         ])->layout('layouts.app');
     }
 }

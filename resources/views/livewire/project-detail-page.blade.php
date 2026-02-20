@@ -69,18 +69,31 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
         <div class="md:col-span-8 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h2 class="text-3xl font-bold mb-6">Project Overview</h2>
-            <div class="prose dark:prose-invert max-w-none">
+            <div class="prose dark:prose-invert max-w-none"
+                 x-data="{
+                    init() {
+                        this.$nextTick(() => {
+                            this.$el.querySelectorAll('img').forEach(img => {
+                                img.style.cursor = 'zoom-in';
+                                img.addEventListener('click', () => {
+                                    $dispatch('open-lightbox', img.src);
+                                });
+                            });
+                        });
+                    }
+                 }"
+            >
                 {!! $project->content !!}
             </div>
 
             {{-- Gallery Section --}}
             @if($project->gallery && count($project->gallery) > 0)
-                <div class="mt-16 pt-16 border-t border-zinc-100 dark:border-zinc-800" x-data="{ open: false, currentImage: '' }">
+                <div class="mt-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
                     <h3 class="text-2xl font-bold mb-8">Project Gallery</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @foreach($project->gallery as $index => $img)
-                            <div class="rounded-3xl overflow-hidden group cursor-pointer"
-                                 @click="open = true; currentImage = '{{ Storage::url($img) }}'">
+                            <div class="rounded-3xl overflow-hidden group cursor-zoom-in"
+                                 @click="$dispatch('open-lightbox', '{{ Storage::url($img) }}')">
                                 <img src="{{ Storage::url($img) }}"
                                      class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-700"
                                      alt="Gallery image {{ $index + 1 }}"
@@ -88,36 +101,6 @@
                                 >
                             </div>
                         @endforeach
-                    </div>
-
-                    {{-- Lightbox Modal --}}
-                    <div x-show="open"
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0"
-                         x-transition:enter-end="opacity-100"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100"
-                         x-transition:leave-end="opacity-0"
-                         @keydown.escape.window="open = false"
-                         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
-                         style="display: none;"
-                    >
-                        {{-- Close Button --}}
-                        <button @click="open = false" class="absolute top-6 right-6 text-white hover:text-mint transition-colors z-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18"/>
-                                <path d="m6 6 12 12"/>
-                            </svg>
-                        </button>
-
-                        {{-- Image --}}
-                        <img :src="currentImage"
-                             class="max-w-full max-h-[90vh] object-contain rounded-2xl"
-                             @click.stop
-                        >
-
-                        {{-- Click outside to close --}}
-                        <div @click="open = false" class="absolute inset-0 -z-10"></div>
                     </div>
                 </div>
             @endif
