@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -6,8 +6,10 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
 }
 
 /* Fix for Summernote fullscreen mode */
@@ -55,4 +57,33 @@
 /* Disable scrolling on body when fullscreen active */
 body.note-fullscreen-active {
     overflow: hidden !important;
+}
+
+@keyframes blob-spin {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+@keyframes blob-spin-reverse {
+    from {
+        transform: rotate(360deg) scale(1.1);
+    }
+    50% {
+        transform: rotate(180deg) scale(0.9);
+    }
+    to {
+        transform: rotate(0deg) scale(1.1);
+    }
+}
+.animate-blob {
+    animation: blob-spin 20s infinite linear;
+}
+.animate-blob-reverse {
+    animation: blob-spin-reverse 25s infinite linear;
 }

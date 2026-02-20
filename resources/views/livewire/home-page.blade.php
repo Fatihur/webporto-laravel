@@ -12,20 +12,20 @@
             </div>
         </div>
 
-        <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center">
-            <p class="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-[0.4em] text-[10px] sm:text-[11px] mb-6 sm:mb-8">
+        <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
+            <p class="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-[0.4em] text-[10px] sm:text-[11px] mb-6 sm:mb-8 transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 / welcome to my Portfolio
             </p>
 
-            <h1 class="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tighter leading-none mb-6">
+            <h1 class="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tighter leading-none mb-6 transition-all duration-1000 delay-150" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 Hi, I'm <span class="text-mint">Fatih</span>
             </h1>
 
-            <p class="text-lg sm:text-xl md:text-2xl font-semibold text-zinc-500 dark:text-zinc-400 mb-12 tracking-tight">
+            <p class="text-lg sm:text-xl md:text-2xl font-semibold text-zinc-500 dark:text-zinc-400 mb-12 tracking-tight transition-all duration-1000 delay-300" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 Tech enthusiast
             </p>
 
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto transition-all duration-1000 delay-500" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 <button class="group w-full sm:min-w-[200px] bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-8 py-4 rounded-full font-bold hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 dark:focus:ring-offset-zinc-950 flex items-center justify-center gap-3">
                     Download CV
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 pointer-events-none">
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 pointer-events-none animate-bounce">
             <span class="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400">Scroll</span>
             <div class="w-[1px] h-10 bg-gradient-to-b from-zinc-300 to-transparent dark:from-zinc-700"></div>
         </div>
@@ -51,8 +51,8 @@
     <livewire:random-quote />
 
     <!-- About Me Section -->
-    <section id="about" class="mb-40">
-        <div class="max-w-3xl mx-auto text-center">
+    <section id="about" class="mb-40" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
+        <div class="max-w-3xl mx-auto text-center transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
 
             <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">About Me</span>
 
@@ -101,21 +101,27 @@
     </section>
 
     <!-- Expertise / Category Cards -->
-    <section id="expertise" class="mb-40">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+    <section id="expertise" class="mb-40" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <div class="max-w-xl">
                 <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">Core Competencies</span>
                 <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter leading-tight">Expertise</h2>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-300 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             @foreach($categories as $index => $cat)
                 <a
                     href="{{ route('projects.category', $cat['id']) }}"
                     wire:navigate
-                    class="group aspect-square rounded-[2.5rem] p-8 flex flex-col justify-between transition-all hover:scale-[1.02] active:scale-95 {{ $cat['color'] }}"
+                    x-data="{ x: 0, y: 0 }"
+                    @mousemove="x = $event.clientX - $el.getBoundingClientRect().left; y = $event.clientY - $el.getBoundingClientRect().top"
+                    class="group relative overflow-hidden aspect-square rounded-[2.5rem] p-8 flex flex-col justify-between transition-all hover:scale-[1.02] active:scale-95 border border-transparent hover:border-mint/50 {{ $cat['color'] }}"
                 >
+                    <!-- Magic Glow Effect -->
+                    <div class="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+                         :style="`background: radial-gradient(400px circle at ${x}px ${y}px, rgba(255,255,255,0.15), transparent 40%);`">
+                    </div>
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2 block">
                             {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
@@ -141,8 +147,8 @@
     </section>
 
     <!-- Experience Section -->
-    <section class="mb-40 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        <div class="lg:col-span-5">
+    <section class="mb-40 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
+        <div class="lg:col-span-5 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h2 class="text-4xl font-extrabold mb-6">Experience</h2>
             <p class="text-zinc-500 dark:text-zinc-400 mb-8 leading-relaxed max-w-md">
                 Focusing on the intersection of human-centered design and robust technical implementation for high-growth companies.
@@ -156,7 +162,7 @@
             </div>
         </div>
 
-        <div class="lg:col-span-7 space-y-4 sm:space-y-6">
+        <div class="lg:col-span-7 space-y-4 sm:space-y-6 transition-all duration-1000 delay-300 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <!-- Skeleton Loading -->
             <div wire:loading.delay class="space-y-4">
                 @for($i = 0; $i < 3; $i++)
@@ -199,7 +205,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
         </div>
-        <div class="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-mint/10 blur-[80px] sm:blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-violet/10 blur-[80px] sm:blur-[120px] rounded-full"></div>
+        <div class="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-mint/10 blur-[80px] sm:blur-[120px] rounded-full animate-blob"></div>
+        <div class="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-violet/10 blur-[80px] sm:blur-[120px] rounded-full animate-blob-reverse"></div>
     </section>
 </main>
