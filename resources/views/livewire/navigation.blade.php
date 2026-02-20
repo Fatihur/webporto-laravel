@@ -1,16 +1,23 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800"
+<nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
      x-data="{
          mobileMenuOpen: false,
          megaMenuOpen: false,
          searchOpen: false,
+         isScrolled: false,
          currentPath: window.location.pathname,
          isActive(path) {
              if (path === '/') return this.currentPath === '/';
              return this.currentPath.startsWith(path);
          }
      }"
-     x-init="document.addEventListener('livewire:navigated', () => { currentPath = window.location.pathname })"
+     x-init="
+        document.addEventListener('livewire:navigated', () => { currentPath = window.location.pathname });
+        window.addEventListener('scroll', () => { isScrolled = window.scrollY > 20 });
+        isScrolled = window.scrollY > 20;
+     "
+     x-bind:class="isScrolled ? 'bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm' : 'bg-transparent border-transparent'"
      x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false; searchOpen = false"
+     x-on:keydown.window="if ((event.ctrlKey || event.metaKey) && event.key === 'k') { event.preventDefault(); searchOpen = true; }"
      x-on:open-search.window="searchOpen = true"
 >
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
@@ -71,14 +78,21 @@
                 <button
                     type="button"
                     x-on:click="$dispatch('open-search')"
-                    class="hidden md:flex w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                    class="hidden md:flex items-center gap-2 px-3 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                     aria-label="Search"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100 transition-colors">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.3-4.3"/>
                     </svg>
+                    <span class="text-xs font-medium text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300">Search</span>
+                    <kbd class="hidden lg:inline-flex items-center gap-1 font-sans text-[10px] font-semibold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700">
+                        <span class="text-xs">⌘</span>K
+                    </kbd>
                 </button>
+
+                <!-- Divider -->
+                <div class="hidden md:block w-px h-6 bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
 
                 <livewire:theme-toggle />
                 <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
