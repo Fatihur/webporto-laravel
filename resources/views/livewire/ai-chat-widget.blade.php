@@ -481,7 +481,7 @@
                     @keydown.enter.prevent="if(!event.shiftKey) send()"
                     placeholder="{{ $activeGame ? 'Ketik jawaban atau stop...' : 'Tulis pesan...' }}"
                     :disabled="isThinking"
-                    class="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 text-base sm:text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-mint focus:border-transparent text-zinc-900 dark:text-white placeholder-zinc-400 disabled:opacity-50 touch-manipulation resize-none overflow-y-auto"
+                    class="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 text-base sm:text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-mint focus:border-transparent text-zinc-900 dark:text-white placeholder-zinc-400 disabled:opacity-50 touch-manipulation resize-none overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                     style="font-size: 16px; height: 44px; line-height: 1.4;"
                     maxlength="500"
                     inputmode="{{ $activeGame && $activeGame['type'] === 'math' ? 'numeric' : 'text' }}"
