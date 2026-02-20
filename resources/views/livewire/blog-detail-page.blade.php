@@ -7,9 +7,18 @@
     />
 </x-slot>
 
-<main class="pt-32 pb-20 px-4 sm:px-6 lg:px-12 max-w-4xl mx-auto overflow-x-hidden">
+<main class="pt-32 pb-20 px-4 sm:px-6 lg:px-12 max-w-4xl mx-auto overflow-x-hidden" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
+    <!-- Reading Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-zinc-200 dark:bg-zinc-800 z-50">
+        <div class="h-full bg-mint transition-all ease-out" 
+             x-data="{ scroll: 0 }" 
+             @scroll.window="scroll = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100" 
+             :style="`width: ${scroll}%`">
+        </div>
+    </div>
+
     <!-- Back Link -->
-    <a href="{{ route('blog.index') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors mb-8">
+    <a href="{{ route('blog.index') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white mb-8 transition-all duration-1000 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m12 19-7-7 7-7"/>
             <path d="M19 12H5"/>
@@ -18,7 +27,7 @@
     </a>
 
     <!-- Article Header -->
-    <header class="mb-12">
+    <header class="mb-12 transition-all duration-1000 delay-150 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
             <span class="text-[10px] font-black uppercase tracking-widest text-mint">
                 {{ $post->category }}
@@ -44,7 +53,7 @@
     </header>
 
     <!-- Featured Image -->
-    <div class="aspect-[21/9] rounded-3xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
+    <div class="aspect-[21/9] rounded-3xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800 transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @if($post->image || $post->image_url)
             <img
                 src="{{ $post->image_url ?? Storage::url($post->image) }}"
@@ -70,7 +79,7 @@
     @endif
 
     <!-- Article Content -->
-    <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none mb-12">
+    <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none mb-12 transition-all duration-1000 delay-500 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         <div class="break-words overflow-x-auto">
             {!! $post->content !!}
         </div>
@@ -151,14 +160,14 @@
     </style>
 
     <!-- Comments Section -->
-    <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
-        <div class="flex items-center justify-between mb-8">
+    <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
+        <div class="flex items-center justify-between mb-8 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Comments</h3>
             <span class="text-sm font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
         </div>
 
         <!-- Comments List -->
-        <div class="mb-8">
+        <div class="mb-8 transition-all duration-1000 delay-300 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <livewire:comment-list :blog-id="$post->id" />
         </div>
 
@@ -179,8 +188,8 @@
 
     <!-- Related Articles -->
     @if($relatedPosts->count() > 0)
-        <div class="mb-12">
-            <h3 class="text-2xl font-bold mb-8">Related Articles</h3>
+        <div class="mb-12" x-data="{ shownRelated: false }" x-intersect.once.margin.-100px="shownRelated = true">
+            <h3 class="text-2xl font-bold mb-8 transition-all duration-1000 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">Related Articles</h3>
 
             <!-- Skeleton Loading -->
             <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -193,7 +202,7 @@
                 @endfor
             </div>
 
-            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-1000 delay-300 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
                 @foreach($relatedPosts as $related)
                     <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">

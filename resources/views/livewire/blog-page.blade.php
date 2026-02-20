@@ -1,6 +1,6 @@
-<main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto">
+<main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
     <!-- Header -->
-    <header class="mb-16 text-center max-w-3xl mx-auto">
+    <header class="mb-16 text-center max-w-3xl mx-auto transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">Journal</span>
         <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter mb-6">Thoughts & Insights</h1>
         <p class="text-lg text-zinc-500 dark:text-zinc-400 mb-10">
@@ -91,7 +91,7 @@
     </div>
 
     <!-- Articles List -->
-    <div wire:loading.remove class="space-y-12">
+    <div wire:loading.remove class="space-y-12 transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @forelse($posts as $post)
             <article class="group">
                 <a href="{{ route('blog.show', $post->slug) }}" wire:navigate class="flex flex-col md:flex-row gap-6 md:gap-10 items-start">

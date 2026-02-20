@@ -7,13 +7,13 @@
     />
 </x-slot>
 
-<main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto">
-    <a href="{{ route('projects.category', $project->category) }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors mb-8">
+<main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
+    <a href="{{ route('projects.category', $project->category) }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white mb-8 transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         Back to {{ ucwords(str_replace('-', ' ', $project->category)) }}
     </a>
 
-    <header class="mb-16">
+    <header class="mb-16 transition-all duration-1000 delay-150 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8">{{ $project->title }}</h1>
 
         <!-- Share Buttons -->
@@ -52,7 +52,7 @@
         </div>
     </header>
 
-    <div class="aspect-video w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-zinc-200 dark:shadow-none">
+    <div class="aspect-video w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-zinc-200 dark:shadow-none transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @if($project->thumbnail)
             <img src="{{ Storage::url($project->thumbnail) }}" class="w-full h-full object-cover" alt="{{ $project->title }}" loading="lazy">
         @else
@@ -66,8 +66,8 @@
         @endif
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-        <div class="md:col-span-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-12" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
+        <div class="md:col-span-8 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h2 class="text-3xl font-bold mb-6">Project Overview</h2>
             <div class="prose dark:prose-invert max-w-none">
                 {!! $project->content !!}
@@ -123,7 +123,7 @@
             @endif
         </div>
 
-        <div class="md:col-span-4 space-y-10">
+        <div class="md:col-span-4 space-y-10 transition-all duration-1000 delay-300 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             @if($project->tags && count($project->tags) > 0)
                 <div>
                     <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Core Tags</h4>
@@ -169,8 +169,8 @@
 
     {{-- Related Projects --}}
     @if($relatedProjects->count() > 0)
-        <div class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800">
-            <h3 class="text-2xl font-bold mb-8">Related Projects</h3>
+        <div class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800" x-data="{ shownRelated: false }" x-intersect.once.margin.-100px="shownRelated = true">
+            <h3 class="text-2xl font-bold mb-8 transition-all duration-1000 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">Related Projects</h3>
 
             {{-- Skeleton Loading --}}
             <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -179,7 +179,7 @@
                 @endfor
             </div>
 
-            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000 delay-300 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
                 @foreach($relatedProjects as $related)
                     <a href="{{ route('projects.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-4">

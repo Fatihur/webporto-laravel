@@ -1,6 +1,6 @@
-<main class="pt-32 pb-20 px-6 lg:px-12 max-w-7xl mx-auto">
+<main class="pt-32 pb-20 px-6 lg:px-12 max-w-7xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
     <!-- Header -->
-    <header class="mb-12">
+    <header class="mb-12 transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
         <!-- Breadcrumb -->
         <div class="flex items-center gap-3 text-zinc-400 font-bold mb-4">
             <a href="{{ route('home') }}" wire:navigate class="hover:text-zinc-950 dark:hover:text-white transition-colors">Home</a>
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Projects Grid -->
-    <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @if($projects->count() > 0)
             @foreach($projects as $project)
                 <a
