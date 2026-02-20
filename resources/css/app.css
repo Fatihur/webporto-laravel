@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 @theme {
+    --color-mint: #76d7a4;
+    --color-violet: #c4a1ff;
+    --color-lime: #e8ff8e;
+    --color-zinc-950: #09090b;
     --font-sans:
-        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Inter", "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
 }
@@ -86,4 +92,12 @@ body.note-fullscreen-active {
 }
 .animate-blob-reverse {
     animation: blob-spin-reverse 25s infinite linear;
+}
+
+.rounded-4xl {
+    border-radius: 2rem;
+}
+
+.rounded-5xl {
+    border-radius: 2.5rem;
 }

@@ -12,6 +12,7 @@ use App\Ai\Tools\SearchProjectsTool;
 use Illuminate\Support\Facades\Session;
 use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Attributes\MaxTokens;
+use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Attributes\Temperature;
 use Laravel\Ai\Concerns\RemembersConversations;
@@ -22,6 +23,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider('groq')]
+#[Model('llama-3.3-70b-versatile')]
 #[MaxSteps(5)]
 #[MaxTokens(500)]
 #[Temperature(0.7)]

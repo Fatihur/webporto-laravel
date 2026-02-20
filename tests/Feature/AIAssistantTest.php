@@ -9,11 +9,14 @@ use App\Ai\Tools\GetExperiencesTool;
 use App\Ai\Tools\SearchBlogsTool;
 use App\Ai\Tools\SearchProjectsTool;
 use App\Livewire\AiChatWidget;
-use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\TestCase;
 
 class AIAssistantTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_portfolio_assistant_agent_exists(): void
     {
         $agent = new PortfolioAssistant;
@@ -26,7 +29,7 @@ class AIAssistantTest extends TestCase
         $agent = new PortfolioAssistant;
         $tools = $agent->tools();
 
-        $this->assertCount(3, $tools);
+        $this->assertCount(5, $tools);
     }
 
     public function test_portfolio_assistant_has_instructions(): void

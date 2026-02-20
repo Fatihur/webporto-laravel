@@ -6,6 +6,8 @@ namespace App\Livewire;
 
 use App\Ai\Agents\PortfolioAssistant;
 use App\Services\UserContextService;
+use App\Support\AiChat\GameEngine;
+use App\Support\AiChat\MessageFormatter;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Throwable;
@@ -33,9 +35,15 @@ class AIChatWidget extends Component
 
     protected UserContextService $contextService;
 
+    protected MessageFormatter $messageFormatter;
+
+    protected GameEngine $gameEngine;
+
     public function boot(): void
     {
         $this->contextService = new UserContextService;
+        $this->messageFormatter = new MessageFormatter;
+        $this->gameEngine = new GameEngine;
     }
 
     public function mount(): void
@@ -105,13 +113,15 @@ class AIChatWidget extends Component
             ];
             $this->saveChatHistory();
             $this->endGame();
+
             return;
         }
 
         // Check if we're in active game mode (and not a game command)
-        if ($this->activeGame && !str_starts_with(strtolower($userMessage), 'game:')) {
+        if ($this->activeGame && ! str_starts_with(strtolower($userMessage), 'game:')) {
             // Handle as game answer
             $this->handleGameAnswer($userMessage);
+
             return;
         }
 
@@ -134,10 +144,16 @@ class AIChatWidget extends Component
 
         try {
             $agent = new PortfolioAssistant;
+            // Convert session ID to integer for database compatibility
+            $sessionId = Session::getId();
+            $userId = abs(crc32($sessionId)) ?: 1; // Convert string to positive integer
+            $conversationUser = (object) ['id' => $userId];
 
             // Continue existing conversation if available
             if ($this->conversationId) {
-                $agent = $agent->continue($this->conversationId);
+                $agent = $agent->continue($this->conversationId, $conversationUser);
+            } else {
+                $agent = $agent->forUser($conversationUser);
             }
 
             // Build prompt with context (ISOLATED)
@@ -156,6 +172,12 @@ class AIChatWidget extends Component
                 'timestamp' => now()->toIso8601String(),
             ];
         } catch (Throwable $e) {
+            // Log error untuk debugging
+            logger()->error('AI Chat Error: '.$e->getMessage(), [
+                'exception' => $e,
+                'user_message' => $userMessage,
+            ]);
+
             // Jika API error, gunakan response lokal untuk demo
             $demoResponse = $this->generateDemoResponse($userMessage);
 
@@ -520,6 +542,7 @@ class AIChatWidget extends Component
             $answer = (int) filter_var($message, FILTER_SANITIZE_NUMBER_INT);
             if ($answer !== 0 || $message === '0') {
                 $this->submitGameAnswer($answer);
+
                 return;
             }
         }
@@ -529,6 +552,7 @@ class AIChatWidget extends Component
             $answer = (int) $message - 1; // Convert 1-based to 0-based
             if ($answer >= 0 && $answer < count($this->activeGame['options'])) {
                 $this->submitGameAnswer($answer);
+
                 return;
             }
         }
@@ -553,40 +577,11 @@ class AIChatWidget extends Component
      */
     private function generateMathQuestion(): void
     {
-        $operations = ['+', '-', '*'];
-        $operation = $operations[array_rand($operations)];
-
-        // Difficulty increases with streak
-        $max = min(10 + ($this->gameStreak * 2), 50);
-
-        $num1 = rand(1, $max);
-        $num2 = rand(1, $max);
-
-        // Ensure positive result for subtraction
-        if ($operation === '-' && $num1 < $num2) {
-            [$num1, $num2] = [$num2, $num1];
-        }
-
-        $question = "Berapa {$num1} {$operation} {$num2}?";
-
-        switch ($operation) {
-            case '+':
-                $answer = $num1 + $num2;
-                break;
-            case '-':
-                $answer = $num1 - $num2;
-                break;
-            case '*':
-                $answer = $num1 * $num2;
-                break;
-            default:
-                $answer = 0;
-        }
-
-        $this->activeGame['question'] = $question;
-        $this->activeGame['answer'] = $answer;
-        $this->activeGame['input_type'] = 'number';
-        $this->activeGame['options'] = null;
+        $question = $this->gameEngine->mathQuestion($this->gameStreak);
+        $this->activeGame['question'] = $question['question'];
+        $this->activeGame['answer'] = $question['answer'];
+        $this->activeGame['input_type'] = $question['input_type'];
+        $this->activeGame['options'] = $question['options'];
     }
 
     /**
@@ -594,44 +589,10 @@ class AIChatWidget extends Component
      */
     private function generatePuzzleQuestion(): void
     {
-        $puzzles = [
-            [
-                'question' => '🧩 Teka-teki: Aku punya lobang di tengah, tapi aku bisa menampung air. Apakah aku?',
-                'options' => ['Gelas', 'Ember', 'Spons', 'Piring'],
-                'answer' => 2, // Spons (index 2)
-            ],
-            [
-                'question' => '🧩 Teka-teki: Semakin banyak aku diambil, semakin banyak aku tinggalkan. Apakah aku?',
-                'options' => ['Uang', 'Jejak', 'Waktu', 'Memori'],
-                'answer' => 1, // Jejak (index 1)
-            ],
-            [
-                'question' => '🧩 Teka-teki: Aku selalu naik tapi tidak pernah turun. Apakah aku?',
-                'options' => ['Balon', 'Usia', 'Harga', 'Tangga'],
-                'answer' => 1, // Usia (index 1)
-            ],
-            [
-                'question' => '🧩 Teka-teki: Apa yang punya 4 kaki di pagi hari, 2 kaki di siang hari, dan 3 kaki di malam hari?',
-                'options' => ['Kursi', 'Manusia', 'Meja', 'Binatang'],
-                'answer' => 1, // Manusia (index 1)
-            ],
-            [
-                'question' => '🧩 Teka-teki: Aku ringan seperti bulu, tapi orang terkuat pun tidak bisa memegangku lebih dari 5 menit. Apakah aku?',
-                'options' => ['Bulu', 'Napas', 'Asap', 'Kapas'],
-                'answer' => 1, // Napas (index 1)
-            ],
-            [
-                'question' => '🧩 Teka-teki: Apa yang hancur ketika kamu sebut namanya?',
-                'options' => ['Cermin', 'Kesunyian', 'Hati', 'Es'],
-                'answer' => 1, // Kesunyian (index 1)
-            ],
-        ];
-
-        $puzzle = $puzzles[array_rand($puzzles)];
-
+        $puzzle = $this->gameEngine->puzzleQuestion();
         $this->activeGame['question'] = $puzzle['question'];
         $this->activeGame['answer'] = $puzzle['answer'];
-        $this->activeGame['input_type'] = 'select';
+        $this->activeGame['input_type'] = $puzzle['input_type'];
         $this->activeGame['options'] = $puzzle['options'];
     }
 
@@ -640,49 +601,10 @@ class AIChatWidget extends Component
      */
     private function generateQuizQuestion(): void
     {
-        $quizzes = [
-            [
-                'question' => '📚 Apa kepanjangan dari HTML?',
-                'options' => ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyper Transfer Mark Language', 'Home Tool Markup Language'],
-                'answer' => 0,
-            ],
-            [
-                'question' => '📚 Bahasa pemrograman apa yang digunakan framework Laravel?',
-                'options' => ['Python', 'JavaScript', 'PHP', 'Ruby'],
-                'answer' => 2,
-            ],
-            [
-                'question' => '📚 CSS digunakan untuk?',
-                'options' => ['Membuat struktur web', 'Mendesain tampilan web', 'Membuat logika program', 'Mengelola database'],
-                'answer' => 1,
-            ],
-            [
-                'question' => '📚 Apa fungsi utama dari Git?',
-                'options' => ['Membuat website', 'Version control / Mengelola versi kode', 'Database management', 'Server hosting'],
-                'answer' => 1,
-            ],
-            [
-                'question' => '📚 Manakah yang BUKAN merupakan database?',
-                'options' => ['MySQL', 'MongoDB', 'PostgreSQL', 'Bootstrap'],
-                'answer' => 3,
-            ],
-            [
-                'question' => '📚 Apa kepanjangan dari API?',
-                'options' => ['Application Programming Interface', 'Advanced Program Integration', 'Automated Processing Instruction', 'Application Process Interface'],
-                'answer' => 0,
-            ],
-            [
-                'question' => '📚 Framework CSS yang populer saat ini?',
-                'options' => ['jQuery', 'Bootstrap', 'Tailwind CSS', 'Semua benar'],
-                'answer' => 3,
-            ],
-        ];
-
-        $quiz = $quizzes[array_rand($quizzes)];
-
+        $quiz = $this->gameEngine->quizQuestion();
         $this->activeGame['question'] = $quiz['question'];
         $this->activeGame['answer'] = $quiz['answer'];
-        $this->activeGame['input_type'] = 'select';
+        $this->activeGame['input_type'] = $quiz['input_type'];
         $this->activeGame['options'] = $quiz['options'];
     }
 
@@ -691,96 +613,7 @@ class AIChatWidget extends Component
      */
     public function formatMessage(string $content): array
     {
-        // Game inputs (to be rendered specially)
-        $gameInputs = [];
-
-        // Parse number input [INPUT:number|game_answer]
-        if (preg_match('/\[INPUT:(.*?)\|(game_answer)\]/', $content, $matches)) {
-            $gameInputs[] = [
-                'type' => 'number',
-                'action' => $matches[2],
-            ];
-            $content = preg_replace('/\[INPUT:(.*?)\|game_answer\]/', '', $content);
-        }
-
-        // Parse select input [SELECT:game_answer|option1,option2,option3]
-        if (preg_match('/\[SELECT:(game_answer)\|(.*?)\]/', $content, $matches)) {
-            $options = explode(',', $matches[2]);
-            $gameInputs[] = [
-                'type' => 'select',
-                'action' => $matches[1],
-                'options' => array_map('trim', $options),
-            ];
-            $content = preg_replace('/\[SELECT:game_answer\|.*?\]/', '', $content);
-        }
-
-        // Parse buttons first [BUTTON:Label|/path] or [BUTTON:Label|game:xxx]
-        $buttons = [];
-        $content = preg_replace_callback(
-            '/\[BUTTON:(.*?)\|(.*?)\]/',
-            function ($matches) use (&$buttons) {
-                $buttons[] = [
-                    'label' => trim($matches[1]),
-                    'url' => trim($matches[2]),
-                    'isGameAction' => str_starts_with(trim($matches[2]), 'game:'),
-                ];
-
-                return ''; // Remove from content
-            },
-            $content
-        );
-
-        // Parse suggestions [SUGGEST:Label|Question]
-        $suggestions = [];
-        $content = preg_replace_callback(
-            '/\[SUGGEST:(.*?)\|(.*?)\]/',
-            function ($matches) use (&$suggestions) {
-                $suggestions[] = [
-                    'label' => trim($matches[1]),
-                    'question' => trim($matches[2]),
-                ];
-
-                return ''; // Remove from content
-            },
-            $content
-        );
-
-        // Convert markdown bold (**text**) to strong (darker color for visibility)
-        $content = preg_replace('/\*\*(.*?)\*\*/', '<strong class="font-semibold text-zinc-900 dark:text-white">$1</strong>', $content);
-
-        // Convert markdown italic (*text*) to em
-        $content = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $content);
-
-        // Remove markdown code blocks but keep content
-        $content = preg_replace_callback('/```[\s\S]*?```/', function ($matches) {
-            $code = trim(substr($matches[0], 3, -3));
-
-            return "<code class=\"bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-xs font-mono\">{$code}</code>";
-        }, $content);
-
-        // Convert inline code
-        $content = preg_replace('/`(.*?)`/', '<code class="bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-xs font-mono">$1</code>', $content);
-
-        // Convert markdown links [text](url) to anchor tags
-        $content = preg_replace_callback('/\[(.*?)\]\(https?:\/\/.*?\)/', function ($matches) {
-            $text = $matches[1];
-            $url = preg_replace('/\[(.*?)\]\((.*?)\)/', '$2', $matches[0]);
-
-            return "<a href=\"{$url}\" target=\"_blank\" rel=\"noopener\" class=\"text-mint hover:underline\">{$text}</a>";
-        }, $content);
-
-        // Convert newlines to <br> tags
-        $content = preg_replace('/\n/', '<br>', $content);
-
-        // Clean up extra breaks
-        $content = preg_replace('/(<br>\s*){3,}/', '<br><br>', $content);
-
-        return [
-            'text' => trim($content),
-            'buttons' => $buttons,
-            'suggestions' => $suggestions,
-            'gameInputs' => $gameInputs,
-        ];
+        return $this->messageFormatter->format($content);
     }
 
     public function render()

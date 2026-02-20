@@ -13,6 +13,8 @@ class KnowledgeEntry extends Model
     protected $fillable = [
         'title',
         'content',
+        'embedding',
+        'metadata',
         'category',
         'tags',
         'is_active',
@@ -22,6 +24,8 @@ class KnowledgeEntry extends Model
 
     protected $casts = [
         'tags' => 'array',
+        'metadata' => 'array',
+        'embedding' => 'array',
         'is_active' => 'boolean',
         'usage_count' => 'integer',
         'last_used_at' => 'datetime',

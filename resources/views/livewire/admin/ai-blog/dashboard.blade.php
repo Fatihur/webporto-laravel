@@ -98,6 +98,22 @@
         </div>
     </div>
 
+    <!-- Operational Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-8">
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <p class="text-xs sm:text-sm text-zinc-500 mb-1">Median Duration (7d)</p>
+            <p class="text-2xl sm:text-3xl font-black">{{ $metrics['median_duration_seconds'] }}s</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <p class="text-xs sm:text-sm text-zinc-500 mb-1">Avg Duration (7d)</p>
+            <p class="text-2xl sm:text-3xl font-black">{{ $metrics['avg_duration_seconds'] }}s</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+            <p class="text-xs sm:text-sm text-zinc-500 mb-1">Failed Runs (7d)</p>
+            <p class="text-2xl sm:text-3xl font-black">{{ $metrics['retry_count_last_7d'] }}</p>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Daily Stats Chart -->
         <div class="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
@@ -163,6 +179,23 @@
                     </div>
                 @else
                     <p class="text-sm text-zinc-500 text-center py-4">No upcoming runs scheduled</p>
+                @endif
+            </div>
+
+            <!-- Top Error Messages -->
+            <div class="bg-white dark:bg-zinc-900 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6">
+                <h2 class="text-base sm:text-lg font-bold mb-4">Top Errors (7d)</h2>
+                @if(count($topErrors) > 0)
+                    <div class="space-y-2">
+                        @foreach($topErrors as $error)
+                            <div class="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                                <p class="text-xs text-zinc-600 dark:text-zinc-300 break-words">{{ $error->error_message }}</p>
+                                <p class="text-xs text-zinc-400 mt-1">{{ $error->total }}x</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-sm text-zinc-500 text-center py-4">No recent errors</p>
                 @endif
             </div>
 

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Blog;
 use App\Models\Project;
-use App\Models\Experience;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 class SeoService
@@ -15,16 +15,16 @@ class SeoService
      */
     public function generateSitemap(): string
     {
-        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' .
-                    ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . PHP_EOL;
+        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
+        $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                    ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'.PHP_EOL;
 
         // Static pages
         $staticPages = [
             ['url' => route('home'), 'changefreq' => 'weekly', 'priority' => '1.0'],
-            ['url' => route('projects'), 'changefreq' => 'weekly', 'priority' => '0.9'],
-            ['url' => route('blog'), 'changefreq' => 'daily', 'priority' => '0.9'],
-            ['url' => route('contact'), 'changefreq' => 'monthly', 'priority' => '0.7'],
+            ['url' => route('projects.category', 'graphic-design'), 'changefreq' => 'weekly', 'priority' => '0.9'],
+            ['url' => route('blog.index'), 'changefreq' => 'daily', 'priority' => '0.9'],
+            ['url' => route('contact.index'), 'changefreq' => 'monthly', 'priority' => '0.7'],
         ];
 
         foreach ($staticPages as $page) {
@@ -45,10 +45,15 @@ class SeoService
             );
 
             // Add image if exists
-            if ($blog->featured_image) {
+            $blogImage = $blog->image_url;
+            if (! $blogImage && $blog->image) {
+                $blogImage = Storage::url($blog->image);
+            }
+
+            if ($blogImage) {
                 $entry = str_replace(
                     '</url>',
-                    $this->generateImageTag($blog->featured_image, $blog->title) . '</url>',
+                    $this->generateImageTag($blogImage, $blog->title).'</url>',
                     $entry
                 );
             }
@@ -57,7 +62,7 @@ class SeoService
         }
 
         // Projects
-        $projects = Project::orderBy('sort_order')
+        $projects = Project::orderBy('project_date', 'desc')
             ->orderBy('updated_at', 'desc')
             ->get();
 
@@ -69,10 +74,12 @@ class SeoService
                 $project->updated_at->toIso8601String()
             );
 
-            if ($project->featured_image) {
+            $projectImage = $project->thumbnail ? Storage::url($project->thumbnail) : null;
+
+            if ($projectImage) {
                 $entry = str_replace(
                     '</url>',
-                    $this->generateImageTag($project->featured_image, $project->title) . '</url>',
+                    $this->generateImageTag($projectImage, $project->title).'</url>',
                     $entry
                 );
             }
@@ -94,16 +101,16 @@ class SeoService
         string $priority = '0.5',
         ?string $lastmod = null
     ): string {
-        $entry = '  <url>' . PHP_EOL;
-        $entry .= '    <loc>' . htmlspecialchars($url) . '</loc>' . PHP_EOL;
+        $entry = '  <url>'.PHP_EOL;
+        $entry .= '    <loc>'.htmlspecialchars($url).'</loc>'.PHP_EOL;
 
         if ($lastmod) {
-            $entry .= '    <lastmod>' . $lastmod . '</lastmod>' . PHP_EOL;
+            $entry .= '    <lastmod>'.$lastmod.'</lastmod>'.PHP_EOL;
         }
 
-        $entry .= '    <changefreq>' . $changefreq . '</changefreq>' . PHP_EOL;
-        $entry .= '    <priority>' . $priority . '</priority>' . PHP_EOL;
-        $entry .= '  </url>' . PHP_EOL;
+        $entry .= '    <changefreq>'.$changefreq.'</changefreq>'.PHP_EOL;
+        $entry .= '    <priority>'.$priority.'</priority>'.PHP_EOL;
+        $entry .= '  </url>'.PHP_EOL;
 
         return $entry;
     }
@@ -113,10 +120,10 @@ class SeoService
      */
     protected function generateImageTag(string $imageUrl, string $title): string
     {
-        return '    <image:image>' . PHP_EOL .
-               '      <image:loc>' . htmlspecialchars($imageUrl) . '</image:loc>' . PHP_EOL .
-               '      <image:title>' . htmlspecialchars($title) . '</image:title>' . PHP_EOL .
-               '    </image:image>' . PHP_EOL;
+        return '    <image:image>'.PHP_EOL.
+               '      <image:loc>'.htmlspecialchars($imageUrl).'</image:loc>'.PHP_EOL.
+               '      <image:title>'.htmlspecialchars($title).'</image:title>'.PHP_EOL.
+               '    </image:image>'.PHP_EOL;
     }
 
     /**
@@ -125,6 +132,7 @@ class SeoService
     public function saveSitemap(): bool
     {
         $sitemap = $this->generateSitemap();
+
         return Storage::disk('public')->put('sitemap.xml', $sitemap);
     }
 
@@ -142,7 +150,7 @@ class SeoService
         $content .= "Disallow: /password/*\n";
         $content .= "Disallow: /email/*\n";
         $content .= "\n";
-        $content .= "Sitemap: " . route('sitemap') . "\n";
+        $content .= 'Sitemap: '.route('sitemap')."\n";
 
         return $content;
     }
@@ -152,12 +160,17 @@ class SeoService
      */
     public function generateBlogStructuredData(Blog $blog): array
     {
+        $blogImage = $blog->image_url;
+        if (! $blogImage && $blog->image) {
+            $blogImage = Storage::url($blog->image);
+        }
+
         return [
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
             'headline' => $blog->title,
             'description' => $blog->excerpt ?? $blog->meta_description,
-            'image' => $blog->featured_image,
+            'image' => $blogImage,
             'datePublished' => $blog->published_at?->toIso8601String(),
             'dateModified' => $blog->updated_at->toIso8601String(),
             'author' => [
@@ -184,6 +197,8 @@ class SeoService
      */
     public function generateProjectStructuredData(Project $project): array
     {
+        $projectImage = $project->thumbnail ? Storage::url($project->thumbnail) : null;
+
         $data = [
             '@context' => 'https://schema.org',
             '@type' => 'SoftwareSourceCode',
@@ -199,8 +214,8 @@ class SeoService
             ],
         ];
 
-        if ($project->featured_image) {
-            $data['image'] = $project->featured_image;
+        if ($projectImage) {
+            $data['image'] = $projectImage;
         }
 
         return $data;
@@ -211,7 +226,7 @@ class SeoService
      */
     public function generateWebsiteStructuredData(): array
     {
-        return [
+        $data = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
             'name' => config('app.name'),
@@ -222,12 +237,17 @@ class SeoService
                 'name' => config('app.author_name', 'Developer'),
                 'url' => config('app.url'),
             ],
-            'potentialAction' => [
-                '@type' => 'SearchAction',
-                'target' => route('search') . '?q={search_term_string}',
-                'query-input' => 'required name=search_term_string',
-            ],
         ];
+
+        if (Route::has('blog.index')) {
+            $data['potentialAction'] = [
+                '@type' => 'SearchAction',
+                'target' => route('blog.index').'?search={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ];
+        }
+
+        return $data;
     }
 
     /**

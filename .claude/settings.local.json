@@ -56,7 +56,10 @@
       "mcp__laravel-boost__read-log-entries",
       "Bash(findstr:*)",
       "mcp__laravel-boost__database-query",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "mcp__laravel-boost__get-config",
+      "mcp__laravel-boost__list-available-config-keys",
+      "mcp__laravel-boost__list-available-env-vars"
     ]
   },
   "enableAllProjectMcpServers": true,

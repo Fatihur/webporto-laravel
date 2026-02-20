@@ -208,7 +208,11 @@
         </div>
 
         {{-- Large Hi Animation (Above Messages) --}}
-        @if(empty($chatHistory) || count($chatHistory) <= 1)
+        {{-- Only show when no user message yet --}}
+        @php
+            $hasUserMessage = collect($chatHistory)->contains('role', 'user');
+        @endphp
+        @if(!$hasUserMessage)
             <div class="flex justify-center pt-6 pb-2 bg-gradient-to-b from-mint/5 to-transparent">
                 <div class="w-40 h-40">
                     <lottie-player

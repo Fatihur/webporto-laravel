@@ -6,7 +6,6 @@ use App\Models\Project;
 use App\Services\ImageOptimizationService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Laravel\Ai\Enums\Lab;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -38,6 +37,12 @@ class Form extends Component
     public array $tech_stack = [];
 
     public bool $is_featured = false;
+
+    public ?string $meta_title = null;
+
+    public ?string $meta_description = null;
+
+    public ?string $meta_keywords = null;
 
     // Stats as array of objects
     public array $stats = [];
@@ -78,6 +83,9 @@ class Form extends Component
             'tech_stack' => 'array',
             'stats' => 'array',
             'is_featured' => 'boolean',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'meta_keywords' => 'nullable|string|max:255',
             'thumbnail' => $this->projectId ? 'nullable|image|max:2048' : 'required|image|max:2048',
             'gallery' => 'array',
             'gallery.*' => 'image|max:2048',
@@ -102,6 +110,9 @@ class Form extends Component
                 $this->tech_stack = $project->tech_stack ?? [];
                 $this->stats = $project->stats ?? [['label' => '', 'value' => '']];
                 $this->is_featured = $project->is_featured;
+                $this->meta_title = $project->meta_title;
+                $this->meta_description = $project->meta_description;
+                $this->meta_keywords = $project->meta_keywords;
                 $this->thumbnailPreview = $project->thumbnail ? Storage::url($project->thumbnail) : null;
                 $this->existingGallery = $project->gallery ?? [];
             }
@@ -200,6 +211,9 @@ class Form extends Component
             'tech_stack' => $this->tech_stack,
             'stats' => array_filter($this->stats, fn ($stat) => ! empty($stat['label']) && ! empty($stat['value'])),
             'is_featured' => $this->is_featured,
+            'meta_title' => $this->meta_title ?: $this->title,
+            'meta_description' => $this->meta_description ?: Str::limit(strip_tags($cleanDescription), 155),
+            'meta_keywords' => $this->meta_keywords ?: implode(', ', array_slice($this->tags, 0, 8)),
         ];
 
         // Handle thumbnail upload with optimization
@@ -286,8 +300,7 @@ INSTRUCTIONS,
             ];
 
             $response = $agent->prompt(
-                "Translate the following Indonesian text to English. Maintain professional tech portfolio tone:\n\n".json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
-                provider: Lab::Groq,
+                "Translate the following Indonesian text to English. Maintain professional tech portfolio tone:\n\n".json_encode($input, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
             );
 
             $translatedText = (string) $response;
