@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'openrouter',
+    'default' => 'groq',
     'default_for_images' => 'gemini',
     'default_for_audio' => 'openai',
     'default_for_transcription' => 'openai',
@@ -36,6 +36,11 @@ return [
             'cache' => false,
             'store' => env('CACHE_STORE', 'database'),
         ],
+    ],
+
+    'fallback' => [
+        'openrouter_model' => env('AI_FALLBACK_OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
+        'openai_model' => env('AI_FALLBACK_OPENAI_MODEL', 'moonshot-v1-8k'),
     ],
 
     /*

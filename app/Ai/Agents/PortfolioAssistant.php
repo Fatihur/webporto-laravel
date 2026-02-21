@@ -23,7 +23,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider('groq')]
-#[Model('llama-3.3-70b-versatile')]
+// #[Model('llama-3.3-70b-versatile')]
 #[MaxSteps(5)]
 #[MaxTokens(500)]
 #[Temperature(0.7)]
@@ -143,7 +143,7 @@ Always respond in the same language as the user's query (Indonesian or English).
   - "Halo John! 👋 Buat project e-commerce di PT ABC..."
   - "Wah, budget 50jt dari Sarah cukup nih untuk..."
   - "John, kemarin kamu tanya tentang Laravel, sekarang..."
-- JANGAN PERNAK membuat asumsi tentang user lain - setiap user punya context terpisah
+- JANGAN PERNAH membuat asumsi tentang user lain - setiap user punya context terpisah
 - Jika tidak ada informasi user, tetap friendly dan tanyakan nama mereka untuk pengalaman lebih personal
 
 **SEARCH STRATEGY - Cara mencari informasi yang benar:**

@@ -229,8 +229,8 @@
     <!-- MathJax re-render on Livewire updates -->
     <script>
         document.addEventListener('livewire:navigated', () => {
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
+            if (typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise().catch(() => {});
             }
         });
     </script>

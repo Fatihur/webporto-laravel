@@ -1,5 +1,6 @@
 <div x-data="{
     notifications: [],
+    nextId: 0,
     init() {
         // Support both Livewire v2 and v3 syntax
         if (typeof Livewire !== 'undefined' && Livewire.on) {
@@ -27,7 +28,8 @@
         });
     },
     add(type, message) {
-        const id = Date.now();
+        this.nextId += 1;
+        const id = `${Date.now()}-${this.nextId}`;
         this.notifications.push({ id, type, message });
         setTimeout(() => this.remove(id), 5000);
     },
@@ -35,7 +37,7 @@
         this.notifications = this.notifications.filter(n => n.id !== id);
     }
 }" x-cloak class="fixed top-4 right-4 z-50 space-y-2">
-    <template x-for="notification in notifications" :key="notification.id">
+    <template x-for="notification in notifications" :key="notification.id ?? `${notification.type}-${notification.message}`">
         <div x-show.transition="true"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform translate-x-full"
@@ -46,6 +48,7 @@
              :class="{
                 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950': notification.type === 'success',
                 'bg-red-500 text-white': notification.type === 'error',
+                'bg-amber-500 text-white': notification.type === 'warning',
                 'bg-blue-500 text-white': notification.type === 'info'
              }"
              class="px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 min-w-[300px]"
@@ -66,6 +69,15 @@
                 </svg>
             </template>
 
+            <!-- Warning Icon -->
+            <template x-if="notification.type === 'warning'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
+                    <path d="M12 9v4"/>
+                    <path d="M12 17h.01"/>
+                </svg>
+            </template>
+
             <!-- Info Icon -->
             <template x-if="notification.type === 'info'">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -75,7 +87,7 @@
                 </svg>
             </template>
 
-            <span class="font-bold" x-text="notification.message"></span>
+            <span class="font-bold" x-text="notification.message || notification"></span>
 
             <button @click="remove(notification.id)" class="ml-auto opacity-70 hover:opacity-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

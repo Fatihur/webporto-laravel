@@ -8,7 +8,9 @@ use App\Ai\Agents\PortfolioAssistant;
 use App\Services\UserContextService;
 use App\Support\AiChat\GameEngine;
 use App\Support\AiChat\MessageFormatter;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Laravel\Ai\Exceptions\RateLimitedException;
 use Livewire\Component;
 use Throwable;
 
@@ -171,6 +173,33 @@ class AIChatWidget extends Component
                 'content' => (string) $response,
                 'timestamp' => now()->toIso8601String(),
             ];
+        } catch (RateLimitedException $e) {
+            logger()->warning('AI provider rate limited, using local fallback.', [
+                'exception' => $e,
+                'user_message' => $userMessage,
+            ]);
+
+            $secondaryResponse = $this->attemptSecondaryProviderResponse($promptWithContext);
+
+            if ($secondaryResponse !== null) {
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => "⚠️ Groq lagi kena rate limit. Aku pindah ke provider cadangan ya.\n\n{$secondaryResponse}",
+                    'timestamp' => now()->toIso8601String(),
+                ];
+
+                $this->isLoading = false;
+                $this->saveChatHistory();
+                $this->dispatch('chat-updated');
+
+                return;
+            }
+
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => "⚠️ Groq lagi kena rate limit. Aku lanjut bantu pakai mode fallback lokal dulu ya.\n\n".$this->generateDemoResponse($userMessage),
+                'timestamp' => now()->toIso8601String(),
+            ];
         } catch (Throwable $e) {
             // Log error untuk debugging
             logger()->error('AI Chat Error: '.$e->getMessage(), [
@@ -315,6 +344,92 @@ class AIChatWidget extends Component
 
         // Default response
         return "Maaf, layanan AI sedang sementara tidak tersedia. Silakan coba lagi nanti atau hubungi Fatih langsung melalui halaman Contact.\n\nAnda bisa bertanya tentang:\n• Project portfolio\n• Blog/artikel\n• Pengalaman kerja\n• Cara menghubungi Fatih";
+    }
+
+    /**
+     * Try OpenAI-compatible secondary providers in order.
+     */
+    private function attemptSecondaryProviderResponse(string $promptWithContext): ?string
+    {
+        foreach ($this->secondaryProviderCandidates() as $candidate) {
+            try {
+                $response = Http::withToken($candidate['api_key'])
+                    ->acceptJson()
+                    ->timeout(20)
+                    ->post(rtrim($candidate['base_url'], '/').'/chat/completions', [
+                        'model' => $candidate['model'],
+                        'messages' => [
+                            [
+                                'role' => 'system',
+                                'content' => $this->secondarySystemPrompt(),
+                            ],
+                            [
+                                'role' => 'user',
+                                'content' => $promptWithContext,
+                            ],
+                        ],
+                        'temperature' => 0.7,
+                        'max_tokens' => 500,
+                    ]);
+
+                if (! $response->successful()) {
+                    continue;
+                }
+
+                $content = data_get($response->json(), 'choices.0.message.content');
+
+                if (is_string($content) && $content !== '') {
+                    return $content;
+                }
+            } catch (Throwable $exception) {
+                logger()->warning('Secondary AI provider failed', [
+                    'provider' => $candidate['provider'],
+                    'exception' => $exception,
+                ]);
+            }
+        }
+
+        return null;
+    }
+
+    private function secondarySystemPrompt(): string
+    {
+        return <<<'PROMPT'
+Kamu adalah Fay, asisten untuk website portfolio Fatih.
+Jawab singkat, ramah, dan fokus hanya pada konteks portfolio Fatih (project, blog, pengalaman kerja, kontak).
+
+Jika informasi tidak cukup, jangan mengarang. Katakan bahwa data belum tersedia dan arahkan user ke halaman yang relevan seperti /projects, /blog, atau /contact.
+PROMPT;
+    }
+
+    /**
+     * @return array<int, array{provider: string, base_url: string, api_key: string, model: string}>
+     */
+    private function secondaryProviderCandidates(): array
+    {
+        $candidates = [];
+
+        $openrouterKey = (string) config('ai.providers.openrouter.key');
+        if ($openrouterKey !== '') {
+            $candidates[] = [
+                'provider' => 'openrouter',
+                'base_url' => (string) config('ai.providers.openrouter.url', 'https://openrouter.ai/api/v1'),
+                'api_key' => $openrouterKey,
+                'model' => (string) config('ai.fallback.openrouter_model', 'openai/gpt-4o-mini'),
+            ];
+        }
+
+        $openaiKey = (string) config('ai.providers.openai.key');
+        if ($openaiKey !== '') {
+            $candidates[] = [
+                'provider' => 'openai',
+                'base_url' => (string) config('ai.providers.openai.url', 'https://api.openai.com/v1'),
+                'api_key' => $openaiKey,
+                'model' => (string) config('ai.fallback.openai_model', 'moonshot-v1-8k'),
+            ];
+        }
+
+        return $candidates;
     }
 
     /**

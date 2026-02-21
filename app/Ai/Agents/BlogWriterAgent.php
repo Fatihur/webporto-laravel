@@ -6,6 +6,7 @@ namespace App\Ai\Agents;
 
 use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Attributes\MaxTokens;
+use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Attributes\Temperature;
 use Laravel\Ai\Contracts\Agent;
@@ -13,6 +14,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[Provider('groq')]
+#[Model('llama-3.3-70b-versatile')]
 #[MaxSteps(10)]
 #[MaxTokens(4000)]
 #[Temperature(0.95)]
