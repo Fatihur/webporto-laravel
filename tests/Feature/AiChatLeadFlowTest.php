@@ -42,7 +42,7 @@ class AiChatLeadFlowTest extends TestCase
         $this->assertSame(1, Contact::count());
     }
 
-    public function test_it_appends_citations_when_retrieval_sources_exist(): void
+    public function test_it_does_not_append_citations_when_retrieval_sources_exist(): void
     {
         app(EngineManager::class)->forgetEngines();
         config(['scout.driver' => 'null']);
@@ -61,8 +61,6 @@ class AiChatLeadFlowTest extends TestCase
                 ],
             ]);
         $retrievalMock->shouldReceive('buildPromptContext')->andReturn('retrieval context');
-        $retrievalMock->shouldReceive('formatCitationBlock')->andReturn("📎 **Sumber rujukan:**\n• [Laravel SEO Guide](https://example.com/blog/laravel-seo-guide)");
-
         PortfolioAssistant::fake(['Ini jawaban dari AI.']);
 
         $component = Livewire::test(AiChatWidget::class);
@@ -72,6 +70,6 @@ class AiChatLeadFlowTest extends TestCase
         $lastAssistant = collect($history)->reverse()->first(fn (array $entry): bool => $entry['role'] === 'assistant');
 
         $this->assertNotNull($lastAssistant);
-        $this->assertStringContainsString('Sumber rujukan', $lastAssistant['content']);
+        $this->assertStringNotContainsString('Sumber rujukan', $lastAssistant['content']);
     }
 }

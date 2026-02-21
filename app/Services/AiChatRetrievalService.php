@@ -301,22 +301,4 @@ class AiChatRetrievalService
 
         return implode("\n", $lines);
     }
-
-    /**
-     * @param  array{sources: array<int, array<string, string>>}  $retrieval
-     */
-    public function formatCitationBlock(array $retrieval): string
-    {
-        if (empty($retrieval['sources'])) {
-            return '';
-        }
-
-        $lines = ['📎 **Sumber rujukan:**'];
-
-        foreach ($retrieval['sources'] as $source) {
-            $lines[] = "• [{$source['title']}]({$source['url']})";
-        }
-
-        return implode("\n", $lines);
-    }
 }

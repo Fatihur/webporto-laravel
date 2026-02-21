@@ -50,34 +50,6 @@ class AiChatRetrievalServiceTest extends TestCase
         $this->assertNotEmpty($service->buildPromptContext($result));
     }
 
-    public function test_it_formats_citation_block_for_assistant_response(): void
-    {
-        $service = new AiChatRetrievalService;
-
-        $result = [
-            'sources' => [
-                [
-                    'type' => 'blog',
-                    'title' => 'SEO Guide',
-                    'url' => 'https://example.com/blog/seo-guide',
-                    'snippet' => 'SEO guide content',
-                ],
-                [
-                    'type' => 'project',
-                    'title' => 'Portfolio Project',
-                    'url' => 'https://example.com/project/portfolio-project',
-                    'snippet' => 'Project snippet',
-                ],
-            ],
-        ];
-
-        $citation = $service->formatCitationBlock($result);
-
-        $this->assertStringContainsString('Sumber rujukan', $citation);
-        $this->assertStringContainsString('SEO Guide', $citation);
-        $this->assertStringContainsString('Portfolio Project', $citation);
-    }
-
     public function test_it_prioritizes_highly_relevant_sources(): void
     {
         app(EngineManager::class)->forgetEngines();
