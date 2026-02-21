@@ -155,6 +155,50 @@
         <livewire:stats-counter />
     </section>
 
+    <!-- Featured Projects Section -->
+    <section class="mb-40" x-data="{ shownProjects: false }" x-intersect.once.margin.-100px="shownProjects = true">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 transition-all duration-1000 transform" x-bind:class="shownProjects ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+            <div class="max-w-xl">
+                <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-3 block">Selected Work</span>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter leading-tight">Featured Projects</h2>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 transition-all duration-1000 delay-300 transform" x-bind:class="shownProjects ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+            @forelse($featuredProjects as $project)
+                <a
+                    href="{{ route('projects.show', $project->slug) }}"
+                    wire:navigate
+                    class="group rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 overflow-hidden hover:border-mint/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition"
+                >
+                    <div class="aspect-[16/10] bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+                        @if($project->thumbnail)
+                            <x-optimized-image
+                                :src="Storage::url($project->thumbnail)"
+                                :alt="$project->title"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="p-5 sm:p-6">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-2">{{ $project->category }}</p>
+                        <h3 class="text-lg sm:text-xl font-bold text-zinc-950 dark:text-white group-hover:text-mint transition-colors">{{ $project->title }}</h3>
+                        <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 line-clamp-3">{{ strip_tags($project->description) }}</p>
+                    </div>
+                </a>
+            @empty
+                <div class="md:col-span-2 xl:col-span-3 rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-900/50 p-8 sm:p-10 text-center">
+                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Featured projects are being prepared.</p>
+                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Please explore categories above or check back soon.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
     <!-- Experience Section -->
     <section class="mb-40 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
         <div class="lg:col-span-5 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
@@ -186,15 +230,20 @@
             </div>
 
             <div wire:loading.remove>
-            @foreach($experiences as $exp)
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 sm:p-8 rounded-4xl border border-zinc-100 dark:border-zinc-800 group hover:border-mint transition-colors gap-2">
-                    <div>
-                        <h4 class="text-lg sm:text-xl font-bold group-hover:text-mint transition-colors">{{ $exp->role }}</h4>
-                        <p class="text-zinc-500 dark:text-zinc-400 text-sm">{{ $exp->company }}</p>
+                @forelse($experiences as $exp)
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 sm:p-8 rounded-4xl border border-zinc-100 dark:border-zinc-800 group hover:border-mint transition-colors gap-2">
+                        <div>
+                            <h4 class="text-lg sm:text-xl font-bold group-hover:text-mint transition-colors">{{ $exp->role }}</h4>
+                            <p class="text-zinc-500 dark:text-zinc-300 text-sm">{{ $exp->company }}</p>
+                        </div>
+                        <span class="text-xs sm:text-sm font-bold opacity-80 bg-zinc-50 dark:bg-zinc-900 px-4 py-1 rounded-full">{{ $exp->dateRange() }}</span>
                     </div>
-                    <span class="text-xs sm:text-sm font-bold opacity-60 bg-zinc-50 dark:bg-zinc-900 px-4 py-1 rounded-full">{{ $exp->dateRange() }}</span>
-                </div>
-                @endforeach
+                @empty
+                    <div class="rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-900/50 p-6 sm:p-8">
+                        <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Experience timeline is being updated.</p>
+                        <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">You can still reach out via WhatsApp for collaboration details.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -208,7 +257,7 @@
             <a
                 href="{{ route('contact.index') }}"
                 wire:navigate
-                class="inline-flex items-center gap-3 bg-white text-zinc-950 px-8 sm:px-10 py-4 sm:py-5 rounded-full font-black text-base sm:text-lg hover:scale-105 transition-transform"
+                class="inline-flex items-center gap-3 min-h-12 bg-white text-zinc-950 px-8 sm:px-10 py-4 sm:py-5 rounded-full font-black text-base sm:text-lg hover:scale-105 transition-transform"
             >
                 Start Project
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>

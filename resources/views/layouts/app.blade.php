@@ -196,9 +196,13 @@
     @stack('styles')
 </head>
 <body class="bg-white text-zinc-950 dark:bg-zinc-950 dark:text-white transition-colors duration-300 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-zinc-950 focus:text-white dark:focus:bg-white dark:focus:text-zinc-950">
+        Skip to main content
+    </a>
+
     <livewire:navigation />
 
-    <main>
+    <main id="main-content">
         {{ $slot }}
     </main>
 
@@ -246,9 +250,9 @@
                       </template>
                  </div>
                  <div class="flex-1 text-sm font-semibold" x-text="toast.message"></div>
-                 <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                 </button>
+                 <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="min-h-10 min-w-10 inline-flex items-center justify-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint rounded-lg" aria-label="Dismiss notification">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
             </div>
         </template>
     </div>
@@ -278,9 +282,9 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
     >
-        <button @click="open = false" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+         <button @click="open = false" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" aria-label="Close image preview">
+             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+         </button>
         <img :src="imgSrc" @click.outside="open = false" class="max-w-full max-h-full rounded-2xl shadow-2xl object-contain" 
              x-show="open"
              x-transition:enter="transition ease-out duration-300 delay-100"

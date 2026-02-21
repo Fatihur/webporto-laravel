@@ -45,7 +45,9 @@
             <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
             <span class="text-xs text-zinc-500">{{ $post->published_at?->format('M d, Y') ?? $post->created_at?->format('M d, Y') }}</span>
             <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
-            <span class="text-xs text-zinc-500">{{ $post->read_time }} min read</span>
+            <span class="text-xs text-zinc-600 dark:text-zinc-300">{{ $post->read_time }} min read</span>
+            <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
+            <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300">Math rendering enabled</span>
         </div>
 
         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-6 leading-tight break-words">
@@ -108,7 +110,7 @@
                             this.$el.querySelectorAll('pre').forEach(pre => {
                                 pre.style.position = 'relative';
                                 let btn = document.createElement('button');
-                                btn.className = 'absolute top-2 right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-zinc-400 hover:text-white transition-colors text-xs flex items-center justify-center backdrop-blur-sm z-10 group opacity-0 group-hover/pre:opacity-100 transition-opacity';
+                                btn.className = 'absolute top-2 right-2 p-2.5 min-h-10 min-w-10 rounded-md bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white transition-colors text-xs flex items-center justify-center backdrop-blur-sm z-10 group opacity-0 group-hover/pre:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint';
                                 btn.innerHTML = `<svg class='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'/></svg>`;
                                 btn.onclick = (e) => {
                                     e.stopPropagation();
@@ -281,7 +283,7 @@
     <section class="mb-16 pt-16 border-t border-zinc-100 dark:border-zinc-800" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
         <div class="flex items-center justify-between mb-8 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Comments</h3>
-            <span class="text-sm font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
+            <span class="text-sm font-bold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{{ $post->approvedComments->count() }}</span>
         </div>
 
         <!-- Comments List -->
@@ -305,59 +307,62 @@
     </div>
 
     <!-- Related Articles -->
-    @if($relatedPosts->count() > 0)
-        <div class="mb-12" x-data="{ shownRelated: false }" x-intersect.once.margin.-100px="shownRelated = true">
-            <h3 class="text-2xl font-bold mb-8 transition-all duration-1000 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">Related Articles</h3>
+    <div class="mb-12" x-data="{ shownRelated: false }" x-intersect.once.margin.-100px="shownRelated = true">
+        <h3 class="text-2xl font-bold mb-8 transition-all duration-1000 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">Related Articles</h3>
 
-            <!-- Skeleton Loading -->
-            <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @for($i = 0; $i < 2; $i++)
-                    <div class="animate-pulse">
-                        <div class="aspect-[16/10] rounded-2xl bg-zinc-200 dark:bg-zinc-800 mb-4"></div>
-                        <div class="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-1/4 mb-2"></div>
-                        <div class="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4"></div>
-                    </div>
-                @endfor
-            </div>
-
-            <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-1000 delay-300 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
-                @foreach($relatedPosts as $related)
-                    <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
-                        <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
-                            @if($related->image || $related->image_url)
-                                <x-optimized-image
-                                    :src="$related->image_url ?? Storage::url($related->image)"
-                                    :alt="$related->title"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                            @else
-                                <div class="w-full h-full flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
-                                        <rect width="18" height="18" x="3" y="3" rx="2"/>
-                                        <circle cx="9" cy="9" r="2"/>
-                                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                                    </svg>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2 mb-2">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $related->category }}</span>
-                            <span class="text-zinc-300 dark:text-zinc-700">•</span>
-                            <span class="text-xs text-zinc-500">{{ $related->read_time }} min read</span>
-                        </div>
-                        <h4 class="text-lg font-bold group-hover:text-mint transition-colors">{{ $related->title }}</h4>
-                    </a>
-                @endforeach
-            </div>
+        <!-- Skeleton Loading -->
+        <div wire:loading.delay class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            @for($i = 0; $i < 2; $i++)
+                <div class="animate-pulse">
+                    <div class="aspect-[16/10] rounded-2xl bg-zinc-200 dark:bg-zinc-800 mb-4"></div>
+                    <div class="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-1/4 mb-2"></div>
+                    <div class="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4"></div>
+                </div>
+            @endfor
         </div>
-    @endif
+
+        <div wire:loading.remove class="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-1000 delay-300 transform" x-bind:class="shownRelated ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+            @forelse($relatedPosts as $related)
+                <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group rounded-2xl border border-zinc-200/80 dark:border-zinc-800 p-4 sm:p-5 hover:border-mint/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950">
+                    <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
+                        @if($related->image || $related->image_url)
+                            <x-optimized-image
+                                :src="$related->image_url ?? Storage::url($related->image)"
+                                :alt="$related->title"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                        @else
+                            <div class="w-full h-full flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
+                                    <rect width="18" height="18" x="3" y="3" rx="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                </svg>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-mint">{{ $related->category }}</span>
+                        <span class="text-zinc-300 dark:text-zinc-700">•</span>
+                        <span class="text-xs text-zinc-600 dark:text-zinc-300">{{ $related->read_time }} min read</span>
+                    </div>
+                    <h4 class="text-lg font-bold group-hover:text-mint transition-colors">{{ $related->title }}</h4>
+                </a>
+            @empty
+                <div class="md:col-span-2 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-900/50 p-6 sm:p-8">
+                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">No related articles yet.</p>
+                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Explore the journal for more topics and fresh updates.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
 
     <!-- CTA -->
     <div class="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 md:p-12 text-center">
-        <h3 class="text-xl sm:text-2xl font-bold mb-4">Enjoyed this article?</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 mb-6 text-sm sm:text-base">Let's discuss your project and create something amazing together.</p>
-        <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold hover:scale-105 transition-transform text-sm sm:text-base">
-            Get in Touch
+            <h3 class="text-xl sm:text-2xl font-bold mb-4">Enjoyed this article?</h3>
+            <p class="text-zinc-600 dark:text-zinc-300 mb-6 text-sm sm:text-base">Let's discuss your project and create something amazing together.</p>
+            <a href="{{ route('contact.index') }}" wire:navigate class="inline-flex items-center gap-2 min-h-11 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold hover:scale-105 transition-transform text-sm sm:text-base">
+                Get in Touch
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14"/>
                 <path d="m12 5 7 7-7 7"/>

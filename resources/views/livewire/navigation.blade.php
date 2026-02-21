@@ -5,16 +5,21 @@
          searchOpen: false,
          isScrolled: false,
          currentPath: window.location.pathname,
+         syncBodyScroll() {
+             document.body.style.overflow = (this.mobileMenuOpen || this.searchOpen) ? 'hidden' : 'auto';
+         },
          isActive(path) {
              if (path === '/') return this.currentPath === '/';
              return this.currentPath.startsWith(path);
          }
      }"
      x-init="
-        document.addEventListener('livewire:navigated', () => { currentPath = window.location.pathname });
-        window.addEventListener('scroll', () => { isScrolled = window.scrollY > 20 });
-        isScrolled = window.scrollY > 20;
-     "
+         document.addEventListener('livewire:navigated', () => { currentPath = window.location.pathname });
+         window.addEventListener('scroll', () => { isScrolled = window.scrollY > 20 });
+         isScrolled = window.scrollY > 20;
+         $watch('mobileMenuOpen', () => syncBodyScroll());
+         $watch('searchOpen', () => syncBodyScroll());
+      "
      x-bind:class="isScrolled ? 'bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm' : 'bg-transparent border-transparent'"
      x-on:keydown.escape.window="mobileMenuOpen = false; megaMenuOpen = false; searchOpen = false"
      x-on:keydown.window="if ((event.ctrlKey || event.metaKey) && event.key === 'k') { event.preventDefault(); searchOpen = true; }"
@@ -38,12 +43,15 @@
                         x-on:click="megaMenuOpen = !megaMenuOpen"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-colors"
                         x-bind:class="isActive('/project') ? 'bg-mint/20 text-mint ring-1 ring-mint/50' : (megaMenuOpen ? 'bg-zinc-100 dark:bg-zinc-900' : 'hover:bg-zinc-100 dark:hover:bg-zinc-900')"
+                        x-bind:aria-expanded="megaMenuOpen"
+                        aria-controls="projects-mega-menu"
                     >
                         Projects
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-200" x-bind:class="megaMenuOpen ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
 
                     <div
+                        id="projects-mega-menu"
                         x-show="megaMenuOpen"
                         x-on:click.outside="megaMenuOpen = false"
                         x-transition
@@ -78,7 +86,7 @@
                 <button
                     type="button"
                     x-on:click="$dispatch('open-search')"
-                    class="hidden md:flex items-center gap-2 px-3 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
+                    class="hidden md:flex items-center gap-2 px-3 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
                     aria-label="Search"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100 transition-colors">
@@ -95,7 +103,7 @@
                 <div class="hidden md:block w-px h-6 bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
 
                 <livewire:theme-toggle />
-                <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+                <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" x-bind:aria-expanded="mobileMenuOpen" aria-controls="mobile-nav-sidebar" aria-label="Toggle mobile menu">
                     <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                     <svg x-show="mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
@@ -110,11 +118,11 @@
             <div x-show="mobileMenuOpen" x-on:click="mobileMenuOpen = false" x-transition.opacity class="fixed inset-0 bg-black/50 z-[60] lg:hidden"></div>
 
             <!-- Sidebar -->
-            <div x-show="mobileMenuOpen" x-transition:enter="transition transform ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition transform ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed top-0 right-0 bottom-0 w-80 max-w-full bg-white dark:bg-zinc-950 z-[70] lg:hidden shadow-2xl flex flex-col">
+            <div id="mobile-nav-sidebar" x-show="mobileMenuOpen" x-transition:enter="transition transform ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition transform ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed top-0 right-0 bottom-0 w-[min(22rem,100vw)] max-w-full bg-white dark:bg-zinc-950 z-[70] lg:hidden shadow-2xl flex flex-col" role="dialog" aria-modal="true" aria-label="Mobile navigation">
                 <!-- Header -->
                 <div class="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800 shrink-0">
                     <span class="font-black text-lg">Menu</span>
-                    <button type="button" x-on:click="mobileMenuOpen = false" class="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+                    <button type="button" x-on:click="mobileMenuOpen = false" class="w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" aria-label="Close mobile menu">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                 </div>
@@ -168,6 +176,9 @@
             class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] flex items-start justify-center pt-24 md:pt-32"
             x-on:keydown.escape.window="searchOpen = false"
             @close-search.window="searchOpen = false"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search"
         >
             <div
                 x-show="searchOpen"

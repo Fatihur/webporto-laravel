@@ -1,4 +1,4 @@
-<div class="fixed bottom-6 right-6 z-[9999]"
+<div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999]"
      x-data="{
         isOpen: @entangle('isOpen'),
         inputMessage: '',
@@ -122,7 +122,7 @@
         x-transition:leave-end="opacity-0 scale-50"
         @click="isOpen = true"
         type="button"
-        class="absolute bottom-0 right-0 flex items-center justify-center w-12 h-12 bg-mint rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        class="absolute bottom-0 right-0 flex items-center justify-center w-14 h-14 bg-mint rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
         aria-label="Open chat assistant">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -139,8 +139,11 @@
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-90"
         @click.outside="attemptClose($wire.activeGame !== null)"
-        class="absolute bottom-0 right-0 flex flex-col w-80 sm:w-96 h-[480px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden origin-bottom-right"
+        class="absolute bottom-0 right-0 flex flex-col w-[calc(100vw-2rem)] sm:w-96 h-[min(75vh,520px)] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden origin-bottom-right"
         style="display: none;"
+        role="dialog"
+        aria-modal="true"
+        aria-label="AI chat assistant"
     >
         {{-- Header --}}
         <div class="flex items-center justify-between px-4 py-3 bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
@@ -159,7 +162,9 @@
                 {{-- Context Menu Dropdown --}}
                 <div x-data="{ showContext: false }" class="relative">
                     <button @click="showContext = !showContext" type="button"
-                            class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors {{ !empty($userContexts) ? 'text-mint' : '' }}"
+                            class="p-2.5 min-h-11 min-w-11 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint {{ !empty($userContexts) ? 'text-mint' : '' }}"
+                            x-bind:aria-expanded="showContext"
+                            aria-controls="chat-context-menu"
                             title="Your Info">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -167,9 +172,9 @@
                     </button>
 
                     {{-- Context Dropdown --}}
-                    <div x-show="showContext" @click.away="showContext = false"
-                         x-transition class="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 z-50"
-                         style="display: none;">
+                    <div id="chat-context-menu" x-show="showContext" @click.away="showContext = false"
+                          x-transition class="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 z-50"
+                          style="display: none;">
                         <div class="p-3">
                             <p class="text-xs font-semibold text-zinc-500 uppercase mb-2">Info Tersimpan</p>
                             @if(!empty($userContexts))
@@ -194,12 +199,12 @@
                     </div>
                 </div>
 
-                <button wire:click="clearChat" type="button" class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors" title="Clear chat">
+                <button wire:click="clearChat" type="button" class="p-2.5 min-h-11 min-w-11 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" title="Clear chat" aria-label="Clear chat messages">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                 </button>
-                <button @click="attemptClose($wire.activeGame !== null)" type="button" class="p-2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <button @click="attemptClose($wire.activeGame !== null)" type="button" class="p-2.5 min-h-11 min-w-11 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" aria-label="Close chat window">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -508,5 +513,5 @@
     </div>
 
     {{-- Lottie Player Script --}}
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" defer></script>
 </div>

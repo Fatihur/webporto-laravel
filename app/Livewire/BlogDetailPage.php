@@ -62,6 +62,8 @@ class BlogDetailPage extends Component
             'relatedPosts' => $relatedPosts,
             'enableMathJax' => true,
             'structuredData' => $structuredData,
-        ])->layout('layouts.app');
+        ])->layout('layouts.app', [
+            'enableMathJax' => true,
+        ]);
     }
 }
