@@ -77,4 +77,81 @@ class AiChatRetrievalServiceTest extends TestCase
         $this->assertStringContainsString('SEO Guide', $citation);
         $this->assertStringContainsString('Portfolio Project', $citation);
     }
+
+    public function test_it_prioritizes_highly_relevant_sources(): void
+    {
+        app(EngineManager::class)->forgetEngines();
+        config(['scout.driver' => 'null']);
+
+        KnowledgeEntry::factory()->create([
+            'title' => 'SEO Basic Tips',
+            'content' => 'Tips SEO dasar untuk pemula.',
+            'category' => 'general',
+            'is_active' => true,
+        ]);
+
+        Blog::factory()->published()->create([
+            'title' => 'Website Company Profile Update',
+            'slug' => 'website-company-profile-update',
+            'excerpt' => 'Update ringan website company profile.',
+            'published_at' => now(),
+        ]);
+
+        Blog::factory()->published()->create([
+            'title' => 'Laravel SEO Optimization Guide',
+            'slug' => 'laravel-seo-optimization-guide',
+            'excerpt' => 'Panduan optimasi SEO Laravel dari sisi teknis.',
+            'published_at' => now()->subDay(),
+        ]);
+
+        $service = new AiChatRetrievalService;
+        $result = $service->retrieve('laravel seo optimization', 1);
+
+        $this->assertCount(1, $result['sources']);
+        $this->assertSame('Laravel SEO Optimization Guide', $result['sources'][0]['title']);
+    }
+
+    public function test_it_applies_pricing_intent_filter_to_prioritize_pricing_knowledge(): void
+    {
+        app(EngineManager::class)->forgetEngines();
+        config(['scout.driver' => 'null']);
+
+        KnowledgeEntry::query()->create([
+            'title' => 'Harga Website Company Profile',
+            'content' => 'Range harga mulai 15 juta tergantung scope.',
+            'category' => 'pricing',
+            'tags' => ['harga', 'pricing', 'website'],
+            'is_active' => true,
+            'usage_count' => 0,
+        ]);
+
+        KnowledgeEntry::query()->create([
+            'title' => 'Tips Design Branding',
+            'content' => 'Panduan umum branding visual.',
+            'category' => 'skills',
+            'tags' => ['design', 'branding'],
+            'is_active' => true,
+            'usage_count' => 0,
+        ]);
+
+        Blog::factory()->published()->create([
+            'title' => 'General Portfolio Update',
+            'slug' => 'general-portfolio-update',
+            'excerpt' => 'Update umum portfolio.',
+        ]);
+
+        Project::factory()->create([
+            'title' => 'Harga Website Company Profile',
+            'slug' => 'harga-website-company-profile',
+            'description' => 'Project showcase website company profile.',
+            'category' => 'software-dev',
+        ]);
+
+        $service = new AiChatRetrievalService;
+        $result = $service->retrieve('berapa harga website company profile', 1);
+
+        $this->assertCount(1, $result['sources']);
+        $this->assertSame('knowledge', $result['sources'][0]['type']);
+        $this->assertSame('Harga Website Company Profile', $result['sources'][0]['title']);
+    }
 }
