@@ -245,7 +245,7 @@
                             @foreach($existingGallery as $index => $image)
                                 <div class="relative aspect-square rounded-xl overflow-hidden group"
                                      wire:key="existing-gallery-{{ $index }}">
-                                    <img src="{{ Storage::url($image) }}" alt=""
+                                    <img src="{{ Storage::url($image) }}" alt="Existing gallery image {{ $index + 1 }}"
                                          class="w-full h-full object-cover">
                                     <button type="button" wire:click="removeGalleryImage({{ $index }})"
                                             class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -268,7 +268,7 @@
                             @foreach($gallery as $index => $image)
                                 <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-mint"
                                      wire:key="new-gallery-{{ $index }}">
-                                    <img src="{{ $image->temporaryUrl() }}" alt=""
+                                    <img src="{{ $image->temporaryUrl() }}" alt="New gallery image {{ $index + 1 }}"
                                          class="w-full h-full object-cover">
                                     <div class="absolute top-1 right-1 bg-mint text-zinc-950 text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</div>
                                     <button type="button" wire:click="removeNewGalleryImage({{ $index }})"
@@ -426,7 +426,7 @@
                     <!-- Preview -->
                     @if($thumbnailPreview)
                         <div class="relative aspect-video rounded-xl overflow-hidden mb-4 group">
-                            <img src="{{ $thumbnailPreview }}" alt="" class="w-full h-full object-cover">
+                            <img src="{{ $thumbnailPreview }}" alt="Project thumbnail preview" class="w-full h-full object-cover">
                             @if($thumbnail)
                                 <div class="absolute top-2 right-2 bg-mint text-zinc-950 text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</div>
                             @endif

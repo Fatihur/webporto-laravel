@@ -87,7 +87,13 @@
                                 <!-- Project Thumbnail or Icon -->
                                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-violet/20 to-violet/5 flex items-center justify-center shrink-0 overflow-hidden">
                                     @if ($result['data']->thumbnail)
-                                        <img src="{{ Storage::url($result['data']->thumbnail) }}" alt="" class="w-full h-full object-cover">
+                                        <img
+                                            src="{{ Storage::url($result['data']->thumbnail) }}"
+                                            alt="{{ $result['data']->title }} thumbnail"
+                                            class="w-full h-full object-cover"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
                                     @else
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet">
                                             <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
@@ -136,7 +142,13 @@
                                 <!-- Blog Image or Icon -->
                                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-mint/20 to-mint/5 flex items-center justify-center shrink-0 overflow-hidden">
                                     @if ($result['data']->image)
-                                        <img src="{{ Storage::url($result['data']->image) }}" alt="" class="w-full h-full object-cover">
+                                        <img
+                                            src="{{ Storage::url($result['data']->image) }}"
+                                            alt="{{ $result['data']->title }} cover image"
+                                            class="w-full h-full object-cover"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
                                     @else
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-mint">
                                             <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>

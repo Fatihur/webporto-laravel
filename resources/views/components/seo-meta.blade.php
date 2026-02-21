@@ -23,8 +23,11 @@ $metaDescription = strip_tags($description ?? $defaultDescription);
 $metaKeywords = $keywords ?? 'portfolio, design, development, web, graphic design, software development';
 $metaImage = $image ?? $defaultImage;
 $metaUrl = $url ?? url()->current();
+$canonicalUrl = preg_replace('/\?.*/', '', (string) $metaUrl);
 $metaLocale = $locale ?? str_replace('-', '_', config('app.locale', 'en'));
-$robotsContent = $noindex ? 'noindex, nofollow' : 'index, follow';
+$robotsContent = $noindex
+    ? 'noindex, nofollow'
+    : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
 @endphp
 
 {{-- Primary Meta Tags --}}
@@ -33,6 +36,8 @@ $robotsContent = $noindex ? 'noindex, nofollow' : 'index, follow';
 <meta name="keywords" content="{{ $metaKeywords }}">
 <meta name="author" content="{{ $author }}">
 <meta name="robots" content="{{ $robotsContent }}">
+<meta name="googlebot" content="{{ $robotsContent }}">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 
 {{-- Open Graph / Facebook --}}
 <meta property="og:type" content="{{ $type }}">
@@ -40,6 +45,8 @@ $robotsContent = $noindex ? 'noindex, nofollow' : 'index, follow';
 <meta property="og:title" content="{{ $metaTitle }}">
 <meta property="og:description" content="{{ $metaDescription }}">
 <meta property="og:image" content="{{ $metaImage }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{{ $metaTitle }}">
 <meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:locale" content="{{ $metaLocale }}">
@@ -58,10 +65,12 @@ $robotsContent = $noindex ? 'noindex, nofollow' : 'index, follow';
 <meta name="twitter:title" content="{{ $metaTitle }}">
 <meta name="twitter:description" content="{{ $metaDescription }}">
 <meta name="twitter:image" content="{{ $metaImage }}">
+<meta name="twitter:image:alt" content="{{ $metaTitle }}">
 
 @if ($twitterSite)
     <meta name="twitter:site" content="{{ $twitterSite }}">
 @endif
 
 {{-- Canonical URL --}}
-<link rel="canonical" href="{{ $metaUrl }}">
+<link rel="canonical" href="{{ $canonicalUrl }}">
+<link rel="alternate" hreflang="{{ str_replace('_', '-', $metaLocale) }}" href="{{ $canonicalUrl }}">

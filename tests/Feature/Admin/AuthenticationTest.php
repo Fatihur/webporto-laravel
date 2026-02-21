@@ -4,13 +4,15 @@ namespace Tests\Feature\Admin;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function admin_login_page_can_be_accessed(): void
     {
         $response = $this->get('/admin/login');
@@ -19,7 +21,7 @@ class AuthenticationTest extends TestCase
         $response->assertSee('Login');
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_access_admin_dashboard(): void
     {
         $user = User::factory()->create();
@@ -30,7 +32,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_admin_dashboard(): void
     {
         $response = $this->get('/admin');
@@ -38,7 +40,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/admin/login');
     }
 
-    /** @test */
+    #[Test]
     public function user_can_login_with_valid_credentials(): void
     {
         $user = User::factory()->create([
@@ -46,56 +48,53 @@ class AuthenticationTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post('/admin/login', [
-            'email' => 'admin@example.com',
-            'password' => 'password',
-        ]);
+        Livewire::test(\App\Livewire\Admin\Auth\Login::class)
+            ->set('email', 'admin@example.com')
+            ->set('password', 'password')
+            ->call('login')
+            ->assertRedirect('/admin');
 
-        $response->assertRedirect('/admin');
         $this->assertAuthenticatedAs($user);
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_login_with_invalid_credentials(): void
     {
-        $user = User::factory()->create([
+        User::factory()->create([
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post('/admin/login', [
-            'email' => 'admin@example.com',
-            'password' => 'wrong-password',
-        ]);
+        Livewire::test(\App\Livewire\Admin\Auth\Login::class)
+            ->set('email', 'admin@example.com')
+            ->set('password', 'wrong-password')
+            ->call('login')
+            ->assertHasErrors(['email']);
 
-        $response->assertRedirect('/admin/login');
-        $response->assertSessionHasErrors('email');
         $this->assertGuest();
     }
 
-    /** @test */
+    #[Test]
     public function login_requires_email(): void
     {
-        $response = $this->post('/admin/login', [
-            'email' => '',
-            'password' => 'password',
-        ]);
-
-        $response->assertSessionHasErrors('email');
+        Livewire::test(\App\Livewire\Admin\Auth\Login::class)
+            ->set('email', '')
+            ->set('password', 'password')
+            ->call('login')
+            ->assertHasErrors(['email']);
     }
 
-    /** @test */
+    #[Test]
     public function login_requires_password(): void
     {
-        $response = $this->post('/admin/login', [
-            'email' => 'admin@example.com',
-            'password' => '',
-        ]);
-
-        $response->assertSessionHasErrors('password');
+        Livewire::test(\App\Livewire\Admin\Auth\Login::class)
+            ->set('email', 'admin@example.com')
+            ->set('password', '')
+            ->call('login')
+            ->assertHasErrors(['password']);
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_logout(): void
     {
         $user = User::factory()->create();
@@ -107,7 +106,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_admin_projects(): void
     {
         $response = $this->get('/admin/projects');
@@ -115,7 +114,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/admin/login');
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_admin_blogs(): void
     {
         $response = $this->get('/admin/blogs');
@@ -123,7 +122,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/admin/login');
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_admin_contacts(): void
     {
         $response = $this->get('/admin/contacts');
@@ -131,7 +130,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/admin/login');
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_admin_experiences(): void
     {
         $response = $this->get('/admin/experiences');

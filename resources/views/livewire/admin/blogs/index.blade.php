@@ -181,7 +181,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($blog->image)
-                                    <img src="{{ Storage::url($blog->image) }}" alt="" class="w-12 h-12 rounded-lg object-cover">
+                                    <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }} thumbnail" class="w-12 h-12 rounded-lg object-cover" loading="lazy" decoding="async">
                                 @else
                                     <div class="w-12 h-12 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
@@ -234,7 +234,7 @@
                     <div class="flex items-start gap-3 mb-3">
                         <input type="checkbox" value="{{ $blog->id }}" wire:model.live="selected" class="mt-1 rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint">
                         @if($blog->image)
-                            <img src="{{ Storage::url($blog->image) }}" alt="" class="w-14 h-14 rounded-lg object-cover flex-shrink-0">
+                            <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }} thumbnail" class="w-14 h-14 rounded-lg object-cover flex-shrink-0" loading="lazy" decoding="async">
                         @else
                             <div class="w-14 h-14 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">

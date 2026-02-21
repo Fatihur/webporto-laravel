@@ -33,4 +33,9 @@ Tidak ada perubahan path untuk menghindari risiko regression terhadap indexing y
 
 Untuk halaman publik yang dioptimasi, gambar utama sudah menggunakan alt deskriptif berbasis judul konten saat tersedia.
 
-Catatan: masih ada beberapa image di area admin/form preview yang menggunakan alt kosong karena purely decorative/editorial helper. Ini tidak berdampak langsung ke indeks halaman publik.
+Update tambahan:
+
+- Alt text pada hasil pencarian (`resources/views/livewire/search-component.blade.php`) kini deskriptif (`thumbnail`/`cover image` berbasis judul konten).
+- Alt text pada listing admin blog/project yang sebelumnya kosong kini diisi deskriptif untuk mengurangi a11y lint noise dan menjaga konsistensi kualitas markup.
+
+Catatan: masih ada beberapa image preview editor/form yang bersifat helper internal; prioritas SEO tetap pada halaman publik.

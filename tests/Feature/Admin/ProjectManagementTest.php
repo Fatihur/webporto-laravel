@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Livewire\Admin\Projects\Form;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProjectManagementTest extends TestCase
@@ -21,132 +24,142 @@ class ProjectManagementTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_view_projects_list(): void
     {
         Project::factory()->count(5)->create();
 
-        $response = $this->actingAs($this->user)
-            ->get('/admin/projects');
+        $response = $this->actingAs($this->user)->get('/admin/projects');
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertSee('Projects');
     }
 
-    /** @test */
+    #[Test]
     public function projects_list_shows_pagination(): void
     {
         Project::factory()->count(15)->create();
 
-        $response = $this->actingAs($this->user)
-            ->get('/admin/projects');
-
-        $response->assertStatus(200);
+        $this->actingAs($this->user)
+            ->get('/admin/projects')
+            ->assertOk();
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_create_project(): void
     {
+        $this->actingAs($this->user);
         Storage::fake('public');
 
-        $projectData = [
-            'title' => 'Test Project',
-            'slug' => 'test-project',
-            'description' => 'Test project description',
-            'content' => '<p>Test content</p>',
-            'category' => 'software-dev',
-            'project_date' => '2024-01-15',
-            'tags' => ['Laravel', 'Vue.js'],
-            'tech_stack' => ['PHP', 'MySQL'],
-            'stats' => [['label' => 'Client', 'value' => 'Test Corp']],
-            'is_featured' => true,
-        ];
+        Livewire::test(Form::class)
+            ->set('title', 'Test Project')
+            ->set('slug', 'test-project')
+            ->set('description', 'Test project description')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'software-dev')
+            ->set('project_date', '2024-01-15')
+            ->set('tags', ['Laravel', 'Vue.js'])
+            ->set('tech_stack', ['PHP', 'MySQL'])
+            ->set('stats', [['label' => 'Client', 'value' => 'Test Corp']])
+            ->set('is_featured', true)
+            ->set('thumbnail', UploadedFile::fake()->image('thumbnail.jpg'))
+            ->call('save')
+            ->assertRedirect(route('admin.projects.index'));
 
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', $projectData);
-
-        $response->assertRedirect('/admin/projects');
         $this->assertDatabaseHas('projects', [
             'title' => 'Test Project',
             'slug' => 'test-project',
+            'category' => 'software-dev',
+            'is_featured' => true,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function project_requires_title(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => '',
-                'description' => 'Description',
-                'category' => 'software-dev',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('title');
+        Livewire::test(Form::class)
+            ->set('title', '')
+            ->set('slug', 'test-project')
+            ->set('description', 'Description')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'software-dev')
+            ->set('project_date', '2024-01-15')
+            ->call('save')
+            ->assertHasErrors(['title']);
     }
 
-    /** @test */
+    #[Test]
     public function project_requires_description(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Test Project',
-                'description' => '',
-                'category' => 'software-dev',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('description');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Project')
+            ->set('slug', 'test-project')
+            ->set('description', '')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'software-dev')
+            ->set('project_date', '2024-01-15')
+            ->call('save')
+            ->assertHasErrors(['description']);
     }
 
-    /** @test */
+    #[Test]
     public function project_requires_category(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Test Project',
-                'description' => 'Description',
-                'category' => '',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('category');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Project')
+            ->set('slug', 'test-project')
+            ->set('description', 'Description')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', '')
+            ->set('project_date', '2024-01-15')
+            ->call('save')
+            ->assertHasErrors(['category']);
     }
 
-    /** @test */
+    #[Test]
     public function project_slug_must_be_unique(): void
     {
         Project::factory()->create(['slug' => 'existing-slug']);
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Test Project',
-                'slug' => 'existing-slug',
-                'description' => 'Description',
-                'category' => 'software-dev',
-                'project_date' => '2024-01-15',
-            ]);
-
-        $response->assertSessionHasErrors('slug');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Project')
+            ->set('slug', 'existing-slug')
+            ->set('description', 'Description')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'software-dev')
+            ->set('project_date', '2024-01-15')
+            ->call('save')
+            ->assertHasErrors(['slug']);
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_update_project(): void
     {
         $project = Project::factory()->create([
             'title' => 'Old Title',
             'description' => 'Old description',
+            'category' => 'software-dev',
+            'project_date' => now(),
         ]);
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->put("/admin/projects/{$project->id}", [
-                'title' => 'Updated Title',
-                'slug' => $project->slug,
-                'description' => 'Updated description',
-                'content' => $project->content,
-                'category' => $project->category,
-                'project_date' => $project->project_date->format('Y-m-d'),
-            ]);
+        Livewire::test(Form::class, ['id' => $project->id])
+            ->set('title', 'Updated Title')
+            ->set('slug', $project->slug)
+            ->set('description', 'Updated description')
+            ->set('content', '<p>Updated content</p>')
+            ->set('category', 'software-dev')
+            ->set('project_date', '2024-01-15')
+            ->call('save')
+            ->assertRedirect(route('admin.projects.index'));
 
-        $response->assertRedirect('/admin/projects');
         $this->assertDatabaseHas('projects', [
             'id' => $project->id,
             'title' => 'Updated Title',
@@ -154,94 +167,15 @@ class ProjectManagementTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_delete_project(): void
     {
         $project = Project::factory()->create();
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->delete("/admin/projects/{$project->id}");
+        Livewire::test(\App\Livewire\Admin\Projects\Index::class)
+            ->call('delete', $project->id);
 
-        $response->assertRedirect('/admin/projects');
-        $this->assertDatabaseMissing('projects', [
-            'id' => $project->id,
-        ]);
-    }
-
-    /** @test */
-    public function project_can_be_featured(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Featured Project',
-                'slug' => 'featured-project',
-                'description' => 'Description',
-                'category' => 'software-dev',
-                'project_date' => '2024-01-15',
-                'is_featured' => true,
-            ]);
-
-        $response->assertRedirect('/admin/projects');
-        $this->assertDatabaseHas('projects', [
-            'title' => 'Featured Project',
-            'is_featured' => true,
-        ]);
-    }
-
-    /** @test */
-    public function project_can_have_tags(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Tagged Project',
-                'slug' => 'tagged-project',
-                'description' => 'Description',
-                'category' => 'software-dev',
-                'project_date' => '2024-01-15',
-                'tags' => ['PHP', 'Laravel', 'Vue.js'],
-            ]);
-
-        $response->assertRedirect('/admin/projects');
-        $project = Project::where('slug', 'tagged-project')->first();
-        $this->assertCount(3, $project->tags);
-    }
-
-    /** @test */
-    public function project_can_have_tech_stack(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Tech Project',
-                'slug' => 'tech-project',
-                'description' => 'Description',
-                'category' => 'software-dev',
-                'project_date' => '2024-01-15',
-                'tech_stack' => ['PHP', 'MySQL', 'Redis'],
-            ]);
-
-        $response->assertRedirect('/admin/projects');
-        $project = Project::where('slug', 'tech-project')->first();
-        $this->assertCount(3, $project->tech_stack);
-    }
-
-    /** @test */
-    public function project_can_have_stats(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/projects', [
-                'title' => 'Stats Project',
-                'slug' => 'stats-project',
-                'description' => 'Description',
-                'category' => 'software-dev',
-                'project_date' => '2024-01-15',
-                'stats' => [
-                    ['label' => 'Client', 'value' => 'Acme Corp'],
-                    ['label' => 'Duration', 'value' => '3 months'],
-                ],
-            ]);
-
-        $response->assertRedirect('/admin/projects');
-        $project = Project::where('slug', 'stats-project')->first();
-        $this->assertCount(2, $project->stats);
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
     }
 }

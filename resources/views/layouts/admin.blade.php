@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,12 @@
     <meta name="theme-color" content="#76D7A4">
     <meta name="litespeed-cache-control" content="no-cache">
 
-    <title>@yield('title', 'Admin Dashboard') - {{ config('app.name') }}</title>
+    <x-seo-meta
+        :title="trim((string) View::yieldContent('title', 'Admin Dashboard'))"
+        description="Admin dashboard page"
+        :url="url()->current()"
+        noindex
+    />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1,2 +1,22 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /logout
+Disallow: /register
+Disallow: /password/*
+Disallow: /email/*
+Disallow: /livewire/*
+
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+
+Host: fatihur.com
+Sitemap: https://fatihur.com/sitemap.xml
+
+Crawl-delay: 2

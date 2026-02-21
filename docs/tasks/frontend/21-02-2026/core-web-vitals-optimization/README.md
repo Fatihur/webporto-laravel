@@ -16,13 +16,17 @@ Meningkatkan SEO teknis, performa, dan aksesibilitas untuk halaman publik utama 
 ## Implemented Changes
 
 - Enhanced `seo-meta` component untuk robots directive, article metadata, locale, twitter site, og:image:alt.
+- Canonical URL dinormalisasi agar tidak membawa query string tracking/filter.
 - Inject default SEO + global WebSite/Person schema dari layout ketika page-specific SEO belum didefinisikan.
 - Menambahkan structured data page-level untuk Blog, Blog Detail, Project Detail, Project Listing, Contact.
 - Memperbaiki sitemap generation agar memasukkan semua kategori project, URL gambar absolut, dan robots host directive.
+- Memperluas robots policy untuk crawler modern (`GPTBot`, `ClaudeBot`) dan menjaga sitemap discovery.
 - Menyetel cache middleware agar route `sitemap` dan `robots` tidak tertimpa cache policy default.
 - Migrasi beberapa `<img>` menjadi `<x-optimized-image>` untuk konsistensi loading behavior.
+- Menambah skip link untuk keyboard navigation (`Skip to main content`) pada layout utama.
+- Menutup gap alt text pada beberapa image list/search cards yang sebelumnya kosong.
 
 ## Validation
 
 - `php artisan test --compact tests/Feature/SeoServiceTest.php tests/Feature/SeoMetaRenderingTest.php`
-- Hasil: passing (6 tests)
+- Hasil: passing (8 tests)

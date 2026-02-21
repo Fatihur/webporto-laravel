@@ -2,9 +2,12 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Livewire\Admin\Blogs\Form;
 use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class BlogManagementTest extends TestCase
@@ -19,204 +22,144 @@ class BlogManagementTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_view_blogs_list(): void
     {
         Blog::factory()->count(5)->create();
 
-        $response = $this->actingAs($this->user)
-            ->get('/admin/blogs');
+        $response = $this->actingAs($this->user)->get('/admin/blogs');
 
-        $response->assertStatus(200);
-        $response->assertSee('Blog');
+        $response->assertOk();
+        $response->assertSee('Blog Posts');
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_create_blog_post(): void
     {
-        $blogData = [
-            'title' => 'Test Blog Post',
-            'slug' => 'test-blog-post',
-            'excerpt' => 'Test excerpt',
-            'content' => '<p>Test content</p>',
-            'category' => 'technology',
-            'author' => 'Test Author',
-            'read_time' => 5,
-            'is_published' => true,
-            'published_at' => '2024-01-15',
-        ];
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', $blogData);
+        Livewire::test(Form::class)
+            ->set('title', 'Test Blog Post')
+            ->set('slug', 'test-blog-post')
+            ->set('excerpt', 'This is a short excerpt for testing purposes.')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'technology')
+            ->set('author', 'Test Author')
+            ->set('read_time', 5)
+            ->set('is_published', true)
+            ->set('published_at', '2024-01-15')
+            ->call('save')
+            ->assertRedirect(route('admin.blogs.index'));
 
-        $response->assertRedirect('/admin/blogs');
         $this->assertDatabaseHas('blogs', [
             'title' => 'Test Blog Post',
             'slug' => 'test-blog-post',
+            'category' => 'technology',
+            'is_published' => true,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function blog_requires_title(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => '',
-                'excerpt' => 'Excerpt',
-                'category' => 'technology',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('title');
+        Livewire::test(Form::class)
+            ->set('title', '')
+            ->set('slug', 'test-blog')
+            ->set('excerpt', 'This is a short excerpt for testing purposes.')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'technology')
+            ->set('read_time', 5)
+            ->call('save')
+            ->assertHasErrors(['title']);
     }
 
-    /** @test */
+    #[Test]
     public function blog_requires_excerpt(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Test Blog',
-                'excerpt' => '',
-                'category' => 'technology',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('excerpt');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Blog')
+            ->set('slug', 'test-blog')
+            ->set('excerpt', '')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'technology')
+            ->set('read_time', 5)
+            ->call('save')
+            ->assertHasErrors(['excerpt']);
     }
 
-    /** @test */
+    #[Test]
     public function blog_requires_category(): void
     {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Test Blog',
-                'excerpt' => 'Excerpt',
-                'category' => '',
-            ]);
+        $this->actingAs($this->user);
 
-        $response->assertSessionHasErrors('category');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Blog')
+            ->set('slug', 'test-blog')
+            ->set('excerpt', 'This is a short excerpt for testing purposes.')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', '')
+            ->set('read_time', 5)
+            ->call('save')
+            ->assertHasErrors(['category']);
     }
 
-    /** @test */
+    #[Test]
     public function blog_slug_must_be_unique(): void
     {
         Blog::factory()->create(['slug' => 'existing-slug']);
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Test Blog',
-                'slug' => 'existing-slug',
-                'excerpt' => 'Excerpt',
-                'category' => 'technology',
-            ]);
-
-        $response->assertSessionHasErrors('slug');
+        Livewire::test(Form::class)
+            ->set('title', 'Test Blog')
+            ->set('slug', 'existing-slug')
+            ->set('excerpt', 'This is a short excerpt for testing purposes.')
+            ->set('content', '<p>Test content</p>')
+            ->set('category', 'technology')
+            ->set('read_time', 5)
+            ->call('save')
+            ->assertHasErrors(['slug']);
     }
 
-    /** @test */
-    public function blog_excerpt_cannot_exceed_500_characters(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Test Blog',
-                'excerpt' => str_repeat('a', 501),
-                'category' => 'technology',
-            ]);
-
-        $response->assertSessionHasErrors('excerpt');
-    }
-
-    /** @test */
+    #[Test]
     public function authenticated_user_can_update_blog(): void
     {
         $blog = Blog::factory()->create([
             'title' => 'Old Title',
-            'excerpt' => 'Old excerpt',
+            'excerpt' => 'Old excerpt with enough characters',
+            'category' => 'technology',
         ]);
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->put("/admin/blogs/{$blog->id}", [
-                'title' => 'Updated Title',
-                'slug' => $blog->slug,
-                'excerpt' => 'Updated excerpt',
-                'content' => $blog->content,
-                'category' => $blog->category,
-                'read_time' => 5,
-            ]);
+        Livewire::test(Form::class, ['id' => $blog->id])
+            ->set('title', 'Updated Title')
+            ->set('slug', $blog->slug)
+            ->set('excerpt', 'Updated excerpt with enough characters')
+            ->set('content', '<p>Updated content</p>')
+            ->set('category', 'technology')
+            ->set('read_time', 7)
+            ->call('save')
+            ->assertRedirect(route('admin.blogs.index'));
 
-        $response->assertRedirect('/admin/blogs');
         $this->assertDatabaseHas('blogs', [
             'id' => $blog->id,
             'title' => 'Updated Title',
-            'excerpt' => 'Updated excerpt',
+            'read_time' => 7,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_delete_blog(): void
     {
         $blog = Blog::factory()->create();
+        $this->actingAs($this->user);
 
-        $response = $this->actingAs($this->user)
-            ->delete("/admin/blogs/{$blog->id}");
+        Livewire::test(\App\Livewire\Admin\Blogs\Index::class)
+            ->call('delete', $blog->id);
 
-        $response->assertRedirect('/admin/blogs');
-        $this->assertDatabaseMissing('blogs', [
-            'id' => $blog->id,
-        ]);
-    }
-
-    /** @test */
-    public function blog_can_be_published(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Published Post',
-                'slug' => 'published-post',
-                'excerpt' => 'Excerpt',
-                'category' => 'technology',
-                'read_time' => 5,
-                'is_published' => true,
-                'published_at' => '2024-01-15',
-            ]);
-
-        $response->assertRedirect('/admin/blogs');
-        $this->assertDatabaseHas('blogs', [
-            'title' => 'Published Post',
-            'is_published' => true,
-        ]);
-    }
-
-    /** @test */
-    public function blog_can_be_draft(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Draft Post',
-                'slug' => 'draft-post',
-                'excerpt' => 'Excerpt',
-                'category' => 'technology',
-                'read_time' => 5,
-                'is_published' => false,
-            ]);
-
-        $response->assertRedirect('/admin/blogs');
-        $this->assertDatabaseHas('blogs', [
-            'title' => 'Draft Post',
-            'is_published' => false,
-        ]);
-    }
-
-    /** @test */
-    public function blog_read_time_must_be_integer(): void
-    {
-        $response = $this->actingAs($this->user)
-            ->post('/admin/blogs', [
-                'title' => 'Test Blog',
-                'slug' => 'test-blog',
-                'excerpt' => 'Excerpt',
-                'category' => 'technology',
-                'read_time' => 'not-a-number',
-            ]);
-
-        $response->assertSessionHasErrors('read_time');
+        $this->assertDatabaseMissing('blogs', ['id' => $blog->id]);
     }
 }

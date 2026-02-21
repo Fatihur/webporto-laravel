@@ -186,8 +186,8 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($project->thumbnail)
-                                    <img src="{{ Storage::url($project->thumbnail) }}" alt=""
-                                         class="w-10 h-10 rounded-lg object-cover">
+                                    <img src="{{ Storage::url($project->thumbnail) }}" alt="{{ $project->title }} thumbnail"
+                                         class="w-10 h-10 rounded-lg object-cover" loading="lazy" decoding="async">
                                 @endif
                                 <div>
                                     <div class="font-bold">{{ $project->title }}</div>
@@ -243,7 +243,7 @@
                     <div class="flex items-start gap-3 mb-3">
                         <input type="checkbox" value="{{ $project->id }}" wire:model.live="selected" class="mt-1 rounded border-zinc-300 dark:border-zinc-600 text-mint focus:ring-mint">
                         @if($project->thumbnail)
-                            <img src="{{ Storage::url($project->thumbnail) }}" alt="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+                            <img src="{{ Storage::url($project->thumbnail) }}" alt="{{ $project->title }} thumbnail" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" loading="lazy" decoding="async">
                         @endif
                         <div class="flex-1 min-w-0">
                             <h3 class="font-bold text-sm line-clamp-2">{{ $project->title }}</h3>

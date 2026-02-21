@@ -61,4 +61,30 @@ class SeoMetaRenderingTest extends TestCase
         $this->assertStringContainsString('public', $cacheControl);
         $this->assertStringContainsString('max-age=21600', $cacheControl);
     }
+
+    public function test_blog_index_canonical_does_not_include_query_string(): void
+    {
+        app(EngineManager::class)->forgetEngines();
+        config(['scout.driver' => 'null']);
+
+        $response = $this->get(route('blog.index', ['q' => 'laravel']));
+
+        $response->assertOk();
+        $response->assertSee('<link rel="canonical" href="'.route('blog.index').'">', false);
+    }
+
+    public function test_robots_route_returns_expected_directives(): void
+    {
+        app(EngineManager::class)->forgetEngines();
+        config(['scout.driver' => 'null']);
+
+        $response = $this->get(route('robots'));
+
+        $response->assertOk();
+        $response->assertSee('User-agent: *');
+        $response->assertSee('Disallow: /admin/');
+        $response->assertSee('Sitemap: '.route('sitemap'));
+        $cacheControl = (string) $response->headers->get('Cache-Control');
+        $this->assertStringContainsString('max-age=86400', $cacheControl);
+    }
 }

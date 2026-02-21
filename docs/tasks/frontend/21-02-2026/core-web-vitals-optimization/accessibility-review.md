@@ -7,6 +7,8 @@
 - Menambahkan `rel="noopener noreferrer"` untuk link eksternal WhatsApp pada hero (`resources/views/livewire/home-page.blade.php`).
 - Menjaga `aria-label` pada elemen interaktif yang sudah ada (chat toggle, menu, social links).
 - Memastikan semantic heading hierarchy tetap konsisten pada page utama (single H1 per page section context).
+- Menambahkan skip link keyboard (`Skip to main content`) di `resources/views/layouts/app.blade.php`.
+- Melengkapi alt text di beberapa image yang sebelumnya kosong pada komponen pencarian dan listing admin.
 
 ## Semantic HTML
 

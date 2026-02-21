@@ -35,6 +35,7 @@
 ## Canonical URLs
 
 - Canonical tetap dipertahankan di `x-seo-meta` dan kini dipastikan aktif juga untuk page yang sebelumnya belum punya slot SEO eksplisit (via fallback layout).
+- Canonical dinormalisasi agar tidak memuat query string, sehingga mencegah duplicate URL index untuk variasi parameter filter/tracking.
 
 ## Structured Data (JSON-LD)
 
@@ -65,3 +66,4 @@
 - Menambahkan `Disallow: /livewire/*`
 - Menambahkan directive `Host: <app host>`
 - Mempertahankan `Sitemap: ...`
+- Menambahkan blok khusus untuk crawler modern (`GPTBot`, `ClaudeBot`) dengan policy publik yang sama dan pembatasan area admin.

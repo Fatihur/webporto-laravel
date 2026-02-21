@@ -159,8 +159,18 @@ class SeoService
         $content .= "Disallow: /email/*\n";
         $content .= "Disallow: /livewire/*\n";
         $content .= "\n";
+        $content .= "User-agent: GPTBot\n";
+        $content .= "Allow: /\n";
+        $content .= "Disallow: /admin/\n";
+        $content .= "\n";
+        $content .= "User-agent: ClaudeBot\n";
+        $content .= "Allow: /\n";
+        $content .= "Disallow: /admin/\n";
+        $content .= "\n";
         $content .= 'Host: '.parse_url(config('app.url'), PHP_URL_HOST)."\n";
         $content .= 'Sitemap: '.route('sitemap')."\n";
+        $content .= "\n";
+        $content .= "Crawl-delay: 2\n";
 
         return $content;
     }

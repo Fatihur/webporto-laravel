@@ -15,10 +15,17 @@
 4. **Absolute media URL di sitemap/schema**
    - Dipilih untuk kompatibilitas crawler dan validator structured data.
 
+5. **Canonical normalization**
+   - Canonical dibersihkan dari query string untuk menghindari fragmentasi indexing pada URL yang sama.
+
+6. **Robots policy for AI crawlers**
+   - Menambahkan blok eksplisit untuk `GPTBot` dan `ClaudeBot` agar policy crawl tetap jelas saat konsumsi konten oleh mesin AI.
+
 ## Trade-offs
 
 - Menambahkan pemanggilan service (`app(SeoService::class)`) di beberapa Livewire component meningkatkan konsistensi SEO, dengan trade-off coupling ringan ke service layer.
 - Tidak mengganti seluruh `<img>` sekaligus untuk menghindari blast radius besar di area admin; fokus pada halaman publik yang berdampak SEO.
+- Penambahan directive crawler modern di robots bersifat policy-level; tetap perlu ditinjau berkala sesuai kebijakan distribusi konten.
 
 ## Risk Mitigation
 

@@ -5,6 +5,8 @@ namespace Tests\Feature\Admin;
 use App\Models\AiBlogAutomation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AiBlogAutomationTest extends TestCase
@@ -17,6 +19,7 @@ class AiBlogAutomationTest extends TestCase
         $this->actingAs(User::factory()->create());
     }
 
+    #[Test]
     public function test_user_can_view_automation_index(): void
     {
         $response = $this->get(route('admin.ai-blog.index'));
@@ -25,6 +28,7 @@ class AiBlogAutomationTest extends TestCase
         $response->assertSee('AI Blog Automation');
     }
 
+    #[Test]
     public function test_user_can_create_automation(): void
     {
         $response = $this->get(route('admin.ai-blog.create'));
@@ -33,6 +37,7 @@ class AiBlogAutomationTest extends TestCase
         $response->assertSee('New Automation');
     }
 
+    #[Test]
     public function test_user_can_store_automation(): void
     {
         $data = [
@@ -47,15 +52,26 @@ class AiBlogAutomationTest extends TestCase
             'auto_publish' => true,
         ];
 
-        $response = $this->post(route('admin.ai-blog.create'), $data);
+        Livewire::test(\App\Livewire\Admin\AiBlog\Form::class)
+            ->set('name', $data['name'])
+            ->set('topic_prompt', $data['topic_prompt'])
+            ->set('content_prompt', $data['content_prompt'])
+            ->set('category', $data['category'])
+            ->set('frequency', $data['frequency'])
+            ->set('scheduled_at', $data['scheduled_at'])
+            ->set('is_active', $data['is_active'])
+            ->set('max_articles_per_day', $data['max_articles_per_day'])
+            ->set('auto_publish', $data['auto_publish'])
+            ->call('save')
+            ->assertRedirect(route('admin.ai-blog.index'));
 
-        $response->assertRedirect(route('admin.ai-blog.index'));
         $this->assertDatabaseHas('ai_blog_automations', [
             'name' => 'Test Automation',
             'category' => 'technology',
         ]);
     }
 
+    #[Test]
     public function test_automation_calculates_next_run_correctly(): void
     {
         $automation = AiBlogAutomation::factory()->create([
@@ -70,6 +86,7 @@ class AiBlogAutomationTest extends TestCase
         $this->assertEquals('09:00:00', $nextRun->format('H:i:s'));
     }
 
+    #[Test]
     public function test_automation_should_run_now_when_active(): void
     {
         $automation = AiBlogAutomation::factory()->create([
@@ -81,6 +98,7 @@ class AiBlogAutomationTest extends TestCase
         $this->assertTrue($automation->shouldRunNow());
     }
 
+    #[Test]
     public function test_automation_should_not_run_when_inactive(): void
     {
         $automation = AiBlogAutomation::factory()->create([
@@ -92,6 +110,7 @@ class AiBlogAutomationTest extends TestCase
         $this->assertFalse($automation->shouldRunNow());
     }
 
+    #[Test]
     public function test_user_can_view_logs_page(): void
     {
         $response = $this->get(route('admin.ai-blog.logs'));
@@ -100,9 +119,10 @@ class AiBlogAutomationTest extends TestCase
         $response->assertSee('Generation Logs');
     }
 
+    #[Test]
     public function test_user_can_view_dashboard(): void
     {
-        $response = $this->get(route('admin.ai-blog.dashboard'));
+        $response = $this->get(route('admin.knowledge.dashboard'));
 
         $response->assertStatus(200);
         $response->assertSee('AI Blog Dashboard');

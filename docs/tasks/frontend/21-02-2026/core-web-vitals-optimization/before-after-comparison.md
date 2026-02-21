@@ -13,7 +13,9 @@
 - Semua halaman publik mendapat baseline meta via fallback layout.
 - Structured data tersedia global + per-page (blog/project/contact/listing).
 - Sitemap memuat seluruh kategori project dari sumber data kategori.
+- Canonical URL lebih bersih karena query string tidak ikut ditandai sebagai URL utama.
 - Robots dan sitemap caching behavior lebih predictable.
+- robots policy eksplisit untuk `GPTBot` dan `ClaudeBot`.
 
 ## Performance Signals
 
@@ -28,10 +30,11 @@
 - Komponen `optimized-image` mendukung `fetchpriority` dan dipakai di halaman publik inti.
 - Image prioritas memakai eager + high fetch priority.
 - Endpoint `sitemap`/`robots` mempertahankan cache directive yang benar.
+- Sejumlah image card/search kini memakai lazy+async dan alt text deskriptif.
 
 ## Test Evidence
 
-- SEO-related tests: **6 passed**
+- SEO-related tests: **8 passed**
   - `tests/Feature/SeoServiceTest.php`
   - `tests/Feature/SeoMetaRenderingTest.php`
 

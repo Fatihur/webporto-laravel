@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - {{ config('app.name') }}</title>
+
+    <x-seo-meta
+        title="Admin Login"
+        description="Admin authentication page"
+        :url="url()->current()"
+        noindex
+    />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -247,7 +247,7 @@
                     <!-- Preview -->
                     @if($imagePreview)
                         <div class="relative aspect-video rounded-xl overflow-hidden mb-4 group">
-                            <img src="{{ $imagePreview }}" alt="" class="w-full h-full object-cover">
+                            <img src="{{ $imagePreview }}" alt="Blog featured image preview" class="w-full h-full object-cover">
                             @if($image)
                                 <div class="absolute top-2 right-2 bg-mint text-zinc-950 text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</div>
                             @endif

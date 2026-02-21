@@ -46,3 +46,8 @@ Optimasi difokuskan pada area yang mempengaruhi LCP dan TBT/FID mobile:
 
 - Bundling tetap mengikuti Vite existing flow (`@vite`) tanpa perubahan dependency.
 - Tidak ada penambahan package frontend baru agar bundle baseline tetap terjaga.
+
+## Verification Snapshot
+
+- Test command: `php artisan test --compact tests/Feature/SeoMetaRenderingTest.php tests/Feature/SeoServiceTest.php`
+- Result: 8 passed, 34 assertions, ~11s
