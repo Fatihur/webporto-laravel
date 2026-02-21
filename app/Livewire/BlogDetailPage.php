@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Blog;
+use App\Services\SeoService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -46,9 +47,21 @@ class BlogDetailPage extends Component
             ->take(2)
             ->values();
 
+        $seoService = app(SeoService::class);
+
+        $structuredData = [
+            $seoService->generateBlogStructuredData($this->post),
+            $seoService->generateBreadcrumbStructuredData([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Blog', 'url' => route('blog.index')],
+                ['name' => $this->post->title, 'url' => route('blog.show', $this->post->slug)],
+            ]),
+        ];
+
         return view('livewire.blog-detail-page', [
             'relatedPosts' => $relatedPosts,
             'enableMathJax' => true,
+            'structuredData' => $structuredData,
         ])->layout('layouts.app');
     }
 }

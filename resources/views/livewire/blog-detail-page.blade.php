@@ -1,10 +1,20 @@
 <x-slot name="seo">
     <x-seo-meta
-        :title="$post->title"
+        :title="$post->meta_title ?: $post->title"
         :description="$post->meta_description ?? $post->excerpt"
         :keywords="$post->meta_keywords"
+        :image="$post->image_url ?? ($post->image ? Storage::url($post->image) : null)"
+        :url="route('blog.show', $post->slug)"
         type="article"
+        :published-time="$post->published_at?->toIso8601String()"
+        :modified-time="$post->updated_at->toIso8601String()"
     />
+
+    @if(!empty($structuredData))
+        @foreach($structuredData as $schema)
+            <x-structured-data :data="$schema" />
+        @endforeach
+    @endif
 </x-slot>
 
 <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-12 max-w-4xl mx-auto overflow-x-hidden" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
@@ -55,11 +65,12 @@
     <!-- Featured Image -->
     <div class="aspect-[21/9] rounded-3xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800 transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @if($post->image || $post->image_url)
-            <img
-                src="{{ $post->image_url ?? Storage::url($post->image) }}"
-                alt="{{ $post->title }}"
+            <x-optimized-image
+                :src="$post->image_url ?? Storage::url($post->image)"
+                :alt="$post->title"
                 class="w-full h-full object-cover"
-            >
+                priority
+            />
         @else
             <div class="w-full h-full flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
@@ -314,12 +325,11 @@
                     <a href="{{ route('blog.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[16/10] rounded-2xl overflow-hidden mb-4 bg-zinc-100 dark:bg-zinc-800">
                             @if($related->image || $related->image_url)
-                                <img
-                                    src="{{ $related->image_url ?? Storage::url($related->image) }}"
-                                    alt="{{ $related->title }}"
+                                <x-optimized-image
+                                    :src="$related->image_url ?? Storage::url($related->image)"
+                                    :alt="$related->title"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    loading="lazy"
-                                >
+                                />
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">

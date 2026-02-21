@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Contact;
 use App\Models\SiteContact;
+use App\Services\SeoService;
 use Livewire\Component;
 
 class ContactPage extends Component
@@ -49,8 +50,24 @@ class ContactPage extends Component
     {
         $siteContact = SiteContact::getSettings();
 
+        $seoService = app(SeoService::class);
+
+        $structuredData = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'ContactPage',
+                'name' => 'Contact',
+                'url' => route('contact.index'),
+            ],
+            $seoService->generateBreadcrumbStructuredData([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Contact', 'url' => route('contact.index')],
+            ]),
+        ];
+
         return view('livewire.contact-page', [
             'siteContact' => $siteContact,
+            'structuredData' => $structuredData,
         ])->layout('layouts.app');
     }
 }

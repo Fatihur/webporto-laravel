@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CacheHeaders
@@ -17,8 +18,17 @@ class CacheHeaders
     {
         $response = $next($request);
 
+        $publicRouteNames = [
+            'home',
+            'projects.category',
+            'projects.show',
+            'blog.index',
+            'blog.show',
+            'contact.index',
+        ];
+
         // Skip for authenticated users, admin routes, and Livewire routes
-        if (auth()->check() || $request->is('admin/*') || $request->is('livewire*')) {
+        if (Auth::check() || $request->is('admin/*') || $request->is('livewire*')) {
             $response->headers->set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
             $response->headers->set('Pragma', 'no-cache');
             $response->headers->set('X-LiteSpeed-Cache-Control', 'no-cache');
@@ -34,8 +44,14 @@ class CacheHeaders
             return $response;
         }
 
+        if ($request->routeIs('sitemap', 'robots')) {
+            $response->headers->set('Vary', 'Accept-Encoding');
+
+            return $response;
+        }
+
         // Add lightweight preload headers only on the homepage.
-        if ($request->is('/')) {
+        if ($request->routeIs('home')) {
             $response->headers->set(
                 'Link',
                 '<https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwY.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
@@ -44,7 +60,7 @@ class CacheHeaders
         }
 
         // Public pages - cache for 5 minutes with stale-while-revalidate
-        if ($request->is('/') || $request->is('projects') || $request->is('projects/*') || $request->is('project/*') || $request->is('blog') || $request->is('blog/*') || $request->is('contact')) {
+        if ($request->routeIs($publicRouteNames)) {
             $response->headers->set('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=3600');
             $response->headers->set('Vary', 'Accept-Encoding');
 

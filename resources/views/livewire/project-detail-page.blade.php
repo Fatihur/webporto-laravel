@@ -1,10 +1,19 @@
 <x-slot name="seo">
     <x-seo-meta
-        :title="$project->title"
+        :title="$project->meta_title ?: $project->title"
         :description="$project->meta_description ?? $project->description"
         :keywords="$project->meta_keywords"
+        :image="$project->thumbnail ? Storage::url($project->thumbnail) : null"
+        :url="route('projects.show', $project->slug)"
         type="article"
+        :modified-time="$project->updated_at->toIso8601String()"
     />
+
+    @if(!empty($structuredData))
+        @foreach($structuredData as $schema)
+            <x-structured-data :data="$schema" />
+        @endforeach
+    @endif
 </x-slot>
 
 <main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
@@ -54,7 +63,7 @@
 
     <div class="aspect-video w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-zinc-200 dark:shadow-none transition-all duration-1000 delay-300 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
         @if($project->thumbnail)
-            <img src="{{ Storage::url($project->thumbnail) }}" class="w-full h-full object-cover" alt="{{ $project->title }}" loading="lazy">
+            <x-optimized-image :src="Storage::url($project->thumbnail)" :alt="$project->title" class="w-full h-full object-cover" priority />
         @else
             <div class="w-full h-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">
@@ -206,7 +215,7 @@
                     <a href="{{ route('projects.show', $related->slug) }}" wire:navigate class="group">
                         <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
                             @if($related->thumbnail)
-                                <img src="{{ Storage::url($related->thumbnail) }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <x-optimized-image :src="Storage::url($related->thumbnail)" :alt="$related->title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             @else
                                 <div class="w-full h-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">

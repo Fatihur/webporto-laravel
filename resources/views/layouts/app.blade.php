@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,14 @@
     <!-- View Transitions API -->
     <meta name="view-transition" content="same-origin">
 
-    {{ $seo ?? '' }}
+    @if (isset($seo) && filled($seo))
+        {{ $seo }}
+    @else
+        <x-seo-meta />
+    @endif
+
+    <x-structured-data :data="app(\App\Services\SeoService::class)->generateWebsiteStructuredData()" />
+    <x-structured-data :data="app(\App\Services\SeoService::class)->generatePersonStructuredData()" />
 
     <!-- Resource Hints for External Assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

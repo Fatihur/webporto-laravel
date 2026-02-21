@@ -1,3 +1,18 @@
+<x-slot name="seo">
+    <x-seo-meta
+        title="Contact"
+        description="Hubungi Fatih untuk kolaborasi project software, desain, data analysis, dan networking."
+        keywords="kontak fatih, hire developer, jasa software, collaboration"
+        :url="route('contact.index')"
+    />
+
+    @if(!empty($structuredData))
+        @foreach($structuredData as $schema)
+            <x-structured-data :data="$schema" />
+        @endforeach
+    @endif
+</x-slot>
+
 <main class="pt-24 md:pt-32 pb-16 md:pb-20 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-20">
         <!-- Left Column: Contact Info -->

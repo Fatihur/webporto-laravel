@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Blog;
+use App\Services\SeoService;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -63,9 +64,26 @@ class BlogPage extends Component
                 ->pluck('category');
         });
 
+        $seoService = app(SeoService::class);
+
+        $structuredData = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'CollectionPage',
+                'name' => 'Blog',
+                'url' => route('blog.index'),
+                'description' => 'Kumpulan artikel tentang teknologi, desain, dan proses kreatif.',
+            ],
+            $seoService->generateBreadcrumbStructuredData([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Blog', 'url' => route('blog.index')],
+            ]),
+        ];
+
         return view('livewire.blog-page', [
             'posts' => $posts,
             'categories' => $categories,
+            'structuredData' => $structuredData,
         ])->layout('layouts.app');
     }
 

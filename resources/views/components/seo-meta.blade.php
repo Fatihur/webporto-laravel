@@ -6,18 +6,25 @@
     'url' => null,
     'type' => 'website',
     'author' => 'Fatih',
+    'noindex' => false,
+    'locale' => null,
+    'publishedTime' => null,
+    'modifiedTime' => null,
 ])
 
 @php
 $siteName = config('app.name', 'Fatih Porto');
 $defaultDescription = config('app.meta_description', 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.');
 $defaultImage = asset('images/og-default.jpg');
+$twitterSite = config('app.twitter_site');
 
 $metaTitle = $title ? "{$title} | {$siteName}" : $siteName;
-$metaDescription = $description ?? $defaultDescription;
+$metaDescription = strip_tags($description ?? $defaultDescription);
 $metaKeywords = $keywords ?? 'portfolio, design, development, web, graphic design, software development';
 $metaImage = $image ?? $defaultImage;
 $metaUrl = $url ?? url()->current();
+$metaLocale = $locale ?? str_replace('-', '_', config('app.locale', 'en'));
+$robotsContent = $noindex ? 'noindex, nofollow' : 'index, follow';
 @endphp
 
 {{-- Primary Meta Tags --}}
@@ -25,6 +32,7 @@ $metaUrl = $url ?? url()->current();
 <meta name="description" content="{{ $metaDescription }}">
 <meta name="keywords" content="{{ $metaKeywords }}">
 <meta name="author" content="{{ $author }}">
+<meta name="robots" content="{{ $robotsContent }}">
 
 {{-- Open Graph / Facebook --}}
 <meta property="og:type" content="{{ $type }}">
@@ -32,14 +40,28 @@ $metaUrl = $url ?? url()->current();
 <meta property="og:title" content="{{ $metaTitle }}">
 <meta property="og:description" content="{{ $metaDescription }}">
 <meta property="og:image" content="{{ $metaImage }}">
+<meta property="og:image:alt" content="{{ $metaTitle }}">
 <meta property="og:site_name" content="{{ $siteName }}">
+<meta property="og:locale" content="{{ $metaLocale }}">
+
+@if ($type === 'article' && $publishedTime)
+    <meta property="article:published_time" content="{{ $publishedTime }}">
+@endif
+
+@if ($type === 'article' && $modifiedTime)
+    <meta property="article:modified_time" content="{{ $modifiedTime }}">
+@endif
 
 {{-- Twitter --}}
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="{{ $metaUrl }}">
-<meta property="twitter:title" content="{{ $metaTitle }}">
-<meta property="twitter:description" content="{{ $metaDescription }}">
-<meta property="twitter:image" content="{{ $metaImage }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="{{ $metaUrl }}">
+<meta name="twitter:title" content="{{ $metaTitle }}">
+<meta name="twitter:description" content="{{ $metaDescription }}">
+<meta name="twitter:image" content="{{ $metaImage }}">
+
+@if ($twitterSite)
+    <meta name="twitter:site" content="{{ $twitterSite }}">
+@endif
 
 {{-- Canonical URL --}}
 <link rel="canonical" href="{{ $metaUrl }}">

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Data\CategoryData;
 use App\Models\Blog;
 use App\Models\Project;
 use Illuminate\Support\Facades\Cache;
@@ -22,10 +23,17 @@ class SeoService
         // Static pages
         $staticPages = [
             ['url' => route('home'), 'changefreq' => 'weekly', 'priority' => '1.0'],
-            ['url' => route('projects.category', 'graphic-design'), 'changefreq' => 'weekly', 'priority' => '0.9'],
             ['url' => route('blog.index'), 'changefreq' => 'daily', 'priority' => '0.9'],
             ['url' => route('contact.index'), 'changefreq' => 'monthly', 'priority' => '0.7'],
         ];
+
+        foreach (CategoryData::all() as $category) {
+            $staticPages[] = [
+                'url' => route('projects.category', $category['id']),
+                'changefreq' => 'weekly',
+                'priority' => '0.9',
+            ];
+        }
 
         foreach ($staticPages as $page) {
             $sitemap .= $this->generateUrlEntry($page['url'], $page['changefreq'], $page['priority']);
@@ -47,7 +55,7 @@ class SeoService
             // Add image if exists
             $blogImage = $blog->image_url;
             if (! $blogImage && $blog->image) {
-                $blogImage = Storage::url($blog->image);
+                $blogImage = url(Storage::url($blog->image));
             }
 
             if ($blogImage) {
@@ -74,7 +82,7 @@ class SeoService
                 $project->updated_at->toIso8601String()
             );
 
-            $projectImage = $project->thumbnail ? Storage::url($project->thumbnail) : null;
+            $projectImage = $project->thumbnail ? url(Storage::url($project->thumbnail)) : null;
 
             if ($projectImage) {
                 $entry = str_replace(
@@ -149,7 +157,9 @@ class SeoService
         $content .= "Disallow: /register\n";
         $content .= "Disallow: /password/*\n";
         $content .= "Disallow: /email/*\n";
+        $content .= "Disallow: /livewire/*\n";
         $content .= "\n";
+        $content .= 'Host: '.parse_url(config('app.url'), PHP_URL_HOST)."\n";
         $content .= 'Sitemap: '.route('sitemap')."\n";
 
         return $content;
@@ -162,7 +172,7 @@ class SeoService
     {
         $blogImage = $blog->image_url;
         if (! $blogImage && $blog->image) {
-            $blogImage = Storage::url($blog->image);
+            $blogImage = url(Storage::url($blog->image));
         }
 
         return [
@@ -197,7 +207,7 @@ class SeoService
      */
     public function generateProjectStructuredData(Project $project): array
     {
-        $projectImage = $project->thumbnail ? Storage::url($project->thumbnail) : null;
+        $projectImage = $project->thumbnail ? url(Storage::url($project->thumbnail)) : null;
 
         $data = [
             '@context' => 'https://schema.org',
@@ -279,17 +289,19 @@ class SeoService
      */
     public function generatePersonStructuredData(): array
     {
+        $sameAs = array_values(array_filter([
+            config('app.social.github'),
+            config('app.social.linkedin'),
+            config('app.social.twitter'),
+        ]));
+
         return [
             '@context' => 'https://schema.org',
             '@type' => 'Person',
             'name' => config('app.author_name', 'Developer'),
             'url' => config('app.url'),
             'image' => asset('images/profile.jpg'),
-            'sameAs' => [
-                config('app.social.github'),
-                config('app.social.linkedin'),
-                config('app.social.twitter'),
-            ],
+            'sameAs' => $sameAs,
             'jobTitle' => config('app.author_title', 'Full Stack Developer'),
             'worksFor' => [
                 '@type' => 'Organization',

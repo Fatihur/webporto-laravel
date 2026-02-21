@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Project;
+use App\Services\SeoService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -44,8 +45,20 @@ class ProjectDetailPage extends Component
             ->take(3)
             ->values();
 
+        $seoService = app(SeoService::class);
+
+        $structuredData = [
+            $seoService->generateProjectStructuredData($this->project),
+            $seoService->generateBreadcrumbStructuredData([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Projects', 'url' => route('projects.category', $this->project->category)],
+                ['name' => $this->project->title, 'url' => route('projects.show', $this->project->slug)],
+            ]),
+        ];
+
         return view('livewire.project-detail-page', [
             'relatedProjects' => $relatedProjects,
+            'structuredData' => $structuredData,
         ])->layout('layouts.app');
     }
 }

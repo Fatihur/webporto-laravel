@@ -10,12 +10,15 @@
 ])
 
 @if($priority)
-    @php $loading = 'eager'; @endphp
+    @php
+        $loading = 'eager';
+        $fetchpriority = 'high';
+    @endphp
+@else
+    @php
+        $fetchpriority = 'auto';
+    @endphp
 @endif
-
-@php
-    $placeholder = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=';
-@endphp
 
 <img
     src="{{ $src }}"
@@ -25,6 +28,7 @@
     @if($height) height="{{ $height }}" @endif
     loading="{{ $loading }}"
     decoding="{{ $decoding }}"
+    fetchpriority="{{ $fetchpriority }}"
     onerror="this.style.display='none'"
     @if(!$priority) style="content-visibility: auto;" @endif
 />

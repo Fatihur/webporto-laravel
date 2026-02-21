@@ -1,3 +1,18 @@
+<x-slot name="seo">
+    <x-seo-meta
+        :title="$title"
+        :description="$description"
+        keywords="portfolio projects, software project, design project, case study"
+        :url="$selectedCategory ? route('projects.category', $selectedCategory) : route('projects.category', 'graphic-design')"
+    />
+
+    @if(!empty($structuredData))
+        @foreach($structuredData as $schema)
+            <x-structured-data :data="$schema" />
+        @endforeach
+    @endif
+</x-slot>
+
 <main class="pt-32 pb-20 px-6 lg:px-12 max-w-7xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
     <!-- Header -->
     <header class="mb-12 transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
@@ -87,12 +102,11 @@
                     <!-- Thumbnail -->
                     <div class="aspect-[4/3] overflow-hidden">
                         @if($project->thumbnail)
-                            <img
-                                src="{{ Storage::url($project->thumbnail) }}"
-                                alt="{{ $project->title }}"
+                            <x-optimized-image
+                                :src="Storage::url($project->thumbnail)"
+                                :alt="$project->title"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                loading="lazy"
-                            >
+                            />
                         @else
                             <div class="w-full h-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">

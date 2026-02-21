@@ -1,3 +1,18 @@
+<x-slot name="seo">
+    <x-seo-meta
+        title="Blog"
+        description="Artikel tentang teknologi, desain, dan proses kreatif dari Fatih."
+        keywords="blog fatih, artikel teknologi, design insights"
+        :url="route('blog.index')"
+    />
+
+    @if(!empty($structuredData))
+        @foreach($structuredData as $schema)
+            <x-structured-data :data="$schema" />
+        @endforeach
+    @endif
+</x-slot>
+
 <main class="pt-32 pb-20 px-6 lg:px-12 max-w-5xl mx-auto" x-data="{ show: false }" x-init="setTimeout(() => show = true, 100)">
     <!-- Header -->
     <header class="mb-16 text-center max-w-3xl mx-auto transition-all duration-1000" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
@@ -99,12 +114,11 @@
                     <div class="w-full md:w-72 lg:w-80 shrink-0">
                         <div class="aspect-[16/10] md:aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                             @if($post->image || $post->image_url)
-                                <img
-                                    src="{{ $post->image_url ?? Storage::url($post->image) }}"
-                                    alt="{{ $post->title }}"
+                                <x-optimized-image
+                                    :src="$post->image_url ?? Storage::url($post->image)"
+                                    :alt="$post->title"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                    loading="lazy"
-                                >
+                                />
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-400">

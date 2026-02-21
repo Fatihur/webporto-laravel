@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Data\CategoryData;
 use App\Models\Project;
+use App\Services\SeoService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
@@ -144,6 +145,26 @@ class ProjectFilter extends Component
 
     public function render()
     {
-        return view('livewire.project-filter')->layout('layouts.app');
+        $seoService = app(SeoService::class);
+
+        $structuredData = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'CollectionPage',
+                'name' => $this->title,
+                'url' => $this->selectedCategory
+                    ? route('projects.category', $this->selectedCategory)
+                    : route('projects.category', 'graphic-design'),
+                'description' => $this->description,
+            ],
+            $seoService->generateBreadcrumbStructuredData([
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Projects', 'url' => route('projects.category', $this->selectedCategory ?: 'graphic-design')],
+            ]),
+        ];
+
+        return view('livewire.project-filter', [
+            'structuredData' => $structuredData,
+        ])->layout('layouts.app');
     }
 }

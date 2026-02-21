@@ -1,5 +1,10 @@
 <x-slot name="seo">
-    <x-seo-meta title="Home" />
+    <x-seo-meta
+        title="Portfolio Fatih"
+        description="Portfolio Fatih menampilkan project software development, graphic design, data analysis, dan networking."
+        keywords="portfolio fatih, software development, graphic design, data analysis, networking"
+        :url="route('home')"
+    />
 </x-slot>
 
 <main class="px-6 lg:px-12 max-w-7xl mx-auto overflow-x-hidden">
@@ -34,6 +39,8 @@
                 <a
                     href="{{ $siteContact->getWhatsappUrl() }}?text=Halo%20Fatih%2C%20saya%20tertarik%20dengan%20portfolio%20Anda.%20Boleh%20berdiskusi%3F"
                     target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Chat via WhatsApp"
                     class="w-full sm:min-w-[200px] border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-950 dark:text-white px-8 py-4 rounded-full font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-mint dark:hover:border-mint transition-all flex items-center justify-center gap-3"
                 >
                     Let's Talk
