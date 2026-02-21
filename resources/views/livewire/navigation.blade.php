@@ -29,7 +29,16 @@
         <div class="flex items-center justify-between h-20">
             <!-- Logo -->
             <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3" x-on:click="megaMenuOpen = false">
-                <div class="w-10 h-10 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-lg">F</div>
+                <div class="w-10 h-10 flex items-center justify-center text-mint" aria-hidden="true">
+                    <svg class="w-7 h-7" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="10.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <rect x="25.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <path d="M22.5 18.5H25.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M9.5 17.5H10.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M37.5 17.5H38.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M13.5 31.5C18.5 35.2 29.5 35.2 34.5 28.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+                    </svg>
+                </div>
                 <span class="font-black text-xl tracking-tight hidden sm:block">{{ config('app.name') }}</span>
             </a>
 
@@ -104,8 +113,22 @@
 
                 <livewire:theme-toggle />
                 <button type="button" x-on:click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden w-11 h-11 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" x-bind:aria-expanded="mobileMenuOpen" aria-controls="mobile-nav-sidebar" aria-label="Toggle mobile menu">
-                    <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                    <svg x-show="mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <svg x-show="!mobileMenuOpen" class="w-6 h-6 text-mint" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="10.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <rect x="25.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <path d="M22.5 18.5H25.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M9.5 17.5H10.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M37.5 17.5H38.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M13.5 31.5C18.5 35.2 29.5 35.2 34.5 28.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+                    </svg>
+                    <svg x-show="mobileMenuOpen" class="w-6 h-6 text-mint" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="10.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <rect x="25.5" y="14.5" width="12" height="8" rx="3" stroke="currentColor" stroke-width="2.6" />
+                        <path d="M22.5 18.5H25.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M9.5 17.5H10.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M37.5 17.5H38.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+                        <path d="M13.5 31.5C19.5 35.6 29 34.8 34.5 30.8" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" />
+                    </svg>
                 </button>
             </div>
         </div>

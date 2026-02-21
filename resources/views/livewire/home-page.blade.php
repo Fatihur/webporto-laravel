@@ -160,7 +160,9 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 transition-all duration-1000 transform" x-bind:class="shownProjects ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <div class="max-w-xl">
                 <span class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-3 block">Selected Work</span>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter leading-tight">Featured Projects</h2>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter leading-tight">
+                    {{ $isFeaturedFallback ? 'Latest Projects' : 'Featured Projects' }}
+                </h2>
             </div>
         </div>
 
@@ -185,15 +187,21 @@
                         @endif
                     </div>
                     <div class="p-5 sm:p-6">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-2">{{ $project->category }}</p>
+                        <div class="flex items-center gap-2 mb-2">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-300">{{ $project->category }}</p>
+                            <span class="text-zinc-300 dark:text-zinc-700">•</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-mint">
+                                {{ $isFeaturedFallback ? 'Latest' : 'Featured' }}
+                            </span>
+                        </div>
                         <h3 class="text-lg sm:text-xl font-bold text-zinc-950 dark:text-white group-hover:text-mint transition-colors">{{ $project->title }}</h3>
                         <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 line-clamp-3">{{ strip_tags($project->description) }}</p>
                     </div>
                 </a>
             @empty
                 <div class="md:col-span-2 xl:col-span-3 rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-900/50 p-8 sm:p-10 text-center">
-                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">Featured projects are being prepared.</p>
-                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Please explore categories above or check back soon.</p>
+                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-200">No projects available yet.</p>
+                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Explore categories above or check back shortly for new work.</p>
                 </div>
             @endforelse
         </div>

@@ -54,6 +54,19 @@ class HomePage extends Component
                 ->get();
         });
 
+        $isFeaturedFallback = false;
+
+        if ($featuredProjects->isEmpty()) {
+            $isFeaturedFallback = true;
+
+            $featuredProjects = Cache::flexible('projects.latest', [3600, 21600], function () {
+                return Project::query()
+                    ->recent()
+                    ->limit(3)
+                    ->get();
+            });
+        }
+
         // Cache experiences for 6 hours
         $experiences = Cache::flexible('experiences.ordered', [21600, 86400], function () {
             return Experience::ordered()
@@ -66,6 +79,7 @@ class HomePage extends Component
 
         return view('livewire.home-page', [
             'featuredProjects' => $featuredProjects,
+            'isFeaturedFallback' => $isFeaturedFallback,
             'experiences' => $experiences,
             'aboutMe' => $this->aboutMe,
             'siteContact' => $siteContact,
