@@ -26,6 +26,12 @@ class Form extends Component
 
     public string $content = '';
 
+    public string $case_study_problem = '';
+
+    public string $case_study_process = '';
+
+    public string $case_study_result = '';
+
     public ?string $link = '';
 
     public string $category = '';
@@ -46,6 +52,8 @@ class Form extends Component
 
     // Stats as array of objects
     public array $stats = [];
+
+    public array $case_study_metrics = [];
 
     // Image uploads
     public $thumbnail = null;
@@ -76,12 +84,16 @@ class Form extends Component
             'slug' => 'required|unique:projects,slug'.($this->projectId ? ','.$this->projectId : ''),
             'description' => 'required|min:10',
             'content' => 'required',
+            'case_study_problem' => 'nullable|string|max:5000',
+            'case_study_process' => 'nullable|string|max:5000',
+            'case_study_result' => 'nullable|string|max:5000',
             'link' => 'nullable|url|max:500',
             'category' => 'required|in:graphic-design,software-dev,data-analysis,networking',
             'project_date' => 'required|date',
             'tags' => 'array',
             'tech_stack' => 'array',
             'stats' => 'array',
+            'case_study_metrics' => 'array',
             'is_featured' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -103,12 +115,16 @@ class Form extends Component
                 $this->slug = $project->slug;
                 $this->description = $this->cleanHtml($project->description);
                 $this->content = $this->cleanHtml($project->content);
+                $this->case_study_problem = (string) $project->case_study_problem;
+                $this->case_study_process = (string) $project->case_study_process;
+                $this->case_study_result = (string) $project->case_study_result;
                 $this->link = $project->link ?? '';
                 $this->category = $project->category;
                 $this->project_date = $project->project_date?->format('Y-m-d');
                 $this->tags = $project->tags ?? [];
                 $this->tech_stack = $project->tech_stack ?? [];
                 $this->stats = $project->stats ?? [['label' => '', 'value' => '']];
+                $this->case_study_metrics = $project->case_study_metrics ?? [['label' => '', 'value' => '']];
                 $this->is_featured = $project->is_featured;
                 $this->meta_title = $project->meta_title;
                 $this->meta_description = $project->meta_description;
@@ -118,6 +134,7 @@ class Form extends Component
             }
         } else {
             $this->stats = [['label' => '', 'value' => '']];
+            $this->case_study_metrics = [['label' => '', 'value' => '']];
         }
     }
 
@@ -171,6 +188,17 @@ class Form extends Component
         $this->stats = array_values($this->stats);
     }
 
+    public function addCaseStudyMetric(): void
+    {
+        $this->case_study_metrics[] = ['label' => '', 'value' => ''];
+    }
+
+    public function removeCaseStudyMetric(int $index): void
+    {
+        unset($this->case_study_metrics[$index]);
+        $this->case_study_metrics = array_values($this->case_study_metrics);
+    }
+
     public function addTag(string $value, string $type = 'tags'): void
     {
         $value = trim($value);
@@ -204,12 +232,16 @@ class Form extends Component
             'slug' => $this->slug,
             'description' => $cleanDescription,
             'content' => $cleanContent,
+            'case_study_problem' => $this->cleanHtml($this->case_study_problem),
+            'case_study_process' => $this->cleanHtml($this->case_study_process),
+            'case_study_result' => $this->cleanHtml($this->case_study_result),
             'link' => $this->link,
             'category' => $this->category,
             'project_date' => $this->project_date,
             'tags' => $this->tags,
             'tech_stack' => $this->tech_stack,
             'stats' => array_filter($this->stats, fn ($stat) => ! empty($stat['label']) && ! empty($stat['value'])),
+            'case_study_metrics' => array_filter($this->case_study_metrics, fn ($metric) => ! empty($metric['label']) && ! empty($metric['value'])),
             'is_featured' => $this->is_featured,
             'meta_title' => $this->meta_title ?: $this->title,
             'meta_description' => $this->meta_description ?: Str::limit(strip_tags($cleanDescription), 155),

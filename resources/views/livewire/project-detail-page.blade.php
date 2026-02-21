@@ -150,6 +150,45 @@
         </div>
     </div>
 
+    @if($project->case_study_problem || $project->case_study_process || $project->case_study_result)
+        <section class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800" x-data="{ showCaseStudy: false }" x-intersect.once.margin.-100px="showCaseStudy = true">
+            <div class="mb-10 transition-all duration-1000 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                <p class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-3">Case Study</p>
+                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tighter">Problem → Process → Result</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 transition-all duration-1000 delay-150 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                <article class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+                    <p class="text-xs uppercase tracking-widest text-zinc-400 mb-3">Problem</p>
+                    <p class="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{{ $project->case_study_problem ?: 'Detail problem belum ditambahkan.' }}</p>
+                </article>
+
+                <article class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+                    <p class="text-xs uppercase tracking-widest text-zinc-400 mb-3">Process</p>
+                    <p class="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{{ $project->case_study_process ?: 'Detail process belum ditambahkan.' }}</p>
+                </article>
+
+                <article class="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-950 text-white dark:bg-zinc-900 p-6">
+                    <p class="text-xs uppercase tracking-widest text-zinc-400 mb-3">Result</p>
+                    <p class="text-sm leading-relaxed text-zinc-200">{{ $project->case_study_result ?: 'Detail result belum ditambahkan.' }}</p>
+                </article>
+            </div>
+
+            @if($project->case_study_metrics && count($project->case_study_metrics) > 0)
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-1000 delay-300 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                    @foreach($project->case_study_metrics as $metric)
+                        @if(isset($metric['label']) && isset($metric['value']))
+                            <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5">
+                                <p class="text-xs uppercase tracking-widest text-zinc-400 mb-1">{{ $metric['label'] }}</p>
+                                <p class="text-2xl font-black">{{ $metric['value'] }}</p>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    @endif
+
     {{-- Related Projects --}}
     @if($relatedProjects->count() > 0)
         <div class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800" x-data="{ shownRelated: false }" x-intersect.once.margin.-100px="shownRelated = true">

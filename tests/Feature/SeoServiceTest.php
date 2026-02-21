@@ -54,4 +54,20 @@ class SeoServiceTest extends TestCase
         $this->assertStringContainsString(route('blog.index'), $data['potentialAction']['target']);
         $this->assertStringContainsString('search={search_term_string}', $data['potentialAction']['target']);
     }
+
+    public function test_sitemap_is_cached_after_first_generation(): void
+    {
+        app(EngineManager::class)->forgetEngines();
+        config(['scout.driver' => 'null']);
+
+        $service = app(SeoService::class);
+
+        $first = $service->getCachedSitemap();
+        $this->assertStringContainsString('<urlset', $first);
+
+        $service->clearSitemapCache();
+        $second = $service->getCachedSitemap();
+
+        $this->assertStringContainsString('<urlset', $second);
+    }
 }

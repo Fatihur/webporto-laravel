@@ -47,7 +47,7 @@ class HomePage extends Component
     public function render()
     {
         // Cache featured projects for 1 hour
-        $featuredProjects = Cache::remember('projects.featured', 3600, function () {
+        $featuredProjects = Cache::flexible('projects.featured', [3600, 21600], function () {
             return Project::featured()
                 ->recent()
                 ->limit(3)
@@ -55,7 +55,7 @@ class HomePage extends Component
         });
 
         // Cache experiences for 6 hours
-        $experiences = Cache::remember('experiences.ordered', 21600, function () {
+        $experiences = Cache::flexible('experiences.ordered', [21600, 86400], function () {
             return Experience::ordered()
                 ->limit(5)
                 ->get();

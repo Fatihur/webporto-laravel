@@ -3,23 +3,27 @@
 namespace App\Livewire;
 
 use App\Data\CategoryData;
-use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Navigation extends Component
 {
     public bool $isMegaMenuOpen = false;
+
     public bool $isMobileMenuOpen = false;
+
     public array $categories = [];
 
     public function mount(): void
     {
-        $this->categories = CategoryData::all();
+        $this->categories = Cache::remember('categories.all', 86400, function () {
+            return CategoryData::all();
+        });
     }
 
     public function toggleMegaMenu(): void
     {
-        $this->isMegaMenuOpen = !$this->isMegaMenuOpen;
+        $this->isMegaMenuOpen = ! $this->isMegaMenuOpen;
     }
 
     public function closeMegaMenu(): void
@@ -29,7 +33,7 @@ class Navigation extends Component
 
     public function toggleMobileMenu(): void
     {
-        $this->isMobileMenuOpen = !$this->isMobileMenuOpen;
+        $this->isMobileMenuOpen = ! $this->isMobileMenuOpen;
     }
 
     public function closeMobileMenu(): void

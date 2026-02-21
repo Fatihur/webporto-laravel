@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Data\CategoryData;
 use App\Models\Project;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -14,16 +15,20 @@ class ProjectFilter extends Component
     public ?string $selectedCategory = null;
 
     public $projects;
+
     public array $categories = [];
+
     public string $title = 'Latest Projects';
+
     public string $description = 'A comprehensive showcase of cross-disciplinary work spanning design, development, and complex system architectures.';
 
     #[Url(as: 'search')]
     public string $search = '';
-    
+
     public array $selectedTechStacks = [];
+
     public array $availableTechStacks = [];
-    
+
     public function mount(?string $category = null): void
     {
         $this->selectedCategory = $category;
@@ -31,7 +36,7 @@ class ProjectFilter extends Component
         $this->categories = Cache::remember('categories.all', 86400, function () {
             return CategoryData::all();
         });
-        
+
         // Get unique tech stacks from all projects
         $this->availableTechStacks = Cache::remember('tech_stacks.all', 86400, function () {
             return Project::all()
@@ -41,7 +46,7 @@ class ProjectFilter extends Component
                 ->values()
                 ->toArray();
         });
-        
+
         $this->loadProjects();
     }
 
@@ -70,17 +75,17 @@ class ProjectFilter extends Component
     private function loadProjects(): void
     {
         // Create cache key based on category and search
-        if (!empty($this->search)) {
-            // Cache search results for 2 minutes (shorter TTL for dynamic content)
-            $cacheKey = 'projects.search.' . md5($this->search . '.' . ($this->selectedCategory ?? 'all'));
+        if (! empty($this->search) || ! empty($this->selectedTechStacks)) {
+            // Cache filtered results for 2 minutes (shorter TTL for dynamic content)
+            $cacheKey = 'projects.search.'.md5($this->search.'.'.($this->selectedCategory ?? 'all').'.'.implode('|', $this->selectedTechStacks));
             $ttl = 120;
         } else {
             // Cache category results for 30 minutes
-            $cacheKey = 'projects.category.' . ($this->selectedCategory ?? 'all');
+            $cacheKey = 'projects.category.'.($this->selectedCategory ?? 'all');
             $ttl = 1800;
         }
 
-        $this->projects = Cache::remember($cacheKey, $ttl, function () {
+        $this->projects = Cache::flexible($cacheKey, [$ttl, 1800], function () {
             return $this->fetchProjectsFromDatabase();
         });
 
@@ -97,17 +102,22 @@ class ProjectFilter extends Component
         }
 
         // Filter by tech stack
-        if (!empty($this->selectedTechStacks)) {
+        if (! empty($this->selectedTechStacks)) {
             $query->byTechStack($this->selectedTechStacks);
         }
 
         // Filter by search term (database LIKE query)
         if ($this->search) {
-            $searchTerm = '%' . strtolower($this->search) . '%';
+            $searchTerm = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', $searchTerm)
-                  ->orWhere('description', 'like', $searchTerm)
-                  ->orWhereJsonContains('tags', $this->search);
+                    ->orWhere('description', 'like', $searchTerm)
+                    ->orWhere('content', 'like', $searchTerm)
+                    ->orWhereJsonContains('tags', $this->search);
+
+                foreach (array_filter(explode(' ', Str::lower($this->search))) as $token) {
+                    $q->orWhereJsonContains('tech_stack', $token);
+                }
             });
         }
 

@@ -3,9 +3,9 @@
 namespace App\Livewire\Admin\Security;
 
 use App\Services\TwoFactorAuthService;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 #[Layout('layouts.admin')]
 class TwoFactorAuth extends Component
@@ -17,11 +17,17 @@ class TwoFactorAuth extends Component
     public string $recoveryCode = '';
 
     public bool $showRecoveryCodeInput = false;
+
     public ?string $qrCodeUrl = null;
+
     public ?string $secret = null;
+
     public array $recoveryCodes = [];
+
     public bool $showRecoveryCodes = false;
+
     public bool $isEnabling = false;
+
     public bool $isDisabling = false;
 
     protected TwoFactorAuthService $twoFactorService;
@@ -33,7 +39,7 @@ class TwoFactorAuth extends Component
 
     public function mount(): void
     {
-        if (!auth()->user()->two_factor_enabled) {
+        if (! auth()->user()->two_factor_enabled) {
             $this->secret = $this->twoFactorService->generateSecretKey();
             $this->qrCodeUrl = $this->twoFactorService->getQRCodeUrl(
                 auth()->user(),
@@ -58,12 +64,10 @@ class TwoFactorAuth extends Component
             'code' => 'required|numeric|digits:6',
         ]);
 
-        // Temporarily store the secret for verification
         $user = auth()->user();
-        $user->two_factor_secret = encrypt($this->secret);
+        $user->two_factor_secret = $this->secret;
 
         if ($this->twoFactorService->enable($user, $this->code)) {
-            // Generate and show recovery codes
             $this->recoveryCodes = $this->twoFactorService->generateRecoveryCodes($user);
             $this->showRecoveryCodes = true;
             $this->isEnabling = false;
@@ -93,11 +97,17 @@ class TwoFactorAuth extends Component
             'code' => 'required|numeric|digits:6',
         ]);
 
-        if ($this->twoFactorService->verifyCode(
-            decrypt(auth()->user()->two_factor_secret),
-            $this->code
-        )) {
-            $this->twoFactorService->disable(auth()->user());
+        $user = auth()->user();
+
+        if (! $user->two_factor_secret) {
+            $this->addError('code', 'Two-factor authentication is not configured.');
+            $this->code = '';
+
+            return;
+        }
+
+        if ($this->twoFactorService->verifyCode(decrypt($user->two_factor_secret), $this->code)) {
+            $this->twoFactorService->disable($user);
             $this->isDisabling = false;
 
             session()->flash('success', 'Two-factor authentication has been disabled.');
@@ -150,11 +160,17 @@ class TwoFactorAuth extends Component
             'code' => 'required|numeric|digits:6',
         ]);
 
-        if ($this->twoFactorService->verifyCode(
-            decrypt(auth()->user()->two_factor_secret),
-            $this->code
-        )) {
-            $this->recoveryCodes = $this->twoFactorService->generateRecoveryCodes(auth()->user());
+        $user = auth()->user();
+
+        if (! $user->two_factor_secret) {
+            $this->addError('code', 'Two-factor authentication is not configured.');
+            $this->code = '';
+
+            return;
+        }
+
+        if ($this->twoFactorService->verifyCode(decrypt($user->two_factor_secret), $this->code)) {
+            $this->recoveryCodes = $this->twoFactorService->generateRecoveryCodes($user);
             $this->showRecoveryCodes = true;
 
             session()->flash('success', 'New recovery codes have been generated.');

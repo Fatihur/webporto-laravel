@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (! Schema::hasTable('knowledge_entries')) {
+            return;
+        }
+
         Schema::table('knowledge_entries', function (Blueprint $table) {
             // Add vector embedding column (stored as JSON for MySQL compatibility)
             $table->json('embedding')->nullable()->after('content');
@@ -18,6 +22,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasTable('knowledge_entries')) {
+            return;
+        }
+
         Schema::table('knowledge_entries', function (Blueprint $table) {
             $table->dropColumn(['embedding', 'metadata']);
         });

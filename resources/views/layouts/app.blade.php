@@ -128,24 +128,26 @@
 
     @livewireStyles
 
-    <!-- MathJax for formula rendering -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
-            },
-            startup: {
-                pageReady: () => {
-                    return MathJax.startup.defaultPageReady();
+    @if (!empty($enableMathJax))
+        <!-- MathJax for formula rendering (loaded only on pages that need it) -->
+        <script>
+            window.MathJax = {
+                tex: {
+                    inlineMath: [['$', '$'], ['\\(', '\\)']],
+                    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                },
+                svg: {
+                    fontCache: 'global'
+                },
+                startup: {
+                    pageReady: () => {
+                        return MathJax.startup.defaultPageReady();
+                    }
                 }
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+            };
+        </script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    @endif
 
     <!-- Code block styling -->
     <style>
@@ -313,18 +315,20 @@
 
     @livewireScripts
 
-    <!-- MathJax re-render on Livewire navigation -->
-    <script>
-        document.addEventListener('livewire:navigated', () => {
-            if (typeof MathJax !== 'undefined' && MathJax.startup && MathJax.startup.promise) {
-                MathJax.startup.promise.then(() => {
-                    MathJax.typesetPromise();
-                }).catch((err) => {
-                    console.log('MathJax typeset error:', err);
-                });
-            }
-        });
-    </script>
+    @if (!empty($enableMathJax))
+        <!-- MathJax re-render on Livewire navigation -->
+        <script>
+            document.addEventListener('livewire:navigated', () => {
+                if (typeof MathJax !== 'undefined' && MathJax.startup && MathJax.startup.promise) {
+                    MathJax.startup.promise.then(() => {
+                        MathJax.typesetPromise();
+                    }).catch((err) => {
+                        console.log('MathJax typeset error:', err);
+                    });
+                }
+            });
+        </script>
+    @endif
 
     @stack('scripts')
 </body>

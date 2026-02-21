@@ -42,9 +42,9 @@ class BlogPage extends Component
         $page = $this->getPage();
 
         // Create cache key based on search, category, and page
-        if (!empty($this->search) || !empty($this->category)) {
+        if (! empty($this->search) || ! empty($this->category)) {
             // Cache filtered results for 2 minutes (shorter TTL for dynamic content)
-            $cacheKey = 'blog.search.' . md5($this->search . '.' . $this->category . '.' . $page);
+            $cacheKey = 'blog.search.'.md5($this->search.'.'.$this->category.'.'.$page);
             $ttl = 120;
         } else {
             // Cache default pagination for 15 minutes
@@ -52,12 +52,12 @@ class BlogPage extends Component
             $ttl = 900;
         }
 
-        $posts = Cache::remember($cacheKey, $ttl, function () {
+        $posts = Cache::flexible($cacheKey, [$ttl, 1800], function () {
             return $this->fetchPosts();
         });
 
         // Cache categories list separately
-        $categories = Cache::remember('blog.categories', 3600, function () {
+        $categories = Cache::flexible('blog.categories', [3600, 21600], function () {
             return Blog::published()
                 ->distinct()
                 ->pluck('category');
@@ -81,11 +81,11 @@ class BlogPage extends Component
 
         // Filter by search term (database LIKE query)
         if ($this->search) {
-            $searchTerm = '%' . strtolower($this->search) . '%';
+            $searchTerm = '%'.strtolower($this->search).'%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', $searchTerm)
-                  ->orWhere('excerpt', 'like', $searchTerm)
-                  ->orWhere('content', 'like', $searchTerm);
+                    ->orWhere('excerpt', 'like', $searchTerm)
+                    ->orWhere('content', 'like', $searchTerm);
             });
         }
 

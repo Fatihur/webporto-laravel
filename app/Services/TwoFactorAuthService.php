@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
 use PragmaRX\Google2FA\Google2FA;
 
 class TwoFactorAuthService
@@ -13,7 +12,7 @@ class TwoFactorAuthService
 
     public function __construct()
     {
-        $this->google2fa = new Google2FA();
+        $this->google2fa = new Google2FA;
     }
 
     /**
@@ -41,7 +40,7 @@ class TwoFactorAuthService
      */
     public function verifyCode(string $secret, string $code): bool
     {
-        return $this->google2fa->verifyKey($secret, $code, 2); // 2 = window size
+        return (bool) $this->google2fa->verifyKey($secret, $code, 2);
     }
 
     /**
@@ -49,12 +48,19 @@ class TwoFactorAuthService
      */
     public function enable(User $user, string $code): bool
     {
-        if (!$this->verifyCode($user->two_factor_secret, $code)) {
+        $plainSecret = $user->two_factor_secret;
+
+        if (! $plainSecret) {
+            return false;
+        }
+
+        if (! $this->verifyCode($plainSecret, $code)) {
             return false;
         }
 
         $user->update([
             'two_factor_enabled' => true,
+            'two_factor_secret' => encrypt($plainSecret),
             'two_factor_confirmed_at' => now(),
         ]);
 
@@ -107,10 +113,17 @@ class TwoFactorAuthService
      */
     public function verifyRecoveryCode(User $user, string $code): bool
     {
+        if (! $user->two_factor_recovery_codes) {
+            return false;
+        }
+
         $codes = json_decode(decrypt($user->two_factor_recovery_codes), true);
 
-        if (($key = array_search($code, $codes)) !== false) {
-            // Remove used code
+        if (! is_array($codes)) {
+            return false;
+        }
+
+        if (($key = array_search($code, $codes, true)) !== false) {
             unset($codes[$key]);
             $user->update([
                 'two_factor_recovery_codes' => encrypt(json_encode(array_values($codes))),
@@ -144,12 +157,13 @@ class TwoFactorAuthService
      */
     public function isVerified(): bool
     {
-        if (!session()->has('two_factor_verified')) {
+        if (! session()->has('two_factor_verified')) {
             return false;
         }
 
         // Verification expires after 6 hours
         $verifiedAt = session()->get('two_factor_verified_at', 0);
+
         return (now()->timestamp - $verifiedAt) < 21600;
     }
 

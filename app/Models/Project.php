@@ -20,6 +20,10 @@ class Project extends Model
         'slug',
         'description',
         'content',
+        'case_study_problem',
+        'case_study_process',
+        'case_study_result',
+        'case_study_metrics',
         'link',
         'category',
         'thumbnail',
@@ -39,6 +43,7 @@ class Project extends Model
         'tech_stack' => 'array',
         'stats' => 'array',
         'gallery' => 'array',
+        'case_study_metrics' => 'array',
         'project_date' => 'date',
         'is_featured' => 'boolean',
     ];

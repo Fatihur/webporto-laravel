@@ -34,11 +34,17 @@ class CacheHeaders
             return $response;
         }
 
-        // Add Link preload headers for critical resources
-        $response->headers->set('Link', '<https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwY.woff2>; rel=preload; as=font; type=font/woff2; crossorigin, <https://fonts.gstatic.com/s/inter/v18/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hjp-Ek-_EeA.woff2>; rel=preload; as=font; type=font/woff2; crossorigin', false);
+        // Add lightweight preload headers only on the homepage.
+        if ($request->is('/')) {
+            $response->headers->set(
+                'Link',
+                '<https://fonts.gstatic.com/s/inter/v18/UcCo3FwrK3iLTcviYwY.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+                false
+            );
+        }
 
         // Public pages - cache for 5 minutes with stale-while-revalidate
-        if ($request->is('/') || $request->is('projects') || $request->is('projects/*') || $request->is('blog') || $request->is('blog/*') || $request->is('contact')) {
+        if ($request->is('/') || $request->is('projects') || $request->is('projects/*') || $request->is('project/*') || $request->is('blog') || $request->is('blog/*') || $request->is('contact')) {
             $response->headers->set('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=3600');
             $response->headers->set('Vary', 'Accept-Encoding');
 

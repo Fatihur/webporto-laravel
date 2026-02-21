@@ -129,6 +129,40 @@
                     </div>
                 </div>
 
+                <!-- Case Study -->
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                    <h2 class="text-lg font-bold mb-4">Interactive Case Study</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Problem</label>
+                            <textarea wire:model="case_study_problem" rows="4"
+                                      class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors resize-none"
+                                      placeholder="Masalah utama yang ingin diselesaikan pada project ini."></textarea>
+                            @error('case_study_problem')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Process</label>
+                            <textarea wire:model="case_study_process" rows="4"
+                                      class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors resize-none"
+                                      placeholder="Jelaskan pendekatan, strategi, dan langkah implementasi."></textarea>
+                            @error('case_study_process')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Result</label>
+                            <textarea wire:model="case_study_result" rows="4"
+                                      class="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors resize-none"
+                                      placeholder="Dampak hasil (business impact, user impact, technical outcome)."></textarea>
+                            @error('case_study_result')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Stats -->
                 <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
                     <div class="flex items-center justify-between mb-4">
@@ -162,6 +196,42 @@
                         @endforeach
                     </div>
                     @error('stats')
+                    <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Case Study Metrics -->
+                <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold">Case Study Metrics</h2>
+                        <button type="button" wire:click="addCaseStudyMetric"
+                                class="text-sm font-bold text-mint hover:text-mint/80 transition-colors">
+                            + Add Metric
+                        </button>
+                    </div>
+
+                    <div class="space-y-3">
+                        @foreach($case_study_metrics as $index => $metric)
+                            <div class="flex gap-3" wire:key="case-study-metric-{{ $index }}">
+                                <input type="text" wire:model="case_study_metrics.{{ $index }}.label"
+                                       class="flex-1 px-4 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
+                                       placeholder="Label (e.g., Conversion Rate)">
+                                <input type="text" wire:model="case_study_metrics.{{ $index }}.value"
+                                       class="flex-1 px-4 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 focus:border-mint focus:outline-none transition-colors text-sm"
+                                       placeholder="Value (e.g., +37%)">
+                                <button type="button" wire:click="removeCaseStudyMetric({{ $index }})"
+                                        class="px-3 py-2 text-red-500 hover:text-red-600 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('case_study_metrics')
                     <p class="text-red-500 text-sm mt-2">{{ $message }}</p> @enderror
                 </div>
 

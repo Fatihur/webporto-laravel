@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SeoController;
 use App\Livewire\Admin\AiBlog\Dashboard as AiBlogDashboard;
@@ -42,16 +41,6 @@ Route::get('/', HomePage::class)->name('home');
 // SEO Routes
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
-
-// Social Login Routes
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login/{provider}', [SocialLoginController::class, 'redirect'])->name('social.login');
-    Route::get('/login/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/social/{provider}/unlink', [SocialLoginController::class, 'unlink'])->name('social.unlink');
-});
 
 // Projects
 Route::redirect('/projects', '/');
