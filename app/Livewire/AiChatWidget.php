@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Ai\Agents\PortfolioAssistant;
+use App\Models\Contact;
+use App\Services\AiChatRetrievalService;
 use App\Services\UserContextService;
 use App\Support\AiChat\GameEngine;
 use App\Support\AiChat\MessageFormatter;
@@ -40,11 +42,28 @@ class AIChatWidget extends Component
 
     protected GameEngine $gameEngine;
 
+    protected AiChatRetrievalService $retrievalService;
+
+    public bool $leadMode = false;
+
+    /**
+     * @var array{name: string, email: string, project_type: string, budget: string, timeline: string, message: string}
+     */
+    public array $leadDraft = [
+        'name' => '',
+        'email' => '',
+        'project_type' => '',
+        'budget' => '',
+        'timeline' => '',
+        'message' => '',
+    ];
+
     public function boot(): void
     {
         $this->contextService = new UserContextService;
         $this->messageFormatter = new MessageFormatter;
         $this->gameEngine = new GameEngine;
+        $this->retrievalService = app(AiChatRetrievalService::class);
     }
 
     public function mount(): void
@@ -57,6 +76,8 @@ class AIChatWidget extends Component
         $this->activeGame = Session::get('ai_active_game');
         $this->gameScore = Session::get('ai_game_score', 0);
         $this->gameStreak = Session::get('ai_game_streak', 0);
+        $this->leadMode = Session::get('ai_lead_mode', false);
+        $this->leadDraft = Session::get('ai_lead_draft', $this->leadDraft);
 
         // Add welcome message if no history
         if (empty($this->chatHistory)) {
@@ -103,6 +124,12 @@ class AIChatWidget extends Component
             return;
         }
 
+        if ($this->leadMode) {
+            $this->handleLeadFlow($userMessage);
+
+            return;
+        }
+
         // Handle stop game command FIRST (before treating as game answer)
         $stopCommands = ['stop', 'stop game', 'end', 'end game', 'berhenti', 'keluar', 'quit', 'exit'];
         if ($this->activeGame && in_array(strtolower($userMessage), $stopCommands)) {
@@ -126,6 +153,12 @@ class AIChatWidget extends Component
             return;
         }
 
+        if ($this->shouldStartLeadFlow($userMessage)) {
+            $this->startLeadFlow($userMessage);
+
+            return;
+        }
+
         // Extract context from user message (ISOLATED per session)
         $this->contextService->extractFromMessage($userMessage);
         $this->loadUserContexts(); // Refresh UI
@@ -143,6 +176,8 @@ class AIChatWidget extends Component
         // Dispatch event untuk update UI
         $this->dispatch('chat-updated');
 
+        $retrieval = $this->retrievalService->retrieve($userMessage, 3);
+
         try {
             $agent = new PortfolioAssistant;
             // Convert session ID to integer for database compatibility
@@ -158,7 +193,7 @@ class AIChatWidget extends Component
             }
 
             // Build prompt with context (ISOLATED)
-            $promptWithContext = $this->buildPromptWithContext($userMessage);
+            $promptWithContext = $this->buildPromptWithContext($userMessage, $retrieval);
             $response = $agent->prompt($promptWithContext);
 
             // Save conversation ID for continuity
@@ -167,9 +202,15 @@ class AIChatWidget extends Component
                 Session::put('ai_conversation_id', $this->conversationId);
             }
 
+            $assistantResponse = (string) $response;
+            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
+            if ($citationBlock !== '') {
+                $assistantResponse .= "\n\n".$citationBlock;
+            }
+
             $this->chatHistory[] = [
                 'role' => 'assistant',
-                'content' => (string) $response,
+                'content' => $assistantResponse,
                 'timestamp' => now()->toIso8601String(),
             ];
         } catch (RateLimitedException $e) {
@@ -178,9 +219,15 @@ class AIChatWidget extends Component
                 'user_message' => $userMessage,
             ]);
 
+            $fallbackResponse = "⚠️ Groq lagi kena rate limit. Aku lanjut bantu pakai mode fallback lokal dulu ya.\n\n".$this->generateDemoResponse($userMessage);
+            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
+            if ($citationBlock !== '') {
+                $fallbackResponse .= "\n\n".$citationBlock;
+            }
+
             $this->chatHistory[] = [
                 'role' => 'assistant',
-                'content' => "⚠️ Groq lagi kena rate limit. Aku lanjut bantu pakai mode fallback lokal dulu ya.\n\n".$this->generateDemoResponse($userMessage),
+                'content' => $fallbackResponse,
                 'timestamp' => now()->toIso8601String(),
             ];
         } catch (Throwable $e) {
@@ -192,6 +239,10 @@ class AIChatWidget extends Component
 
             // Jika API error, gunakan response lokal untuk demo
             $demoResponse = $this->generateDemoResponse($userMessage);
+            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
+            if ($citationBlock !== '') {
+                $demoResponse .= "\n\n".$citationBlock;
+            }
 
             $this->chatHistory[] = [
                 'role' => 'assistant',
@@ -210,15 +261,215 @@ class AIChatWidget extends Component
     /**
      * Build prompt with user context (ISOLATED per session)
      */
-    private function buildPromptWithContext(string $message): string
+    private function buildPromptWithContext(string $message, array $retrieval = []): string
     {
-        $context = $this->contextService->getForAiPrompt();
+        $parts = [];
 
-        if (empty($context)) {
+        $context = $this->contextService->getForAiPrompt();
+        if (! empty($context)) {
+            $parts[] = $context;
+        }
+
+        $retrievalContext = $this->retrievalService->buildPromptContext($retrieval);
+        if ($retrievalContext !== '') {
+            $parts[] = $retrievalContext;
+        }
+
+        if (empty($parts)) {
             return $message;
         }
 
-        return $context."\n\nPertanyaan user: ".$message;
+        return implode("\n\n", $parts)."\n\nPertanyaan user: ".$message;
+    }
+
+    private function shouldStartLeadFlow(string $message): bool
+    {
+        $normalized = strtolower($message);
+        $keywords = [
+            'hire',
+            'hiring',
+            'kerja sama',
+            'kolaborasi',
+            'project',
+            'proyek',
+            'buat website',
+            'jasa',
+            'budget',
+            'pricing',
+            'quotation',
+            'quote',
+        ];
+
+        foreach ($keywords as $keyword) {
+            if (str_contains($normalized, $keyword)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function startLeadFlow(string $initialMessage): void
+    {
+        $this->leadMode = true;
+        $this->leadDraft = [
+            'name' => $this->userContexts['name'] ?? '',
+            'email' => '',
+            'project_type' => $this->userContexts['project_type'] ?? '',
+            'budget' => $this->userContexts['budget'] ?? '',
+            'timeline' => '',
+            'message' => $initialMessage,
+        ];
+
+        $this->chatHistory[] = [
+            'role' => 'user',
+            'content' => $initialMessage,
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        $this->chatHistory[] = [
+            'role' => 'assistant',
+            'content' => "Mantap, aku bantu kumpulin kebutuhan project kamu ya. 🚀\n\nSebelum lanjut, boleh kasih **nama kamu** dulu?\n\nKetik juga **batal** kalau gak jadi.",
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        $this->saveChatHistory();
+        $this->dispatch('chat-updated');
+    }
+
+    private function handleLeadFlow(string $message): void
+    {
+        $input = trim($message);
+        $lower = strtolower($input);
+
+        $this->chatHistory[] = [
+            'role' => 'user',
+            'content' => $input,
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        if (in_array($lower, ['batal', 'cancel', 'stop'], true)) {
+            $this->leadMode = false;
+            $this->leadDraft = [
+                'name' => '',
+                'email' => '',
+                'project_type' => '',
+                'budget' => '',
+                'timeline' => '',
+                'message' => '',
+            ];
+
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => 'Siap, flow lead aku batalkan ya. Kalau mau lanjut lagi tinggal bilang aja. 🙂',
+                'timestamp' => now()->toIso8601String(),
+            ];
+
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+
+            return;
+        }
+
+        if ($this->leadDraft['name'] === '') {
+            $this->leadDraft['name'] = $input;
+            $this->contextService->save('name', $input);
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => 'Thanks, '.$input.'! Sekarang boleh kasih **email aktif** kamu?',
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+
+            return;
+        }
+
+        if ($this->leadDraft['email'] === '') {
+            if (! filter_var($input, FILTER_VALIDATE_EMAIL)) {
+                $this->chatHistory[] = [
+                    'role' => 'assistant',
+                    'content' => 'Sepertinya format email belum valid. Coba kirim email yang benar ya.',
+                    'timestamp' => now()->toIso8601String(),
+                ];
+                $this->saveChatHistory();
+                $this->dispatch('chat-updated');
+
+                return;
+            }
+
+            $this->leadDraft['email'] = $input;
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => 'Noted. Jenis project kamu apa? (contoh: software_dev, graphic_design, data_analysis, networking)',
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+
+            return;
+        }
+
+        if ($this->leadDraft['project_type'] === '') {
+            $this->leadDraft['project_type'] = $input;
+            $this->contextService->save('project_type', $input);
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => 'Sip. Kalau boleh tahu, kisaran **budget** kamu berapa?',
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+
+            return;
+        }
+
+        if ($this->leadDraft['budget'] === '') {
+            $this->leadDraft['budget'] = $input;
+            $this->contextService->save('budget', $input);
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => 'Oke. Target **timeline** pengerjaan yang kamu harapkan berapa lama?',
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+
+            return;
+        }
+
+        if ($this->leadDraft['timeline'] === '') {
+            $this->leadDraft['timeline'] = $input;
+            $this->persistLeadToContacts();
+
+            $this->leadMode = false;
+            $this->chatHistory[] = [
+                'role' => 'assistant',
+                'content' => "Berhasil! ✅ Brief kamu sudah aku teruskan ke tim Fatih.\n\nKamu juga bisa lanjut via halaman contact: [BUTTON:Buka Contact|/contact]",
+                'timestamp' => now()->toIso8601String(),
+            ];
+            $this->saveChatHistory();
+            $this->dispatch('chat-updated');
+        }
+    }
+
+    private function persistLeadToContacts(): void
+    {
+        Contact::create([
+            'name' => $this->leadDraft['name'],
+            'email' => $this->leadDraft['email'],
+            'subject' => 'AI Lead: '.($this->leadDraft['project_type'] ?: 'general'),
+            'message' => trim(implode("\n", [
+                'Sumber: AI Chat Widget',
+                'Project Type: '.$this->leadDraft['project_type'],
+                'Budget: '.$this->leadDraft['budget'],
+                'Timeline: '.$this->leadDraft['timeline'],
+                '',
+                'Pesan awal user:',
+                $this->leadDraft['message'],
+            ])),
+            'is_read' => false,
+        ]);
     }
 
     /**
