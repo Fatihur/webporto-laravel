@@ -1,10 +1,37 @@
 <!-- Mobile Sidebar Overlay -->
-<div x-data="{ open: false }" @keydown.window.escape="open = false">
-    <div x-show="open" class="fixed inset-0 z-40 bg-black/50 lg:hidden" @click="open = false" x-transition.opacity></div>
+<div
+    x-data="{
+        open: false,
+        close() {
+            this.open = false;
+        },
+        toggle() {
+            this.open = !this.open;
+        },
+        init() {
+            this.$watch('open', (value) => {
+                document.body.classList.toggle('overflow-hidden', value && window.innerWidth < 1024);
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    this.open = false;
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
+
+            window.addEventListener('livewire:navigated', () => {
+                this.close();
+            });
+        }
+    }"
+    @keydown.window.escape="close()"
+>
+    <div x-cloak x-show="open" class="fixed inset-0 z-40 bg-black/50 lg:hidden" @click="close()" x-transition.opacity></div>
 
     <!-- Sidebar -->
-    <aside :class="open ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform transition-transform duration-200 lg:translate-x-0 flex flex-col">
+    <aside x-cloak :class="open ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed lg:static inset-y-0 left-0 z-50 w-[min(18rem,85vw)] lg:w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform transition-transform duration-200 lg:translate-x-0 flex flex-col">
         <!-- Logo -->
         <div class="p-6 border-b border-zinc-200 dark:border-zinc-800">
             <a href="{{ route('home') }}" class="flex items-center gap-2 text-2xl font-black tracking-tighter">
@@ -15,7 +42,7 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 p-4 overflow-y-auto custom-scrollbar">
+        <nav class="flex-1 p-4 overflow-y-auto custom-scrollbar" @click="if ($event.target.closest('a[wire\\:navigate]') && window.innerWidth < 1024) { close(); }">
             <div class="space-y-1">
                 <!-- Dashboard -->
                 <a href="{{ route('admin.dashboard') }}"
@@ -183,7 +210,7 @@
         <!-- Bottom Actions -->
         <div class="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
             <!-- Back to Site -->
-            <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors touch-manipulation">
+            <a href="{{ route('home') }}" wire:navigate @click="if (window.innerWidth < 1024) { close(); }" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors touch-manipulation">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
@@ -207,7 +234,7 @@
     </aside>
 
     <!-- Mobile Menu Button -->
-    <button @click="open = !open" class="fixed top-4 left-4 z-30 lg:hidden p-2 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+    <button @click="toggle()" class="fixed top-4 left-4 z-[60] lg:hidden p-2 bg-white/90 dark:bg-zinc-900/90 backdrop-blur rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="4" x2="20" y1="12" y2="12"/>
             <line x1="4" x2="20" y1="6" y2="6"/>
