@@ -5,7 +5,7 @@
     'image' => null,
     'url' => null,
     'type' => 'website',
-    'author' => 'Fatih',
+    'author' => 'Fatihurroyyan',
     'noindex' => false,
     'locale' => null,
     'publishedTime' => null,
@@ -14,13 +14,13 @@
 
 @php
 $siteName = config('app.name', 'Fatih Porto');
-$defaultDescription = config('app.meta_description', 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.');
+$defaultDescription = config('app.meta_description', 'Fatihurroyyan (Fatih) - Tech enthusiast & developer specializing in software development, graphic design, data analysis, and networking.');
 $defaultImage = asset('images/og-default.jpg');
 $twitterSite = config('app.twitter_site');
 
 $metaTitle = $title ? "{$title} | {$siteName}" : $siteName;
 $metaDescription = strip_tags($description ?? $defaultDescription);
-$metaKeywords = $keywords ?? 'portfolio, design, development, web, graphic design, software development';
+$metaKeywords = $keywords ?? 'fatihurroyyan, fatih, portfolio fatihurroyyan, portfolio fatih, software development, graphic design, data analysis, networking, tech enthusiast';
 $metaImage = $image ?? $defaultImage;
 $metaUrl = $url ?? url()->current();
 $canonicalUrl = preg_replace('/\?.*/', '', (string) $metaUrl);

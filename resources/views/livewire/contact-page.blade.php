@@ -1,8 +1,8 @@
 <x-slot name="seo">
     <x-seo-meta
         title="Contact"
-        description="Hubungi Fatih untuk kolaborasi project software, desain, data analysis, dan networking."
-        keywords="kontak fatih, hire developer, jasa software, collaboration"
+        description="Hubungi Fatihurroyyan (Fatih) untuk kolaborasi project software development, graphic design, data analysis, dan networking."
+        keywords="kontak fatihurroyyan, kontak fatih, hire developer, jasa software development, collaboration, hubungi fatihurroyyan"
         :url="route('contact.index')"
     />
 

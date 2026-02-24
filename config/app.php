@@ -26,7 +26,21 @@ return [
     |
     */
 
-    'meta_description' => env('APP_META_DESCRIPTION', 'Portfolio of Fatih - Tech enthusiast specializing in design, development, and complex system architectures.'),
+    'meta_description' => env('APP_META_DESCRIPTION', 'Fatihurroyyan (Fatih) - Tech enthusiast & developer specializing in software development, graphic design, data analysis, and networking.'),
+
+    'author_name' => env('APP_AUTHOR_NAME', 'Fatihurroyyan'),
+
+    'author_title' => env('APP_AUTHOR_TITLE', 'Tech Enthusiast & Software Developer'),
+
+    'description' => env('APP_DESCRIPTION', 'Portfolio website of Fatihurroyyan (Fatih), a tech enthusiast and developer from Indonesia.'),
+
+    'company_name' => env('APP_COMPANY_NAME', 'Fatihurroyyan'),
+
+    'social' => [
+        'github' => env('APP_SOCIAL_GITHUB'),
+        'linkedin' => env('APP_SOCIAL_LINKEDIN'),
+        'twitter' => env('APP_SOCIAL_TWITTER'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

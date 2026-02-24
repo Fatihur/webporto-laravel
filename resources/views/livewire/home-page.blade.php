@@ -1,8 +1,8 @@
 <x-slot name="seo">
     <x-seo-meta
-        title="Portfolio Fatih"
-        description="Portfolio Fatih menampilkan project software development, graphic design, data analysis, dan networking."
-        keywords="portfolio fatih, software development, graphic design, data analysis, networking"
+        title="Fatihurroyyan (Fatih) - Portfolio & Tech Enthusiast"
+        description="Portfolio website Fatihurroyyan (Fatih). Tech enthusiast dengan keahlian di software development, graphic design, data analysis, dan networking. Mahasiswa Informatika Universitas Teknologi Sumbawa."
+        keywords="fatihurroyyan, fatih, portfolio fatihurroyyan, portfolio fatih, fatihurroyyan portfolio, fatih portfolio, software developer, graphic design, data analysis, networking, tech enthusiast, web developer indonesia"
         :url="route('home')"
     />
 </x-slot>
@@ -22,9 +22,13 @@
                 / welcome to my Portfolio
             </p>
 
-            <h1 class="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tighter leading-none mb-6 transition-all duration-1000 delay-150" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
+            <h1 class="text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tighter leading-none mb-4 transition-all duration-1000 delay-150" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 Hi, I'm <span class="text-mint">Fatih</span>
             </h1>
+
+            <p class="text-sm sm:text-base font-semibold text-zinc-400 dark:text-zinc-500 mb-4 tracking-wide transition-all duration-1000 delay-200" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
+                Fatihurroyyan
+            </p>
 
             <p class="text-lg sm:text-xl md:text-2xl font-semibold text-zinc-500 dark:text-zinc-400 mb-12 tracking-tight transition-all duration-1000 delay-300" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 Tech enthusiast

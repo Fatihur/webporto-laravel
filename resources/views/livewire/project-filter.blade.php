@@ -2,7 +2,7 @@
     <x-seo-meta
         :title="$title"
         :description="$description"
-        keywords="portfolio projects, software project, design project, case study"
+        keywords="portfolio fatihurroyyan, portfolio fatih, software project, design project, case study, project fatihurroyyan"
         :url="$selectedCategory ? route('projects.category', $selectedCategory) : route('projects.category', 'graphic-design')"
     />
 

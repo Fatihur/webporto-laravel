@@ -58,7 +58,10 @@
             </div>
 
             <p class="text-sm font-medium text-zinc-400">
-                &copy; {{ date('Y') }} FatihPortfolio. All rights reserved.
+                &copy; {{ date('Y') }} Fatihurroyyan. All rights reserved.
+            </p>
+            <p class="text-xs text-zinc-400/60 mt-1">
+                Portfolio of Fatihurroyyan (Fatih) — Tech Enthusiast & Developer
             </p>
         </div>
     </div>

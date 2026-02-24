@@ -249,12 +249,13 @@ class SeoService
         $data = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => config('app.name'),
+            'name' => config('app.name', 'Fatihurroyyan Portfolio'),
+            'alternateName' => ['Portfolio Fatih', 'Fatihurroyyan', 'Fatih Portfolio'],
             'url' => config('app.url'),
-            'description' => config('app.description', 'Portfolio Website'),
+            'description' => config('app.description', 'Portfolio website of Fatihurroyyan (Fatih), a tech enthusiast and developer from Indonesia.'),
             'author' => [
                 '@type' => 'Person',
-                'name' => config('app.author_name', 'Developer'),
+                'name' => config('app.author_name', 'Fatihurroyyan'),
                 'url' => config('app.url'),
             ],
         ];
@@ -308,14 +309,26 @@ class SeoService
         return [
             '@context' => 'https://schema.org',
             '@type' => 'Person',
-            'name' => config('app.author_name', 'Developer'),
+            'name' => config('app.author_name', 'Fatihurroyyan'),
+            'alternateName' => 'Fatih',
+            'description' => config('app.meta_description', 'Tech enthusiast & developer specializing in software development, graphic design, data analysis, and networking.'),
             'url' => config('app.url'),
             'image' => asset('images/profile.jpg'),
+            'email' => 'fatihur17@gmail.com',
             'sameAs' => $sameAs,
-            'jobTitle' => config('app.author_title', 'Full Stack Developer'),
+            'jobTitle' => config('app.author_title', 'Tech Enthusiast & Software Developer'),
+            'knowsAbout' => [
+                'Software Development',
+                'Graphic Design',
+                'Data Analysis',
+                'Networking',
+                'Web Development',
+                'Laravel',
+                'PHP',
+            ],
             'worksFor' => [
                 '@type' => 'Organization',
-                'name' => config('app.company_name'),
+                'name' => config('app.company_name', 'Fatihurroyyan'),
             ],
         ];
     }

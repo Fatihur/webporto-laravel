@@ -32,9 +32,9 @@ class HomePage extends Component
 
         // About Me data
         $this->aboutMe = [
-            'name' => 'Fatih',
+            'name' => 'Fatihurroyyan',
             'role' => 'Tech Enthusiast',
-            'bio' => "I'm a passionate tech enthusiast with expertise in graphic design, software development, data analysis, and networking. With over 5 years of experience, I specialize in creating elegant solutions that bridge the gap between aesthetics and functionality.",
+            'bio' => "Hi, I'm Fatihurroyyan — also known as Fatih. A passionate tech enthusiast with expertise in graphic design, software development, data analysis, and networking. I specialize in creating elegant solutions that bridge the gap between aesthetics and functionality.",
             'email' => 'fatihur17@gmail.com',
             // 'socials' => [
             //     'github' => 'https://github.com/fatih',

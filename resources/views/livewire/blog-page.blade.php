@@ -1,8 +1,8 @@
 <x-slot name="seo">
     <x-seo-meta
         title="Blog"
-        description="Artikel tentang teknologi, desain, dan proses kreatif dari Fatih."
-        keywords="blog fatih, artikel teknologi, design insights"
+        description="Artikel dan insights tentang teknologi, software development, desain, dan proses kreatif dari Fatihurroyyan (Fatih)."
+        keywords="blog fatihurroyyan, blog fatih, artikel teknologi, software development insights, design blog, tech blog indonesia"
         :url="route('blog.index')"
     />
 
