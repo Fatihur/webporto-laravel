@@ -96,6 +96,30 @@
         <article class="prose prose-sm sm:prose-base md:prose-lg dark:prose-invert max-w-none flex-1 transition-all duration-1000 delay-500 transform" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'"
                  x-data="{
                     headings: [],
+                    slugify(text) {
+                        return text
+                            .toLowerCase()
+                            .trim()
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/(^-|-$)+/g, '');
+                    },
+                    getUniqueHeadingId(baseId, usedIds, fallbackIndex) {
+                        let normalized = (baseId || '').trim();
+
+                        if(!normalized) {
+                            normalized = 'heading-' + fallbackIndex;
+                        }
+
+                        let uniqueId = normalized;
+                        let suffix = 2;
+
+                        while(usedIds.has(uniqueId)) {
+                            uniqueId = `${normalized}-${suffix}`;
+                            suffix++;
+                        }
+
+                        return uniqueId;
+                    },
                     init() {
                         this.$nextTick(() => {
                             // Lightbox
@@ -129,19 +153,27 @@
                             });
 
                             // TOC
+                            this.headings = [];
                             let headers = this.$el.querySelectorAll('h2, h3');
+                            let usedIds = new Set();
                             headers.forEach((h, i) => {
                                 if(!h.id) {
-                                    h.id = h.innerText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-                                    if(!h.id) h.id = 'heading-' + i;
+                                    h.id = this.slugify(h.innerText);
                                 }
+
+                                h.id = this.getUniqueHeadingId(h.id, usedIds, i);
+                                usedIds.add(h.id);
+
                                 this.headings.push({
                                     id: h.id,
                                     text: h.innerText,
                                     level: h.tagName.toLowerCase()
                                 });
                             });
-                            $dispatch('toc-generated', this.headings);
+
+                            window.dispatchEvent(new CustomEvent('toc-generated', {
+                                detail: [...this.headings],
+                            }));
                         });
                     }
                  }"
@@ -156,21 +188,107 @@
             <div class="sticky top-32" x-data="{ 
                 headings: [], 
                 activeId: '',
+                syncHeadings(headings) {
+                    this.headings = Array.isArray(headings) ? headings : [];
+
+                    if(this.headings.length === 0) {
+                        this.activeId = '';
+                        return;
+                    }
+
+                    if(!this.headings.some(h => h.id === this.activeId)) {
+                        this.activeId = this.headings[0].id;
+                    }
+
+                    this.updateActiveHeading();
+                },
+                generateTocFromDom() {
+                    let headers = document.querySelectorAll('article.prose h2, article.prose h3');
+
+                    if(headers.length === 0) {
+                        return;
+                    }
+
+                    let headings = [];
+                    let usedIds = new Set();
+
+                    headers.forEach((h, i) => {
+                        let id = (h.id || '').trim();
+
+                        if(!id) {
+                            id = h.innerText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                        }
+
+                        if(!id) {
+                            id = 'heading-' + i;
+                        }
+
+                        let uniqueId = id;
+                        let suffix = 2;
+
+                        while(usedIds.has(uniqueId)) {
+                            uniqueId = `${id}-${suffix}`;
+                            suffix++;
+                        }
+
+                        if(h.id !== uniqueId) {
+                            h.id = uniqueId;
+                        }
+
+                        usedIds.add(uniqueId);
+
+                        headings.push({
+                            id: uniqueId,
+                            text: h.innerText,
+                            level: h.tagName.toLowerCase()
+                        });
+                    });
+
+                    this.syncHeadings(headings);
+                },
+                updateActiveHeading() {
+                    if(this.headings.length === 0) {
+                        this.activeId = '';
+                        return;
+                    }
+
+                    let scrollPosition = window.scrollY + 140;
+                    let current = this.headings[0].id;
+
+                    for (let h of this.headings) {
+                        let el = document.getElementById(h.id);
+
+                        if (!el) {
+                            continue;
+                        }
+
+                        let headingTop = el.getBoundingClientRect().top + window.scrollY;
+
+                        if (headingTop <= scrollPosition) {
+                            current = h.id;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    this.activeId = current;
+                },
                 init() {
                     window.addEventListener('toc-generated', (e) => {
-                        this.headings = e.detail;
-                        if(this.headings.length > 0) this.activeId = this.headings[0].id;
+                        this.syncHeadings(e.detail);
                     });
                     
-                    window.addEventListener('scroll', () => {
-                        let current = this.headings.length > 0 ? this.headings[0].id : '';
-                        for (let h of this.headings) {
-                            let el = document.getElementById(h.id);
-                            if (el && el.getBoundingClientRect().top < 150) {
-                                current = h.id;
+                    window.addEventListener('scroll', () => this.updateActiveHeading(), { passive: true });
+                    window.addEventListener('resize', () => this.updateActiveHeading(), { passive: true });
+
+                    this.$nextTick(() => {
+                        requestAnimationFrame(() => {
+                            if(this.headings.length === 0) {
+                                this.generateTocFromDom();
                             }
-                        }
-                        this.activeId = current;
+
+                            this.updateActiveHeading();
+                        });
                     });
                 },
                 scrollTo(id) {

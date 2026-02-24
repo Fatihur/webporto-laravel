@@ -31,6 +31,17 @@
                     Dashboard
                 </a>
 
+                <a href="{{ route('admin.performance.dashboard') }}"
+                   wire:navigate
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.performance.*') ? 'bg-mint/10 text-mint font-bold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3v18h18"/>
+                        <path d="m7 14 4-4 3 3 5-6"/>
+                    </svg>
+                    Performance
+                </a>
+
 
                 <!-- Projects -->
                 <a href="{{ route('admin.projects.index') }}"

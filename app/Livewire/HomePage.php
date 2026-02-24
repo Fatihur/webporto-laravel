@@ -46,23 +46,34 @@ class HomePage extends Component
 
     public function render()
     {
-        // Cache featured projects for 1 hour
-        $featuredProjects = Cache::flexible('projects.featured', [3600, 21600], function () {
+        $cacheConfig = config('performance.cache.home', []);
+        $homeVersion = (int) Cache::get('cache.version.home', 1);
+
+        $featuredProjects = Cache::flexible("home.v{$homeVersion}.projects.featured", [
+            (int) ($cacheConfig['featured_projects_fresh'] ?? 900),
+            (int) ($cacheConfig['featured_projects_stale'] ?? 3600),
+        ], function () {
             return Project::featured()
                 ->recent()
                 ->limit(3)
                 ->get();
         });
 
-        // Cache experiences for 6 hours
-        $experiences = Cache::flexible('experiences.ordered', [21600, 86400], function () {
+        $experiences = Cache::flexible("home.v{$homeVersion}.experiences.ordered", [
+            (int) ($cacheConfig['experiences_fresh'] ?? 3600),
+            (int) ($cacheConfig['experiences_stale'] ?? 21600),
+        ], function () {
             return Experience::ordered()
                 ->limit(5)
                 ->get();
         });
 
-        // Get site contact settings
-        $siteContact = SiteContact::getSettings();
+        $siteContact = Cache::flexible("home.v{$homeVersion}.site-contact", [
+            (int) ($cacheConfig['site_contact_fresh'] ?? 300),
+            (int) ($cacheConfig['site_contact_stale'] ?? 1200),
+        ], function (): ?SiteContact {
+            return SiteContact::getSettings();
+        });
 
         return view('livewire.home-page', [
             'featuredProjects' => $featuredProjects,

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\WebVitalsController;
 use App\Livewire\Admin\AiBlog\Dashboard as AiBlogDashboard;
 use App\Livewire\Admin\AiBlog\Form as AiBlogForm;
 use App\Livewire\Admin\AiBlog\Index as AiBlogIndex;
@@ -16,6 +17,7 @@ use App\Livewire\Admin\Experiences\Form as ExperiencesForm;
 use App\Livewire\Admin\Experiences\Index as ExperiencesIndex;
 use App\Livewire\Admin\Newsletter\Index as NewsletterIndex;
 use App\Livewire\Admin\Newsletter\Send as NewsletterSend;
+use App\Livewire\Admin\Performance\Dashboard as PerformanceDashboard;
 use App\Livewire\Admin\Projects\Form as ProjectsForm;
 use App\Livewire\Admin\Projects\Index as ProjectsIndex;
 use App\Livewire\Admin\SiteContacts\Index as SiteContactsIndex;
@@ -56,6 +58,11 @@ Route::get('/contact', ContactPage::class)->name('contact.index');
 
 // Newsletter
 Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+
+// Frontend performance telemetry
+Route::post('/web-vitals', [WebVitalsController::class, 'store'])
+    ->middleware('throttle:120,1')
+    ->name('web-vitals.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -131,5 +138,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::get('/2fa', \App\Livewire\Admin\Security\TwoFactorAuth::class)->name('2fa');
         Route::get('/sessions', \App\Livewire\Admin\Security\SessionManager::class)->name('sessions');
     });
+
+    // Performance
+    Route::get('/performance', PerformanceDashboard::class)->name('admin.performance.dashboard');
 
 });

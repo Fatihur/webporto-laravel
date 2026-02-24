@@ -16,8 +16,14 @@ class BlogDetailPage extends Component
 
     public function mount(string $slug): void
     {
+        $blogCache = config('performance.cache.blog', []);
+        $detailVersion = (int) Cache::get('cache.version.blog.detail', 1);
+
         $this->slug = $slug;
-        $this->post = Cache::flexible('blog.post.'.$slug, [300, 1800], function () use ($slug): ?Blog {
+        $this->post = Cache::flexible("blog.v{$detailVersion}.post.{$slug}", [
+            (int) ($blogCache['detail_fresh'] ?? 600),
+            (int) ($blogCache['detail_stale'] ?? 1800),
+        ], function () use ($slug): ?Blog {
             return Blog::query()
                 ->select(['id', 'title', 'slug', 'excerpt', 'content', 'category', 'image', 'image_url', 'image_source', 'read_time', 'author', 'published_at', 'is_published', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at'])
                 ->where('slug', $slug)
@@ -32,7 +38,13 @@ class BlogDetailPage extends Component
 
     public function render()
     {
-        $cachedRelated = Cache::flexible('blog.related.'.$this->post->category, [300, 1800], function (): Collection {
+        $blogCache = config('performance.cache.blog', []);
+        $relatedVersion = (int) Cache::get('cache.version.blog.related', 1);
+
+        $cachedRelated = Cache::flexible("blog.v{$relatedVersion}.related.".$this->post->category, [
+            (int) ($blogCache['related_fresh'] ?? 600),
+            (int) ($blogCache['related_stale'] ?? 1800),
+        ], function (): Collection {
             return Blog::query()
                 ->select(['id', 'title', 'slug', 'excerpt', 'category', 'image', 'image_url', 'read_time', 'author', 'published_at', 'created_at'])
                 ->published()

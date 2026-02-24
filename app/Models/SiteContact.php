@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\CacheInvalidatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SiteContact extends Model
 {
-    use HasFactory;
+    use CacheInvalidatable, HasFactory;
 
     protected $fillable = [
         'email',
@@ -107,5 +109,11 @@ class SiteContact extends Model
         $number = preg_replace('/[^0-9]/', '', $this->whatsapp);
 
         return "https://wa.me/{$number}";
+    }
+
+    public function clearModelCache(): void
+    {
+        $currentVersion = (int) Cache::get('cache.version.home', 1);
+        Cache::forever('cache.version.home', $currentVersion + 1);
     }
 }

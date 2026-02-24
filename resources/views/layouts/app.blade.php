@@ -36,6 +36,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
 
+    <meta name="web-vitals-endpoint" content="{{ route('web-vitals.store') }}">
+
     <style>
         body {
             font-family: 'Inter', sans-serif;

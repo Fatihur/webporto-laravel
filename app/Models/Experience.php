@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Traits\CacheInvalidatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
 class Experience extends Model
 {
-    use HasFactory, CacheInvalidatable;
+    use CacheInvalidatable, HasFactory;
 
     protected $fillable = [
         'company',
@@ -42,7 +42,7 @@ class Experience extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('order', 'asc')
-                     ->orderBy('start_date', 'desc');
+            ->orderBy('start_date', 'desc');
     }
 
     /**
@@ -61,6 +61,9 @@ class Experience extends Model
      */
     public function clearModelCache(): void
     {
+        $currentVersion = (int) Cache::get('cache.version.home', 1);
+        Cache::forever('cache.version.home', $currentVersion + 1);
+
         Cache::forget('experiences.ordered');
         Cache::forget('experiences.current');
     }

@@ -41,24 +41,27 @@ class BlogPage extends Component
     public function render()
     {
         $page = $this->getPage();
+        $blogCache = config('performance.cache.blog', []);
+        $blogListVersion = (int) Cache::get('cache.version.blog.list', 1);
 
-        // Create cache key based on search, category, and page
         if (! empty($this->search) || ! empty($this->category)) {
-            // Cache filtered results for 2 minutes (shorter TTL for dynamic content)
-            $cacheKey = 'blog.search.'.md5($this->search.'.'.$this->category.'.'.$page);
-            $ttl = 120;
+            $cacheKey = 'blog.v'.$blogListVersion.'.search.'.md5($this->search.'.'.$this->category.'.'.$page);
+            $freshTtl = (int) ($blogCache['list_filtered_fresh'] ?? 180);
+            $staleTtl = (int) ($blogCache['list_filtered_stale'] ?? 600);
         } else {
-            // Cache default pagination for 15 minutes
-            $cacheKey = "blog.posts.page.{$page}";
-            $ttl = 900;
+            $cacheKey = "blog.v{$blogListVersion}.posts.page.{$page}";
+            $freshTtl = (int) ($blogCache['list_default_fresh'] ?? 600);
+            $staleTtl = (int) ($blogCache['list_default_stale'] ?? 1800);
         }
 
-        $posts = Cache::flexible($cacheKey, [$ttl, 1800], function () {
+        $posts = Cache::flexible($cacheKey, [$freshTtl, $staleTtl], function () {
             return $this->fetchPosts();
         });
 
-        // Cache categories list separately
-        $categories = Cache::flexible('blog.categories', [3600, 21600], function () {
+        $categories = Cache::flexible('blog.v'.$blogListVersion.'.categories', [
+            (int) ($blogCache['categories_fresh'] ?? 1800),
+            (int) ($blogCache['categories_stale'] ?? 21600),
+        ], function () {
             return Blog::published()
                 ->distinct()
                 ->pluck('category');

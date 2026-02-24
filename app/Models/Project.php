@@ -89,6 +89,11 @@ class Project extends Model
      */
     public function clearModelCache(): void
     {
+        foreach (['cache.version.home', 'cache.version.search.projects'] as $versionKey) {
+            $currentVersion = (int) Cache::get($versionKey, 1);
+            Cache::forever($versionKey, $currentVersion + 1);
+        }
+
         // Clear featured projects cache
         Cache::forget('projects.featured');
 

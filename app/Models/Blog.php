@@ -96,18 +96,21 @@ class Blog extends Model
      */
     public function clearModelCache(): void
     {
-        // Clear all blog pagination caches (first 10 pages)
-        for ($i = 1; $i <= 10; $i++) {
-            Cache::forget('blog.posts.page.'.$i);
+        $versionKeys = [
+            'cache.version.blog.list',
+            'cache.version.blog.detail',
+            'cache.version.blog.related',
+            'cache.version.search.blogs',
+        ];
+
+        foreach ($versionKeys as $versionKey) {
+            $currentVersion = (int) Cache::get($versionKey, 1);
+            Cache::forever($versionKey, $currentVersion + 1);
         }
 
-        // Clear categories cache
         Cache::forget('blog.categories');
-
-        // Clear specific post cache
         Cache::forget('blog.post.'.$this->slug);
 
-        // Clear related posts cache
         if ($this->category) {
             Cache::forget('blog.related.'.$this->category);
         }
