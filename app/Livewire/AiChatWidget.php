@@ -203,10 +203,6 @@ class AIChatWidget extends Component
             }
 
             $assistantResponse = (string) $response;
-            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
-            if ($citationBlock !== '') {
-                $assistantResponse .= "\n\n".$citationBlock;
-            }
 
             $this->chatHistory[] = [
                 'role' => 'assistant',
@@ -220,10 +216,6 @@ class AIChatWidget extends Component
             ]);
 
             $fallbackResponse = "⚠️ Groq lagi kena rate limit. Aku lanjut bantu pakai mode fallback lokal dulu ya.\n\n".$this->generateDemoResponse($userMessage);
-            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
-            if ($citationBlock !== '') {
-                $fallbackResponse .= "\n\n".$citationBlock;
-            }
 
             $this->chatHistory[] = [
                 'role' => 'assistant',
@@ -239,10 +231,6 @@ class AIChatWidget extends Component
 
             // Jika API error, gunakan response lokal untuk demo
             $demoResponse = $this->generateDemoResponse($userMessage);
-            $citationBlock = $this->retrievalService->formatCitationBlock($retrieval);
-            if ($citationBlock !== '') {
-                $demoResponse .= "\n\n".$citationBlock;
-            }
 
             $this->chatHistory[] = [
                 'role' => 'assistant',
