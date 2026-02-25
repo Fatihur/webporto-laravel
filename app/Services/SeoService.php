@@ -185,31 +185,36 @@ class SeoService
             $blogImage = url(Storage::url($blog->image));
         }
 
-        return [
+        $data = [
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
-            'headline' => $blog->title,
-            'description' => $blog->excerpt ?? $blog->meta_description,
-            'image' => $blogImage,
+            'headline' => (string) $blog->title,
+            'description' => (string) ($blog->excerpt ?? $blog->meta_description ?? ''),
             'datePublished' => $blog->published_at?->toIso8601String(),
             'dateModified' => $blog->updated_at->toIso8601String(),
             'author' => [
                 '@type' => 'Person',
-                'name' => config('app.author_name', 'Developer'),
+                'name' => (string) config('app.author_name', 'Developer'),
             ],
             'publisher' => [
                 '@type' => 'Organization',
-                'name' => config('app.name'),
+                'name' => (string) config('app.name', 'Portfolio'),
                 'logo' => [
                     '@type' => 'ImageObject',
-                    'url' => asset('images/logo.png'),
+                    'url' => (string) asset('images/logo.png'),
                 ],
             ],
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
-                '@id' => route('blog.show', $blog->slug),
+                '@id' => (string) route('blog.show', $blog->slug),
             ],
         ];
+
+        if ($blogImage) {
+            $data['image'] = (string) $blogImage;
+        }
+
+        return $data;
     }
 
     /**
@@ -222,20 +227,23 @@ class SeoService
         $data = [
             '@context' => 'https://schema.org',
             '@type' => 'SoftwareSourceCode',
-            'name' => $project->title,
-            'description' => $project->description,
-            'codeRepository' => $project->link,
+            'name' => (string) $project->title,
+            'description' => (string) ($project->description ?? ''),
             'dateCreated' => $project->created_at->toIso8601String(),
             'dateModified' => $project->updated_at->toIso8601String(),
             'programmingLanguage' => $project->tech_stack ?? [],
             'author' => [
                 '@type' => 'Person',
-                'name' => config('app.author_name', 'Developer'),
+                'name' => (string) config('app.author_name', 'Developer'),
             ],
         ];
 
+        if (! empty($project->link)) {
+            $data['codeRepository'] = (string) $project->link;
+        }
+
         if ($projectImage) {
-            $data['image'] = $projectImage;
+            $data['image'] = (string) $projectImage;
         }
 
         return $data;
@@ -246,17 +254,18 @@ class SeoService
      */
     public function generateWebsiteStructuredData(): array
     {
+        $appUrl = config('app.url', 'http://localhost');
         $data = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => config('app.name', 'Fatihurroyyan Portfolio'),
+            'name' => (string) config('app.name', 'Fatihurroyyan Portfolio'),
             'alternateName' => ['Portfolio Fatih', 'Fatihurroyyan', 'Fatih Portfolio'],
-            'url' => config('app.url'),
-            'description' => config('app.description', 'Portfolio website of Fatihurroyyan (Fatih), a tech enthusiast and developer from Indonesia.'),
+            'url' => (string) $appUrl,
+            'description' => (string) config('app.description', 'Portfolio website of Fatihurroyyan (Fatih), a tech enthusiast and developer from Indonesia.'),
             'author' => [
                 '@type' => 'Person',
-                'name' => config('app.author_name', 'Fatihurroyyan'),
-                'url' => config('app.url'),
+                'name' => (string) config('app.author_name', 'Fatihurroyyan'),
+                'url' => (string) $appUrl,
             ],
         ];
 
@@ -280,12 +289,17 @@ class SeoService
         $position = 1;
 
         foreach ($items as $item) {
-            $itemListElement[] = [
+            $element = [
                 '@type' => 'ListItem',
                 'position' => $position++,
-                'name' => $item['name'],
-                'item' => $item['url'] ?? null,
+                'name' => (string) $item['name'],
             ];
+
+            if (! empty($item['url'])) {
+                $element['item'] = (string) $item['url'];
+            }
+
+            $itemListElement[] = $element;
         }
 
         return [
@@ -300,23 +314,25 @@ class SeoService
      */
     public function generatePersonStructuredData(): array
     {
-        $sameAs = array_values(array_filter([
+        $socialLinks = [
             config('app.social.github'),
             config('app.social.linkedin'),
             config('app.social.twitter'),
-        ]));
+        ];
+
+        $sameAs = array_values(array_filter($socialLinks, fn ($url): bool => ! empty($url) && is_string($url)));
 
         return [
             '@context' => 'https://schema.org',
             '@type' => 'Person',
-            'name' => config('app.author_name', 'Fatihurroyyan'),
+            'name' => (string) config('app.author_name', 'Fatihurroyyan'),
             'alternateName' => 'Fatih',
-            'description' => config('app.meta_description', 'Tech enthusiast & developer specializing in software development, graphic design, data analysis, and networking.'),
-            'url' => config('app.url'),
-            'image' => asset('images/profile.jpg'),
+            'description' => (string) config('app.meta_description', 'Tech enthusiast & developer specializing in software development, graphic design, data analysis, and networking.'),
+            'url' => (string) config('app.url', 'http://localhost'),
+            'image' => (string) asset('images/profile.jpg'),
             'email' => 'fatihur17@gmail.com',
             'sameAs' => $sameAs,
-            'jobTitle' => config('app.author_title', 'Tech Enthusiast & Software Developer'),
+            'jobTitle' => (string) config('app.author_title', 'Tech Enthusiast & Software Developer'),
             'knowsAbout' => [
                 'Software Development',
                 'Graphic Design',
@@ -328,7 +344,7 @@ class SeoService
             ],
             'worksFor' => [
                 '@type' => 'Organization',
-                'name' => config('app.company_name', 'Fatihurroyyan'),
+                'name' => (string) config('app.company_name', 'Fatihurroyyan'),
             ],
         ];
     }
