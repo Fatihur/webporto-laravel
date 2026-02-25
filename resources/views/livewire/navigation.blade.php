@@ -29,8 +29,32 @@
         <div class="flex items-center justify-between h-20">
             <!-- Logo -->
             <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3" x-on:click="megaMenuOpen = false">
-                <div class="w-10 h-10 rounded-full bg-mint flex items-center justify-center text-zinc-950 font-black text-lg">F</div>
-                <span class="font-black text-xl tracking-tight hidden sm:block">{{ config('app.name') }}</span>
+                <svg width="36" height="38" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+                    <path d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#bot-gradient)"/>
+                    <g filter="url(#bot-blur-left)">
+                        <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    </g>
+                    <g filter="url(#bot-blur-right)">
+                        <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    </g>
+                    <defs>
+                        <filter id="bot-blur-left" x="305" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                            <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                        </filter>
+                        <filter id="bot-blur-right" x="515" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                            <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                        </filter>
+                        <radialGradient id="bot-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                            <stop stop-color="#18E2AC"/>
+                            <stop offset="1" stop-color="#82FFDE"/>
+                        </radialGradient>
+                    </defs>
+                </svg>
+                <span class="font-black text-xl tracking-tight hidden sm:block">Fatih Porto</span>
             </a>
 
             <!-- Desktop Navigation -->

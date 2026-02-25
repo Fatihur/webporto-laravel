@@ -10,9 +10,30 @@ $isProjectsActive = request()->routeIs('projects.*');
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="text-2xl font-extrabold tracking-tighter flex items-center gap-1 group">
-                <span>Fatih</span>
-                <span class="text-mint">/</span>
+            <a href="{{ route('home') }}" class="flex items-center gap-2 group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-8 h-8">
+                    <rect width="100" height="100" rx="20" fill="#111827" class="dark:hidden"/>
+                    <rect width="100" height="100" rx="20" fill="white" class="hidden dark:block"/>
+                    <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden">
+                        <circle cx="32" cy="48" r="18"/>
+                        <circle cx="68" cy="48" r="18"/>
+                        <path d="M50 48 H50"/>
+                        <path d="M10 48 H14"/>
+                        <path d="M90 48 H86"/>
+                        <path d="M26 32 L22 26"/>
+                        <path d="M74 32 L78 26"/>
+                    </g>
+                    <g stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block">
+                        <circle cx="32" cy="48" r="18"/>
+                        <circle cx="68" cy="48" r="18"/>
+                        <path d="M50 48 H50"/>
+                        <path d="M10 48 H14"/>
+                        <path d="M90 48 H86"/>
+                        <path d="M26 32 L22 26"/>
+                        <path d="M74 32 L78 26"/>
+                    </g>
+                </svg>
+                <span class="text-xl font-extrabold tracking-tighter">Fatih</span>
             </a>
 
             <!-- Desktop Links -->
@@ -122,8 +143,30 @@ $isProjectsActive = request()->routeIs('projects.*');
     class="fixed top-0 right-0 z-[70] w-[85%] max-w-sm h-full bg-white dark:bg-zinc-950 border-l border-zinc-100 dark:border-zinc-800 transition-transform duration-500 ease-out md:hidden flex flex-col translate-x-full"
 >
     <div class="flex items-center justify-between p-6 border-b border-zinc-50 dark:border-zinc-900">
-        <a href="{{ route('home') }}" class="text-xl font-black tracking-tighter" onclick="closeMobileMenu()">
-            Fatih<span class="text-mint">/</span>
+        <a href="{{ route('home') }}" class="flex items-center gap-2" onclick="closeMobileMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-7 h-7">
+                <rect width="100" height="100" rx="20" fill="#111827" class="dark:hidden"/>
+                <rect width="100" height="100" rx="20" fill="white" class="hidden dark:block"/>
+                <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden">
+                    <circle cx="32" cy="48" r="18"/>
+                    <circle cx="68" cy="48" r="18"/>
+                    <path d="M50 48 H50"/>
+                    <path d="M10 48 H14"/>
+                    <path d="M90 48 H86"/>
+                    <path d="M26 32 L22 26"/>
+                    <path d="M74 32 L78 26"/>
+                </g>
+                <g stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block">
+                    <circle cx="32" cy="48" r="18"/>
+                    <circle cx="68" cy="48" r="18"/>
+                    <path d="M50 48 H50"/>
+                    <path d="M10 48 H14"/>
+                    <path d="M90 48 H86"/>
+                    <path d="M26 32 L22 26"/>
+                    <path d="M74 32 L78 26"/>
+                </g>
+            </svg>
+            <span class="text-lg font-black tracking-tighter">Fatih</span>
         </a>
         <button
             onclick="closeMobileMenu()"

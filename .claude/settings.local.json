@@ -60,7 +60,8 @@
       "mcp__laravel-boost__get-config",
       "mcp__laravel-boost__list-available-config-keys",
       "mcp__laravel-boost__list-available-env-vars",
-      "mcp__laravel-boost__get-absolute-url"
+      "mcp__laravel-boost__get-absolute-url",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

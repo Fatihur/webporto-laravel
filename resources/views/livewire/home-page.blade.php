@@ -26,7 +26,7 @@
                 Hi, I'm <span class="text-mint">Fatih</span>
             </h1>
 
-            <p class="text-sm sm:text-base font-semibold text-zinc-400 dark:text-zinc-500 mb-4 tracking-wide transition-all duration-1000 delay-200" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
+            <p class="hidden text-sm sm:text-base font-semibold text-zinc-400 dark:text-zinc-500 mb-4 tracking-wide transition-all duration-1000 delay-200" x-bind:class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
                 Fatihurroyyan
             </p>
 

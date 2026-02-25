@@ -6,9 +6,9 @@
     <title>404 - Page Not Found</title>
     <meta name="robots" content="noindex, nofollow">
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg?v=3') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico?v=3') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.svg?v=3') }}">
     <meta name="theme-color" content="#76D7A4">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
