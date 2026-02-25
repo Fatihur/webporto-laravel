@@ -30,25 +30,62 @@
             <!-- Logo -->
             <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-3" x-on:click="megaMenuOpen = false">
                 <svg width="36" height="38" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0">
-                    <path d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#bot-gradient)"/>
-                    <g filter="url(#bot-blur-left)">
-                        <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
-                    </g>
-                    <g filter="url(#bot-blur-right)">
-                        <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    <style>
+                        @keyframes nav-lw-float {
+                            0%, 100% { transform: translate(0, 0) scale(1); }
+                            50% { transform: translate(0, 15px) scale(0.98, 1.02); }
+                        }
+                        @keyframes nav-lw-eye-move {
+                            0%, 100% { transform: translate(0, 0) scaleY(1); }
+                            10% { transform: translate(25px, -15px) scaleY(1); }
+                            12% { transform: translate(25px, -15px) scaleY(0.1); }
+                            14% { transform: translate(25px, -15px) scaleY(1); }
+                            30% { transform: translate(25px, -15px) scaleY(1); }
+                            40% { transform: translate(-30px, 10px) scaleY(1); }
+                            42% { transform: translate(-30px, 10px) scaleY(0.1); }
+                            44% { transform: translate(-30px, 10px) scaleY(1); }
+                            46% { transform: translate(-30px, 10px) scaleY(0.1); }
+                            48% { transform: translate(-30px, 10px) scaleY(1); }
+                            65% { transform: translate(-30px, 10px) scaleY(1); }
+                            75% { transform: translate(0px, 20px) scaleY(1); }
+                            85% { transform: translate(0px, 20px) scaleY(1); }
+                            87% { transform: translate(0px, 20px) scaleY(0.1); }
+                            89% { transform: translate(0px, 20px) scaleY(1); }
+                        }
+                        #nav-lw-character {
+                            animation: nav-lw-float 6s ease-in-out infinite;
+                            transform-origin: 490.5px 577px;
+                        }
+                        #nav-lw-left-eye {
+                            animation: nav-lw-eye-move 8s infinite ease-in-out;
+                            transform-origin: 385.5px 499px;
+                        }
+                        #nav-lw-right-eye {
+                            animation: nav-lw-eye-move 8s infinite ease-in-out;
+                            transform-origin: 595.5px 499px;
+                        }
+                    </style>
+                    <g id="nav-lw-character">
+                        <path id="nav-lw-body-blob" d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#nav-lw-paint0_radial_1_2)"/>
+                        <g id="nav-lw-left-eye" filter="url(#nav-lw-filter0_f_1_2)">
+                            <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                        </g>
+                        <g id="nav-lw-right-eye" filter="url(#nav-lw-filter1_f_1_2)">
+                            <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                        </g>
                     </g>
                     <defs>
-                        <filter id="bot-blur-left" x="305" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <filter id="nav-lw-filter0_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
                             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                             <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                             <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                         </filter>
-                        <filter id="bot-blur-right" x="515" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <filter id="nav-lw-filter1_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
                             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                             <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                             <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                         </filter>
-                        <radialGradient id="bot-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                        <radialGradient id="nav-lw-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
                             <stop stop-color="#18E2AC"/>
                             <stop offset="1" stop-color="#82FFDE"/>
                         </radialGradient>

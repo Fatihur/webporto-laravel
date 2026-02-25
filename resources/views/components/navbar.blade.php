@@ -11,27 +11,67 @@ $isProjectsActive = request()->routeIs('projects.*');
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2 group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-8 h-8">
-                    <rect width="100" height="100" rx="20" fill="#111827" class="dark:hidden"/>
-                    <rect width="100" height="100" rx="20" fill="white" class="hidden dark:block"/>
-                    <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden">
-                        <circle cx="32" cy="48" r="18"/>
-                        <circle cx="68" cy="48" r="18"/>
-                        <path d="M50 48 H50"/>
-                        <path d="M10 48 H14"/>
-                        <path d="M90 48 H86"/>
-                        <path d="M26 32 L22 26"/>
-                        <path d="M74 32 L78 26"/>
+                <svg class="w-8 h-8" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        @keyframes nav-float {
+                            0%, 100% { transform: translate(0, 0) scale(1); }
+                            50% { transform: translate(0, 15px) scale(0.98, 1.02); }
+                        }
+                        @keyframes nav-eye-move {
+                            0%, 100% { transform: translate(0, 0) scaleY(1); }
+                            10% { transform: translate(25px, -15px) scaleY(1); }
+                            12% { transform: translate(25px, -15px) scaleY(0.1); }
+                            14% { transform: translate(25px, -15px) scaleY(1); }
+                            30% { transform: translate(25px, -15px) scaleY(1); }
+                            40% { transform: translate(-30px, 10px) scaleY(1); }
+                            42% { transform: translate(-30px, 10px) scaleY(0.1); }
+                            44% { transform: translate(-30px, 10px) scaleY(1); }
+                            46% { transform: translate(-30px, 10px) scaleY(0.1); }
+                            48% { transform: translate(-30px, 10px) scaleY(1); }
+                            65% { transform: translate(-30px, 10px) scaleY(1); }
+                            75% { transform: translate(0px, 20px) scaleY(1); }
+                            85% { transform: translate(0px, 20px) scaleY(1); }
+                            87% { transform: translate(0px, 20px) scaleY(0.1); }
+                            89% { transform: translate(0px, 20px) scaleY(1); }
+                        }
+                        #nav-character {
+                            animation: nav-float 6s ease-in-out infinite;
+                            transform-origin: 490.5px 577px;
+                        }
+                        #nav-left-eye {
+                            animation: nav-eye-move 8s infinite ease-in-out;
+                            transform-origin: 385.5px 499px;
+                        }
+                        #nav-right-eye {
+                            animation: nav-eye-move 8s infinite ease-in-out;
+                            transform-origin: 595.5px 499px;
+                        }
+                    </style>
+                    <g id="nav-character">
+                        <path id="nav-body-blob" d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#nav-paint0_radial_1_2)"/>
+                        <g id="nav-left-eye" filter="url(#nav-filter0_f_1_2)">
+                            <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                        </g>
+                        <g id="nav-right-eye" filter="url(#nav-filter1_f_1_2)">
+                            <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                        </g>
                     </g>
-                    <g stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block">
-                        <circle cx="32" cy="48" r="18"/>
-                        <circle cx="68" cy="48" r="18"/>
-                        <path d="M50 48 H50"/>
-                        <path d="M10 48 H14"/>
-                        <path d="M90 48 H86"/>
-                        <path d="M26 32 L22 26"/>
-                        <path d="M74 32 L78 26"/>
-                    </g>
+                    <defs>
+                        <filter id="nav-filter0_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                            <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                        </filter>
+                        <filter id="nav-filter1_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                            <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                        </filter>
+                        <radialGradient id="nav-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                            <stop stop-color="#18E2AC"/>
+                            <stop offset="1" stop-color="#82FFDE"/>
+                        </radialGradient>
+                    </defs>
                 </svg>
                 <span class="text-xl font-extrabold tracking-tighter">Fatih</span>
             </a>
@@ -144,27 +184,67 @@ $isProjectsActive = request()->routeIs('projects.*');
 >
     <div class="flex items-center justify-between p-6 border-b border-zinc-50 dark:border-zinc-900">
         <a href="{{ route('home') }}" class="flex items-center gap-2" onclick="closeMobileMenu()">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-7 h-7">
-                <rect width="100" height="100" rx="20" fill="#111827" class="dark:hidden"/>
-                <rect width="100" height="100" rx="20" fill="white" class="hidden dark:block"/>
-                <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden">
-                    <circle cx="32" cy="48" r="18"/>
-                    <circle cx="68" cy="48" r="18"/>
-                    <path d="M50 48 H50"/>
-                    <path d="M10 48 H14"/>
-                    <path d="M90 48 H86"/>
-                    <path d="M26 32 L22 26"/>
-                    <path d="M74 32 L78 26"/>
+            <svg class="w-7 h-7" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                    @keyframes navm-float {
+                        0%, 100% { transform: translate(0, 0) scale(1); }
+                        50% { transform: translate(0, 15px) scale(0.98, 1.02); }
+                    }
+                    @keyframes navm-eye-move {
+                        0%, 100% { transform: translate(0, 0) scaleY(1); }
+                        10% { transform: translate(25px, -15px) scaleY(1); }
+                        12% { transform: translate(25px, -15px) scaleY(0.1); }
+                        14% { transform: translate(25px, -15px) scaleY(1); }
+                        30% { transform: translate(25px, -15px) scaleY(1); }
+                        40% { transform: translate(-30px, 10px) scaleY(1); }
+                        42% { transform: translate(-30px, 10px) scaleY(0.1); }
+                        44% { transform: translate(-30px, 10px) scaleY(1); }
+                        46% { transform: translate(-30px, 10px) scaleY(0.1); }
+                        48% { transform: translate(-30px, 10px) scaleY(1); }
+                        65% { transform: translate(-30px, 10px) scaleY(1); }
+                        75% { transform: translate(0px, 20px) scaleY(1); }
+                        85% { transform: translate(0px, 20px) scaleY(1); }
+                        87% { transform: translate(0px, 20px) scaleY(0.1); }
+                        89% { transform: translate(0px, 20px) scaleY(1); }
+                    }
+                    #navm-character {
+                        animation: navm-float 6s ease-in-out infinite;
+                        transform-origin: 490.5px 577px;
+                    }
+                    #navm-left-eye {
+                        animation: navm-eye-move 8s infinite ease-in-out;
+                        transform-origin: 385.5px 499px;
+                    }
+                    #navm-right-eye {
+                        animation: navm-eye-move 8s infinite ease-in-out;
+                        transform-origin: 595.5px 499px;
+                    }
+                </style>
+                <g id="navm-character">
+                    <path id="navm-body-blob" d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#navm-paint0_radial_1_2)"/>
+                    <g id="navm-left-eye" filter="url(#navm-filter0_f_1_2)">
+                        <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    </g>
+                    <g id="navm-right-eye" filter="url(#navm-filter1_f_1_2)">
+                        <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    </g>
                 </g>
-                <g stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block">
-                    <circle cx="32" cy="48" r="18"/>
-                    <circle cx="68" cy="48" r="18"/>
-                    <path d="M50 48 H50"/>
-                    <path d="M10 48 H14"/>
-                    <path d="M90 48 H86"/>
-                    <path d="M26 32 L22 26"/>
-                    <path d="M74 32 L78 26"/>
-                </g>
+                <defs>
+                    <filter id="navm-filter0_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                        <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                    </filter>
+                    <filter id="navm-filter1_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                        <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                    </filter>
+                    <radialGradient id="navm-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                        <stop stop-color="#18E2AC"/>
+                        <stop offset="1" stop-color="#82FFDE"/>
+                    </radialGradient>
+                </defs>
             </svg>
             <span class="text-lg font-black tracking-tighter">Fatih</span>
         </a>
