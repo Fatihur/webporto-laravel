@@ -13,61 +13,67 @@ $isProjectsActive = request()->routeIs('projects.*');
             <a href="{{ route('home') }}" class="flex items-center gap-2 group">
                 <svg class="w-8 h-8" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <style>
-                        @keyframes nav-float {
-                            0%, 100% { transform: translate(0, 0) scale(1); }
-                            50% { transform: translate(0, 15px) scale(0.98, 1.02); }
+                        .nb-head-turn {
+                            animation: nb-headTurn 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+                            transform-origin: 490.5px 577.7px;
                         }
-                        @keyframes nav-eye-move {
-                            0%, 100% { transform: translate(0, 0) scaleY(1); }
-                            10% { transform: translate(25px, -15px) scaleY(1); }
-                            12% { transform: translate(25px, -15px) scaleY(0.1); }
-                            14% { transform: translate(25px, -15px) scaleY(1); }
-                            30% { transform: translate(25px, -15px) scaleY(1); }
-                            40% { transform: translate(-30px, 10px) scaleY(1); }
-                            42% { transform: translate(-30px, 10px) scaleY(0.1); }
-                            44% { transform: translate(-30px, 10px) scaleY(1); }
-                            46% { transform: translate(-30px, 10px) scaleY(0.1); }
-                            48% { transform: translate(-30px, 10px) scaleY(1); }
-                            65% { transform: translate(-30px, 10px) scaleY(1); }
-                            75% { transform: translate(0px, 20px) scaleY(1); }
-                            85% { transform: translate(0px, 20px) scaleY(1); }
-                            87% { transform: translate(0px, 20px) scaleY(0.1); }
-                            89% { transform: translate(0px, 20px) scaleY(1); }
+                        .nb-eye-look {
+                            animation: nb-lookAround 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
                         }
-                        #nav-character {
-                            animation: nav-float 6s ease-in-out infinite;
-                            transform-origin: 490.5px 577px;
-                        }
-                        #nav-left-eye {
-                            animation: nav-eye-move 8s infinite ease-in-out;
+                        .nb-left-eye {
                             transform-origin: 385.5px 499px;
+                            animation: nb-blink 5.5s infinite;
                         }
-                        #nav-right-eye {
-                            animation: nav-eye-move 8s infinite ease-in-out;
+                        .nb-right-eye {
                             transform-origin: 595.5px 499px;
+                            animation: nb-blink 5.5s infinite;
+                        }
+                        @keyframes nb-headTurn {
+                            0%, 10% { transform: translate(0, 0) rotate(0deg); }
+                            15%, 35% { transform: translate(-30px, 10px) rotate(-3deg); }
+                            40%, 60% { transform: translate(40px, -10px) rotate(4deg); }
+                            65%, 85% { transform: translate(0px, 20px) rotate(0deg); }
+                            90%, 100% { transform: translate(0, 0) rotate(0deg); }
+                        }
+                        @keyframes nb-lookAround {
+                            0%, 10% { transform: translate(0, 0); }
+                            15%, 35% { transform: translate(-45px, 15px); }
+                            40%, 60% { transform: translate(60px, -15px); }
+                            65%, 85% { transform: translate(0px, 35px); }
+                            90%, 100% { transform: translate(0, 0); }
+                        }
+                        @keyframes nb-blink {
+                            0%, 46%, 49%, 53%, 100% { transform: scaleY(1); }
+                            47.5%, 51.5% { transform: scaleY(0.05); }
                         }
                     </style>
-                    <g id="nav-character">
-                        <path id="nav-body-blob" d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#nav-paint0_radial_1_2)"/>
-                        <g id="nav-left-eye" filter="url(#nav-filter0_f_1_2)">
-                            <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
-                        </g>
-                        <g id="nav-right-eye" filter="url(#nav-filter1_f_1_2)">
-                            <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                    <g class="nb-head-turn">
+                        <path d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#nb-paint0_radial_1_2)"/>
+                        <g class="nb-eye-look">
+                            <g class="nb-left-eye">
+                                <g filter="url(#nb-filter0_f_1_2)">
+                                    <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                                </g>
+                            </g>
+                            <g class="nb-right-eye">
+                                <g filter="url(#nb-filter1_f_1_2)">
+                                    <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                                </g>
+                            </g>
                         </g>
                     </g>
                     <defs>
-                        <filter id="nav-filter0_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                        <filter id="nb-filter0_f_1_2" x="305" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                             <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                             <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                         </filter>
-                        <filter id="nav-filter1_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                        <filter id="nb-filter1_f_1_2" x="515" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                             <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                             <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                             <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                         </filter>
-                        <radialGradient id="nav-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                        <radialGradient id="nb-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
                             <stop stop-color="#18E2AC"/>
                             <stop offset="1" stop-color="#82FFDE"/>
                         </radialGradient>
@@ -186,61 +192,67 @@ $isProjectsActive = request()->routeIs('projects.*');
         <a href="{{ route('home') }}" class="flex items-center gap-2" onclick="closeMobileMenu()">
             <svg class="w-7 h-7" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <style>
-                    @keyframes navm-float {
-                        0%, 100% { transform: translate(0, 0) scale(1); }
-                        50% { transform: translate(0, 15px) scale(0.98, 1.02); }
+                    .nbm-head-turn {
+                        animation: nbm-headTurn 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+                        transform-origin: 490.5px 577.7px;
                     }
-                    @keyframes navm-eye-move {
-                        0%, 100% { transform: translate(0, 0) scaleY(1); }
-                        10% { transform: translate(25px, -15px) scaleY(1); }
-                        12% { transform: translate(25px, -15px) scaleY(0.1); }
-                        14% { transform: translate(25px, -15px) scaleY(1); }
-                        30% { transform: translate(25px, -15px) scaleY(1); }
-                        40% { transform: translate(-30px, 10px) scaleY(1); }
-                        42% { transform: translate(-30px, 10px) scaleY(0.1); }
-                        44% { transform: translate(-30px, 10px) scaleY(1); }
-                        46% { transform: translate(-30px, 10px) scaleY(0.1); }
-                        48% { transform: translate(-30px, 10px) scaleY(1); }
-                        65% { transform: translate(-30px, 10px) scaleY(1); }
-                        75% { transform: translate(0px, 20px) scaleY(1); }
-                        85% { transform: translate(0px, 20px) scaleY(1); }
-                        87% { transform: translate(0px, 20px) scaleY(0.1); }
-                        89% { transform: translate(0px, 20px) scaleY(1); }
+                    .nbm-eye-look {
+                        animation: nbm-lookAround 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
                     }
-                    #navm-character {
-                        animation: navm-float 6s ease-in-out infinite;
-                        transform-origin: 490.5px 577px;
-                    }
-                    #navm-left-eye {
-                        animation: navm-eye-move 8s infinite ease-in-out;
+                    .nbm-left-eye {
                         transform-origin: 385.5px 499px;
+                        animation: nbm-blink 5.5s infinite;
                     }
-                    #navm-right-eye {
-                        animation: navm-eye-move 8s infinite ease-in-out;
+                    .nbm-right-eye {
                         transform-origin: 595.5px 499px;
+                        animation: nbm-blink 5.5s infinite;
+                    }
+                    @keyframes nbm-headTurn {
+                        0%, 10% { transform: translate(0, 0) rotate(0deg); }
+                        15%, 35% { transform: translate(-30px, 10px) rotate(-3deg); }
+                        40%, 60% { transform: translate(40px, -10px) rotate(4deg); }
+                        65%, 85% { transform: translate(0px, 20px) rotate(0deg); }
+                        90%, 100% { transform: translate(0, 0) rotate(0deg); }
+                    }
+                    @keyframes nbm-lookAround {
+                        0%, 10% { transform: translate(0, 0); }
+                        15%, 35% { transform: translate(-45px, 15px); }
+                        40%, 60% { transform: translate(60px, -15px); }
+                        65%, 85% { transform: translate(0px, 35px); }
+                        90%, 100% { transform: translate(0, 0); }
+                    }
+                    @keyframes nbm-blink {
+                        0%, 46%, 49%, 53%, 100% { transform: scaleY(1); }
+                        47.5%, 51.5% { transform: scaleY(0.05); }
                     }
                 </style>
-                <g id="navm-character">
-                    <path id="navm-body-blob" d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#navm-paint0_radial_1_2)"/>
-                    <g id="navm-left-eye" filter="url(#navm-filter0_f_1_2)">
-                        <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
-                    </g>
-                    <g id="navm-right-eye" filter="url(#navm-filter1_f_1_2)">
-                        <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                <g class="nbm-head-turn">
+                    <path d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#nbm-paint0_radial_1_2)"/>
+                    <g class="nbm-eye-look">
+                        <g class="nbm-left-eye">
+                            <g filter="url(#nbm-filter0_f_1_2)">
+                                <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                            </g>
+                        </g>
+                        <g class="nbm-right-eye">
+                            <g filter="url(#nbm-filter1_f_1_2)">
+                                <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                            </g>
+                        </g>
                     </g>
                 </g>
                 <defs>
-                    <filter id="navm-filter0_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                    <filter id="nbm-filter0_f_1_2" x="305" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                         <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                         <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                     </filter>
-                    <filter id="navm-filter1_f_1_2" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+                    <filter id="nbm-filter1_f_1_2" x="515" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
                         <feFlood flood-opacity="0" result="BackgroundImageFix"/>
                         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
                         <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
                     </filter>
-                    <radialGradient id="navm-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                    <radialGradient id="nbm-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
                         <stop stop-color="#18E2AC"/>
                         <stop offset="1" stop-color="#82FFDE"/>
                     </radialGradient>

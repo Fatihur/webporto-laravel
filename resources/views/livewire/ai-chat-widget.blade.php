@@ -220,13 +220,74 @@
         @if(!$hasUserMessage)
             <div class="flex justify-center pt-6 pb-2 bg-gradient-to-b from-mint/5 to-transparent">
                 <div class="w-40 h-40">
-                    <lottie-player
-                        src="{{ asset('hi.json') }}"
-                        background="transparent"
-                        speed="1"
-                        loop
-                        autoplay>
-                    </lottie-player>
+                    <svg class="w-full h-full" viewBox="0 0 981 1032" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <style>
+                            .chat-head-turn {
+                                animation: chat-headTurn 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+                                transform-origin: 490.5px 577.7px;
+                            }
+                            .chat-eye-look {
+                                animation: chat-lookAround 10s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+                            }
+                            .chat-left-eye {
+                                transform-origin: 385.5px 499px;
+                                animation: chat-blink 5.5s infinite;
+                            }
+                            .chat-right-eye {
+                                transform-origin: 595.5px 499px;
+                                animation: chat-blink 5.5s infinite;
+                            }
+                            @keyframes chat-headTurn {
+                                0%, 10% { transform: translate(0, 0) rotate(0deg); }
+                                15%, 35% { transform: translate(-30px, 10px) rotate(-3deg); }
+                                40%, 60% { transform: translate(40px, -10px) rotate(4deg); }
+                                65%, 85% { transform: translate(0px, 20px) rotate(0deg); }
+                                90%, 100% { transform: translate(0, 0) rotate(0deg); }
+                            }
+                            @keyframes chat-lookAround {
+                                0%, 10% { transform: translate(0, 0); }
+                                15%, 35% { transform: translate(-45px, 15px); }
+                                40%, 60% { transform: translate(60px, -15px); }
+                                65%, 85% { transform: translate(0px, 35px); }
+                                90%, 100% { transform: translate(0, 0); }
+                            }
+                            @keyframes chat-blink {
+                                0%, 46%, 49%, 53%, 100% { transform: scaleY(1); }
+                                47.5%, 51.5% { transform: scaleY(0.05); }
+                            }
+                        </style>
+                        <g class="chat-head-turn">
+                            <path d="M923 577.713C923 817.247 729.363 889 490.5 889C251.637 889 58 817.247 58 577.713C58 338.18 251.637 144 490.5 144C729.363 144 923 338.18 923 577.713Z" fill="url(#chat-paint0_radial_1_2)"/>
+                            <g class="chat-eye-look">
+                                <g class="chat-left-eye">
+                                    <g filter="url(#chat-filter0_f_1_2)">
+                                        <ellipse cx="385.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                                    </g>
+                                </g>
+                                <g class="chat-right-eye">
+                                    <g filter="url(#chat-filter1_f_1_2)">
+                                        <ellipse cx="595.5" cy="499" rx="76.5" ry="108" fill="white"/>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                        <defs>
+                            <filter id="chat-filter0_f_1_2" x="305" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                                <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                            </filter>
+                            <filter id="chat-filter1_f_1_2" x="515" y="387" width="161" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                                <feGaussianBlur stdDeviation="2" result="effect1_foregroundBlur_1_2"/>
+                            </filter>
+                            <radialGradient id="chat-paint0_radial_1_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(490.5 609.331) rotate(90) scale(279.669 324.716)">
+                                <stop stop-color="#18E2AC"/>
+                                <stop offset="1" stop-color="#82FFDE"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
                 </div>
             </div>
         @endif
