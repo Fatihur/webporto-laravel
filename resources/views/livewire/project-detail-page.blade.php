@@ -78,14 +78,24 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12" x-data="{ shown: false }" x-intersect.once.margin.-100px="shown = true">
         <div class="md:col-span-8 transition-all duration-1000 transform" x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
             <h2 class="text-3xl font-bold mb-6">Project Overview</h2>
+            @php
+                $galleryUrls = $project->gallery ? array_map(fn($img) => Storage::url($img), $project->gallery) : [];
+            @endphp
+
             <div class="prose dark:prose-invert max-w-none"
                  x-data="{
+                    galleryUrls: {{ json_encode($galleryUrls) }},
                     init() {
                         this.$nextTick(() => {
                             this.$el.querySelectorAll('img').forEach(img => {
                                 img.style.cursor = 'zoom-in';
                                 img.addEventListener('click', () => {
-                                    $dispatch('open-lightbox', img.src);
+                                    // Find index of clicked image in gallery
+                                    const index = this.galleryUrls.findIndex(url => img.src.includes(url) || url.includes(img.src));
+                                    $dispatch('open-lightbox', {
+                                        images: this.galleryUrls,
+                                        index: index >= 0 ? index : 0
+                                    });
                                 });
                             });
                         });
@@ -97,12 +107,14 @@
 
             {{-- Gallery Section --}}
             @if($project->gallery && count($project->gallery) > 0)
-                <div class="mt-16 pt-16 border-t border-zinc-100 dark:border-zinc-800">
+                <div class="mt-16 pt-16 border-t border-zinc-100 dark:border-zinc-800"
+                    x-data="{ galleryUrls: {{ json_encode($galleryUrls) }} }"
+                >
                     <h3 class="text-2xl font-bold mb-8">Project Gallery</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @foreach($project->gallery as $index => $img)
                             <div class="rounded-3xl overflow-hidden group cursor-zoom-in"
-                                 @click="$dispatch('open-lightbox', '{{ Storage::url($img) }}')">
+                                 @click="$dispatch('open-lightbox', { images: galleryUrls, index: {{ $index }} })">
                                 <img src="{{ Storage::url($img) }}"
                                      class="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-700"
                                      alt="Gallery image {{ $index + 1 }}"

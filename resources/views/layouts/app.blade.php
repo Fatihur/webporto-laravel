@@ -260,23 +260,77 @@
     </div>
 
     <!-- Global Image Lightbox -->
-    <div x-data="{ 
-            open: false, 
-            imgSrc: '', 
+    <div x-data="{
+            open: false,
+            imgSrc: '',
+            images: [],
+            currentIndex: 0,
+            touchStartX: 0,
+            touchEndX: 0,
             init() {
                 window.addEventListener('open-lightbox', (e) => {
-                    this.imgSrc = e.detail;
+                    if (Array.isArray(e.detail.images)) {
+                        this.images = e.detail.images;
+                        this.currentIndex = e.detail.index || 0;
+                        this.imgSrc = this.images[this.currentIndex];
+                    } else {
+                        // Backward compatibility: single image string
+                        this.images = [e.detail];
+                        this.currentIndex = 0;
+                        this.imgSrc = e.detail;
+                    }
                     this.open = true;
                     document.body.style.overflow = 'hidden';
                 });
                 this.$watch('open', value => {
-                    if(!value) document.body.style.overflow = 'auto';
+                    if(!value) {
+                        document.body.style.overflow = 'auto';
+                        this.images = [];
+                        this.currentIndex = 0;
+                    }
                 });
+            },
+            next() {
+                if (this.images.length > 1) {
+                    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+                    this.imgSrc = this.images[this.currentIndex];
+                }
+            },
+            prev() {
+                if (this.images.length > 1) {
+                    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+                    this.imgSrc = this.images[this.currentIndex];
+                }
+            },
+            handleKeydown(e) {
+                if (!this.open) return;
+                if (e.key === 'ArrowRight') this.next();
+                if (e.key === 'ArrowLeft') this.prev();
+                if (e.key === 'Escape') this.open = false;
+            },
+            handleTouchStart(e) {
+                this.touchStartX = e.changedTouches[0].screenX;
+            },
+            handleTouchEnd(e) {
+                this.touchEndX = e.changedTouches[0].screenX;
+                this.handleSwipe();
+            },
+            handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = this.touchStartX - this.touchEndX;
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        this.next(); // Swipe left -> next
+                    } else {
+                        this.prev(); // Swipe right -> prev
+                    }
+                }
             }
          }"
          x-show="open"
          style="display: none;"
-         class="fixed inset-0 z-[110] bg-zinc-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+         @keydown.window="handleKeydown"
+         class="fixed inset-0 z-[110] bg-zinc-950/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -284,18 +338,63 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
     >
-         <button @click="open = false" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint" aria-label="Close image preview">
+         <!-- Close Button -->
+         <button @click="open = false" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint z-10" aria-label="Close image preview">
              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
          </button>
-        <img :src="imgSrc" @click.outside="open = false" class="max-w-full max-h-full rounded-2xl shadow-2xl object-contain" 
-             x-show="open"
-             x-transition:enter="transition ease-out duration-300 delay-100"
-             x-transition:enter-start="opacity-0 scale-90"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-90"
-        >
+
+         <!-- Counter -->
+         <div x-show="images.length > 1" class="absolute top-4 left-4 sm:top-8 sm:left-8 px-4 py-2 bg-white/10 rounded-full text-white text-sm font-medium" x-text="`${currentIndex + 1} / ${images.length}`"></div>
+
+         <!-- Previous Button -->
+         <button x-show="images.length > 1" @click="prev" @click.stop
+                 class="absolute left-4 sm:left-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint hover:scale-110 active:scale-95 z-10"
+                 aria-label="Previous image">
+             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+         </button>
+
+         <!-- Image Container with Touch Events -->
+         <div class="relative w-full h-full flex items-center justify-center"
+              @touchstart="handleTouchStart"
+              @touchend="handleTouchEnd">
+             <img :src="imgSrc"
+                  @click.outside="open = false"
+                  class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain"
+                  x-show="open"
+                  x-transition:enter="transition ease-out duration-300"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-200"
+                  x-transition:leave-start="opacity-100 scale-100"
+                  x-transition:leave-end="opacity-0 scale-95"
+                  :key="currentIndex"
+             >
+         </div>
+
+         <!-- Next Button -->
+         <button x-show="images.length > 1" @click="next" @click.stop
+                 class="absolute right-4 sm:right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint hover:scale-110 active:scale-95 z-10"
+                 aria-label="Next image">
+             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+         </button>
+
+         <!-- Thumbnail Navigation -->
+         <div x-show="images.length > 1" class="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 max-w-[80vw] overflow-x-auto px-4 py-2 bg-black/50 rounded-full backdrop-blur-sm">
+             <template x-for="(img, idx) in images" :key="idx">
+                 <button @click="currentIndex = idx; imgSrc = images[idx]"
+                         class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0"
+                         :class="idx === currentIndex ? 'border-mint scale-110' : 'border-transparent opacity-60 hover:opacity-100'">
+                     <img :src="img" class="w-full h-full object-cover">
+                 </button>
+             </template>
+         </div>
+
+         <!-- Keyboard Hint -->
+         <div class="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 text-white/50 text-xs hidden sm:block">
+             <span class="px-2 py-1 bg-white/10 rounded">←</span>
+             <span class="px-2 py-1 bg-white/10 rounded">→</span>
+             <span class="ml-2">Navigate</span>
+         </div>
     </div>
 
     <!-- Theme handling script -->
