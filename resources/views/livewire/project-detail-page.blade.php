@@ -155,7 +155,7 @@
 
             @if($project->stats && count($project->stats) > 0)
                 <div class="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-4xl">
-                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Key Results</h4>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-6">Project Stats</h4>
                     <div class="space-y-6">
                         @foreach($project->stats as $stat)
                             @if(isset($stat['label']) && isset($stat['value']))
@@ -174,7 +174,7 @@
     @if($project->case_study_problem || $project->case_study_process || $project->case_study_result)
         <section class="mt-20 pt-20 border-t border-zinc-100 dark:border-zinc-800" x-data="{ showCaseStudy: false }" x-intersect.once.margin.-100px="showCaseStudy = true">
             <div class="mb-10 transition-all duration-1000 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
-                <p class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-3">Case Study</p>
+                <p class="text-mint font-bold uppercase tracking-[0.3em] text-[10px] mb-3">Interactive Case Study</p>
                 <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tighter">Problem → Process → Result</h3>
             </div>
 
@@ -196,7 +196,9 @@
             </div>
 
             @if($project->case_study_metrics && count($project->case_study_metrics) > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-1000 delay-300 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                <div class="transition-all duration-1000 delay-300 transform" x-bind:class="showCaseStudy ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                    <h4 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-4">Case Study Metrics</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     @foreach($project->case_study_metrics as $metric)
                         @if(isset($metric['label']) && isset($metric['value']))
                             <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-5">
@@ -205,6 +207,7 @@
                             </div>
                         @endif
                     @endforeach
+                    </div>
                 </div>
             @endif
         </section>

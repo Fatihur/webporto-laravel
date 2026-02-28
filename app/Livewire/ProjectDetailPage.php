@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Services\SeoService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 
 class ProjectDetailPage extends Component
@@ -17,9 +18,9 @@ class ProjectDetailPage extends Component
     public function mount(string $slug): void
     {
         $this->slug = $slug;
-        $this->project = Cache::flexible('project.'.$slug, [300, 1800], function () use ($slug): ?Project {
+        $this->project = Cache::flexible('project.detail.'.$slug, [300, 1800], function () use ($slug): ?Project {
             return Project::query()
-                ->select(['id', 'title', 'slug', 'description', 'content', 'category', 'thumbnail', 'project_date', 'tags', 'tech_stack', 'gallery', 'stats', 'link', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at'])
+                ->select($this->projectSelectColumns())
                 ->where('slug', $slug)
                 ->first();
         });
@@ -60,5 +61,51 @@ class ProjectDetailPage extends Component
             'relatedProjects' => $relatedProjects,
             'structuredData' => $structuredData,
         ])->layout('layouts.app');
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function projectSelectColumns(): array
+    {
+        $requiredColumns = [
+            'id',
+            'title',
+            'slug',
+            'description',
+            'content',
+            'category',
+            'thumbnail',
+            'project_date',
+            'tags',
+            'tech_stack',
+            'gallery',
+            'stats',
+            'link',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'created_at',
+            'updated_at',
+        ];
+
+        $optionalColumns = [
+            'case_study_problem',
+            'case_study_process',
+            'case_study_result',
+            'case_study_metrics',
+        ];
+
+        $availableColumns = array_flip(Schema::getColumnListing('projects'));
+
+        $selectedColumns = [];
+
+        foreach (array_merge($requiredColumns, $optionalColumns) as $column) {
+            if (isset($availableColumns[$column])) {
+                $selectedColumns[] = $column;
+            }
+        }
+
+        return $selectedColumns;
     }
 }

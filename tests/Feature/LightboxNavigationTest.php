@@ -71,4 +71,28 @@ class LightboxNavigationTest extends TestCase
             $response->assertSee("Gallery image {$num}");
         }
     }
+
+    public function test_project_detail_page_shows_case_study_and_stats_sections(): void
+    {
+        $project = Project::factory()->create([
+            'stats' => [
+                ['label' => 'Users', 'value' => '+120%'],
+            ],
+            'case_study_problem' => 'Traffic quality was low.',
+            'case_study_process' => 'We improved onboarding and SEO.',
+            'case_study_result' => 'Retention and conversion improved.',
+            'case_study_metrics' => [
+                ['label' => 'Conversion', 'value' => '+35%'],
+            ],
+        ]);
+
+        $response = $this->get(route('projects.show', $project->slug));
+
+        $response->assertStatus(200);
+        $response->assertSee('Project Stats');
+        $response->assertSee('Interactive Case Study');
+        $response->assertSee('Case Study Metrics');
+        $response->assertSee('Conversion');
+        $response->assertSee('+35%');
+    }
 }

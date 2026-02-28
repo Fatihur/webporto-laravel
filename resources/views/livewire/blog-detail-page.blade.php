@@ -345,13 +345,7 @@
             font-size: 1.375rem;
             font-weight: 600;
         }
-        .prose ul, .prose ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-        .prose li {
-            margin-bottom: 0.5rem;
-        }
+        /* list styles handled globally in app.css */
         /* Media responsive */
         .prose img,
         .prose table,
